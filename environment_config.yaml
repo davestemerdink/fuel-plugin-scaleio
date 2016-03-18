@@ -1,0 +1,145 @@
+attributes:
+
+  password:
+    type: "password"
+    weight: 10
+    value: ""
+    label: "Admin password"
+    description: "Type ScaleIO Admin password"
+    regex:
+      source: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,15}$'
+      error: "You must provide a password with between 8 and 15 characters, one uppercase, and one number"
+
+  gateway_password:
+    type: "password"
+    weight: 20
+    value: ""
+    label: "Gateway password"
+    description: "Type a password for the gateway"
+    regex:
+      source: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,15}$'
+      error: "You must provide a password with between 8 and 15 characters, one uppercase, and one number"
+
+  ephemeral_storage:
+    type: "checkbox"
+    value: true
+    label: "Use ScaleIO as ephemeral storage."
+    description: "Configure OpenStack Nova to keep ephemeral volumes on ScaleIO."
+    weight: 30
+
+  image_storage:
+    type: "checkbox"
+    value: true
+    label: "Use ScaleIO as image storage."
+    description: "Configure OpenStack Glance and Nova to use ScaleIO as storage for VM images."
+    weight: 40
+  
+#  cluster_name:
+#    type: "text"
+#    value: "scaleio1"
+#    label: "ScaleIO cluster name"
+#    description: "Name of ScaleIO cluster to be created if absent.
+#    weight: 50
+#    regex:
+#        source: '^\w+$'
+       
+  protection_domain:
+    type: "text"
+    value: "default"
+    label: "Protection domain name"
+    description: "Name of protection domains to be created if absent.
+    weight: 60
+    regex:
+        source: '^\w+$'
+
+  storage_pool:
+    type: "text"
+    value: "default"
+    label: "Storage pool name"
+    description: "Name of storage pool to be created if absent.
+    weight: 70
+    regex:
+        source: '^\w+$'
+
+  hyperconverged_environment:   
+    type: "checkbox"
+    value: true
+    label: "Hyperconverged environment"
+    description: "Define if the environment is hyperconverged, If true each compute node will be a Storage node as well."
+    weight: 80
+    regex:
+      source: 'true'
+      error: 'The only hyperconverged environemnt is supported for now.'
+    restrictions:
+      - condition: "settings:fuel_version == '6.1'"
+#      action: hide
+
+  separate_pools_for_ssd_disks:
+    type: "checkbox"
+    value: "false"
+    label: "Create separate storage pools for regular HDDs and SSDs"
+    description: "SSD and regular HDD devices will go into different pools. Pool name setting above becomes a prefix in that case."
+    weight: 90
+    restrictions:
+      - condition: "true"
+          
+  device_paths:
+    type: "text"
+    value: ""
+    label: "List of devices to be added into SDS"
+    description: "Coma separated list of devices, e.g. /dev/sdb,/dev/sdc."
+    weight: 95
+    regex:
+      source: '^\w{1,}$'
+      error: 'You must provide a number greater than 100'
+    restrictions:
+      - condition: "settings:fuel_version == '6.1'
+#      action: hide
+      - condition: "settings:scaleio.use_unallocated_disks.value == true"
+      - condition: "settings:scaleio.use_unallocated_space.value == true"
+          
+  use_unallocated_disks:
+    type: "checkbox:
+    value: false
+    label: "Use all unallocated disks as storage devices in SDS."
+    description: "Unallocated disks will be automatically added into SDS as storage devices."
+    weight: 100
+    restrictions:
+      - condition: "settings:fuel_version == '6.1'
+#      action: hide
+      - condition: "settings:scaleio.device_paths.value != ''"
+  
+  use_unallocated_space:
+    type: "checkbox"
+    value: false
+    label: "Use all unallocated space on disks as sotrage devices in SDS."
+    description: "Unallocated space will be automatically partitioned and these partitions will be added into SDS as storage devices."
+    weight: 100
+    restrictions:
+      - condition: "settings:fuel_version == '6.1'"
+#      action: hide
+      - condition: "settings:scaleio.device_paths.value != ''"
+    
+  unallocated_spacesize_threshold:
+    type: "text"
+    value: "100"
+    label: "Storage unallocated space size (in GB) threshold"
+    description: "Minimal size in GB of unallocated space to be automatically used as storage device (SDS). Zero desables the check."
+    weight: 110
+    regex:
+      source: '^\d{1,}$'
+      error: 'You must provide a number greater than 100'
+    restrictions:
+      - condition: "settings:fuel_version == '6.1'"
+ #     action: hide
+      - condition: "settings:scaleio.use_unallocated_space.value == true"
+        
+  version:
+    type: "select"
+    weight: 120
+    value: "2.0"
+    label: "Version"
+    description: "Select the ScaleIO version you wish to install. The only version 2.0 is supported for now."
+    values:
+      - data: "2.0"
+        label: "2.0"

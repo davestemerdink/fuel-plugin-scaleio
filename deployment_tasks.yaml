@@ -1,0 +1,101 @@
+##############################################################################
+# ScaleIO prerequisites tasks
+##############################################################################
+- role: ['scaleio-mdm', 'scaleio-tie_breaker', 'scaleio-gateway', 'scaleio-sds', 'compute']
+  stage: post_deployment/2000
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/environment.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
+    timeout: 360
+
+##############################################################################
+# ScaleIO installation tasks
+##############################################################################
+- role: ['scaleio-mdm']
+  stage: post_deployment/2050
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/mdm_package.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
+    timeout: 1800
+
+- role: ['scaleio-tb']
+  stage: post_deployment/2050
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/tb_package.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
+    timeout: 1800
+    
+- role: ['scaleio-gateway']
+  stage: post_deployment/2050
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/gateway_package.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
+    timeout: 1800
+
+- role: ['scaleio-sds']
+  stage: post_deployment/2050
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/sds_package.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
+    timeout: 1800
+
+- role: ['compute']
+  stage: post_deployment/2050
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/compute_package.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
+    timeout: 1800
+
+
+##############################################################################
+# ScaleIO cluster configuration tasks
+##############################################################################
+- role: ['scaleio-mdm']
+  stage: post_deployment/2100
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/cluster.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
+    timeout: 600
+
+
+##############################################################################
+# ScaleIO storages and clients configuration tasks
+##############################################################################
+- role: ['scaleio-gateway']
+  stage: post_deployment/2150
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/gateway.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
+    timeout: 600
+    
+- role: ['scaleio-sds']
+  stage: post_deployment/2150
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/sds.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
+    timeout: 600
+    
+- role: ['compute']
+  stage: post_deployment/2150
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/compute.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
+    timeout: 600
+
+- role: ['cinder']
+  stage: post_deployment/2150
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/cinder.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
+    timeout: 600
