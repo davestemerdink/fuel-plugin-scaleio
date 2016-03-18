@@ -110,3 +110,4 @@ Please use the [Launchpad project site](https://launchpad.net/fuel-plugin-scalei
 # License
 
 Please read the [LICENSE](LICENSE) document for the latest licensing information.
+
