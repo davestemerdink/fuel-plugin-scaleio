@@ -38,7 +38,7 @@ attributes:
 #    type: "text"
 #    value: "scaleio1"
 #    label: "ScaleIO cluster name"
-#    description: "Name of ScaleIO cluster to be created if absent.
+#    description: "Name of ScaleIO cluster to be created if absent."
 #    weight: 50
 #    regex:
 #        source: '^\w+$'
@@ -47,7 +47,7 @@ attributes:
     type: "text"
     value: "default"
     label: "Protection domain name"
-    description: "Name of protection domains to be created if absent.
+    description: "Name of protection domains to be created if absent."
     weight: 60
     regex:
         source: '^\w+$'
@@ -56,7 +56,7 @@ attributes:
     type: "text"
     value: "default"
     label: "Storage pool name"
-    description: "Name of storage pool to be created if absent.
+    description: "Name of storage pool to be created if absent."
     weight: 70
     regex:
         source: '^\w+$'
@@ -93,19 +93,19 @@ attributes:
       source: '^\w{1,}$'
       error: 'You must provide a number greater than 100'
     restrictions:
-      - condition: "settings:fuel_version == '6.1'
+      - condition: "settings:fuel_version == '6.1'"
 #      action: hide
       - condition: "settings:scaleio.use_unallocated_disks.value == true"
       - condition: "settings:scaleio.use_unallocated_space.value == true"
           
   use_unallocated_disks:
-    type: "checkbox:
+    type: "checkbox"
     value: false
     label: "Use all unallocated disks as storage devices in SDS."
     description: "Unallocated disks will be automatically added into SDS as storage devices."
     weight: 100
     restrictions:
-      - condition: "settings:fuel_version == '6.1'
+      - condition: "settings:fuel_version == '6.1'"
 #      action: hide
       - condition: "settings:scaleio.device_paths.value != ''"
   
