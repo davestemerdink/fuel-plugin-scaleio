@@ -1,8 +1,9 @@
 
 class scaleio_fuel {
 
-  define environment($role) {    
+  define environment($name) { 
     $all_nodes = hiera('nodes')
+    $role = $name
     $nodes = $role ? {
       'sds' => filter_nodes($all_nodes, 'name', "${::hostname}"),
       default => filter_nodes($all_nodes, 'role', "scaleio-${role}")

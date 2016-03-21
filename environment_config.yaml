@@ -34,15 +34,6 @@ attributes:
     description: "Configure OpenStack Glance and Nova to use ScaleIO as storage for VM images."
     weight: 40
   
-#  cluster_name:
-#    type: "text"
-#    value: "scaleio1"
-#    label: "ScaleIO cluster name"
-#    description: "Name of ScaleIO cluster to be created if absent."
-#    weight: 50
-#    regex:
-#        source: '^\w+$'
-       
   protection_domain:
     type: "text"
     value: "default"
@@ -61,27 +52,26 @@ attributes:
     regex:
         source: '^\w+$'
 
-  hyperconverged_environment:   
-    type: "checkbox"
-    value: true
-    label: "Hyperconverged environment"
-    description: "Define if the environment is hyperconverged, If true each compute node will be a Storage node as well."
-    weight: 80
-    regex:
-      source: 'true'
-      error: 'The only hyperconverged environemnt is supported for now.'
-    restrictions:
-      - condition: "settings:fuel_version == '6.1'"
-#      action: hide
+#  hyperconverged_environment:   
+#    type: "checkbox"
+#    value: true
+#    label: "Hyperconverged environment"
+#    description: "Define if the environment is hyperconverged, If true each compute node will be a Storage node as well."
+#    weight: 80
+#    restrictions:
+#      - condition: "true"
+#        action: hide
 
-  separate_pools_for_ssd_disks:
-    type: "checkbox"
-    value: "false"
-    label: "Create separate storage pools for regular HDDs and SSDs"
-    description: "SSD and regular HDD devices will go into different pools. Pool name setting above becomes a prefix in that case."
-    weight: 90
-    restrictions:
-      - condition: "true"
+#  separate_pools_for_ssd_disks:
+#    type: "checkbox"
+#    value: "false"
+#    label: "Create separate storage pools for regular HDDs and SSDs"
+#    description: "SSD and regular HDD devices will go into different pools. Pool name setting above becomes a prefix in that case."
+#    weight: 90
+#    restrictions:
+##      - condition: cluster:fuel_version == '6.1'
+#      - condition: "true"
+#        action: hide
           
   device_paths:
     type: "text"
@@ -90,49 +80,50 @@ attributes:
     description: "Coma separated list of devices, e.g. /dev/sdb,/dev/sdc."
     weight: 95
     regex:
-      source: '^\w{1,}$'
-      error: 'You must provide a number greater than 100'
-    restrictions:
-      - condition: "settings:fuel_version == '6.1'"
-#      action: hide
-      - condition: "settings:scaleio.use_unallocated_disks.value == true"
-      - condition: "settings:scaleio.use_unallocated_space.value == true"
+      source: '^(/dev/[a-zA-Z0-9:-_/]+){1}((,){1}(?=/dev/[a-zA-Z0-9:-_/]+))*'
+      error: 'List of path is incorrect'
+#    restrictions:
+#      - condition: settings:scaleio.use_unallocated_disks.value == true
+#      - condition: settings:scaleio.use_unallocated_space.value == true
           
-  use_unallocated_disks:
-    type: "checkbox"
-    value: false
-    label: "Use all unallocated disks as storage devices in SDS."
-    description: "Unallocated disks will be automatically added into SDS as storage devices."
-    weight: 100
-    restrictions:
-      - condition: "settings:fuel_version == '6.1'"
-#      action: hide
-      - condition: "settings:scaleio.device_paths.value != ''"
+#  use_unallocated_disks:
+#    type: "checkbox"
+#    value: false
+#    label: "Use all unallocated disks as storage devices in SDS."
+#    description: "Unallocated disks will be automatically added into SDS as storage devices."
+#    weight: 100
+#    restrictions:
+##      - condition: cluster:fuel_version == '6.1'
+#      - condition: "true"
+#        action: hide
+#      - condition: settings:scaleio.device_paths.value != ''
   
-  use_unallocated_space:
-    type: "checkbox"
-    value: false
-    label: "Use all unallocated space on disks as sotrage devices in SDS."
-    description: "Unallocated space will be automatically partitioned and these partitions will be added into SDS as storage devices."
-    weight: 100
-    restrictions:
-      - condition: "settings:fuel_version == '6.1'"
-#      action: hide
-      - condition: "settings:scaleio.device_paths.value != ''"
+#  use_unallocated_space:
+#    type: "checkbox"
+#    value: false
+#    label: "Use all unallocated space on disks as sotrage devices in SDS."
+#    description: "Unallocated space will be automatically partitioned and these partitions will be added into SDS as storage devices."
+#    weight: 100
+#    restrictions:
+##      - condition: cluster:fuel_version == '6.1'
+#      - condition: "true"
+#        action: hide
+#      - condition: settings:scaleio.device_paths.value != ''
     
-  unallocated_spacesize_threshold:
-    type: "text"
-    value: "100"
-    label: "Storage unallocated space size (in GB) threshold"
-    description: "Minimal size in GB of unallocated space to be automatically used as storage device (SDS). Zero desables the check."
-    weight: 110
-    regex:
-      source: '^\d{1,}$'
-      error: 'You must provide a number greater than 100'
-    restrictions:
-      - condition: "settings:fuel_version == '6.1'"
- #     action: hide
-      - condition: "settings:scaleio.use_unallocated_space.value == true"
+#  unallocated_spacesize_threshold:
+#    type: "text"
+#    value: "100"
+#    label: "Space size threshold"
+#    description: "Minimal size in GB of unallocated space to be automatically used as storage device (SDS). Zero desables the check."
+#    weight: 110
+#    regex:
+#      source: '^\d+$'
+#      error: 'You must provide a valid number'
+#    restrictions:
+##      - condition: cluster:fuel_version == '6.1'
+#      - condition: "true"
+#        action: hide
+#      - condition: settings:scaleio.use_unallocated_space.value == false
         
   version:
     type: "select"
@@ -143,3 +134,4 @@ attributes:
     values:
       - data: "2.0"
         label: "2.0"
+
