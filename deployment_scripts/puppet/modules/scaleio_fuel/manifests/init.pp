@@ -1,7 +1,7 @@
 
 class scaleio_fuel {
 
-  define environment($name) { 
+  define environment() { 
     $all_nodes = hiera('nodes')
     $role = $name
     $nodes = $role ? {
