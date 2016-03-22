@@ -70,7 +70,6 @@ define ensure_sds(
     ip_roles           => $ip_roles,
     storage_pools      => $storage_pools,
     device_paths       => $device_paths,
-    require            => Scaleio::Login['login'],
   }
 }
 
