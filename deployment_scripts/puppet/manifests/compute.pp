@@ -7,7 +7,7 @@ if $scaleio['metadata']['enabled'] {
     } ->
     class {'scaleio::sdc_server':
       ensure  => 'present',
-      mdm_ips => $::mdm_ips,
+      mdm_ip  => $::mdm_ips,
     } ->
     class {'scaleio_openstack::nova':
       ensure  => present,

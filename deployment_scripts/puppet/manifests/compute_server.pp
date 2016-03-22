@@ -6,6 +6,6 @@ if $scaleio['metadata']['enabled'] {
   }
   class {'scaleio::sdc_server':
     ensure   => 'present',
-    mdm_ips  => undef,
+    mdm_ip   => undef,
   }
 }
