@@ -24,10 +24,17 @@
   stage: post_deployment/2050
   type: puppet
   parameters:
-    puppet_manifest: puppet/manifests/compute_server.pp
+    puppet_manifest: puppet/manifests/sds_server.pp
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 1800
 
+- role: ['compute']
+  stage: post_deployment/2050
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/sdc_server.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
+    timeout: 1800
 
 ##############################################################################
 # ScaleIO cluster configuration tasks
