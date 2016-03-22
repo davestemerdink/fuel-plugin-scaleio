@@ -42,7 +42,7 @@ if $scaleio['metadata']['enabled'] {
       notify {"Master MDM ${master_ip}": } ->
       class {'scaleio::mdm_server':
         ensure              => 'present',
-        role                => 'manager',
+        is_manager          => undef,
         master_mdm_name     => $master_ip,
         mdm_ips             => $master_ip,
         mdm_management_ips  => $master_ip,
