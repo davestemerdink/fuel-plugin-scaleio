@@ -47,8 +47,9 @@ if $scaleio['metadata']['enabled'] {
         mdm_ips             => $master_ip,
         mdm_management_ips  => $master_ip,
       } ->
-      scaleio::login {'First login': password => 'admin'} ->
-      scaleio::cluster {'Set password': password=>'admin', new_password=>$password }->
+      scaleio::login {'First': password => 'admin'} ->
+      scaleio::cluster {'Set password': password => 'admin', new_password => $password }->
+      scaleio::login {'Normal': password => $password } ->
       mdm_standby {$standby_ips: } ->
       mdm_tb{$tb_ip_array:} ->
       scaleio::cluster {'Configure cluster mode':
