@@ -2,8 +2,7 @@ $scaleio = hiera('scaleio')
 if $scaleio['metadata']['enabled'] {
   if $::mdm_ips {
     scaleio::login {'login':
-      password => $scaleio['password'],
-      before   => Class['scaleio::sds']
+      password => $scaleio['password']
     } ->
     class {'scaleio::sdc_server':
       ensure  => 'present',
@@ -22,9 +21,10 @@ if $scaleio['metadata']['enabled'] {
     if $sds_ips {
       #use first ip as SDS name
       $sds_name = $sds_ips[0]
+      $sds_ips_str = join($sds_ips, ',')
       # remove possible trailing comas
       # generate array of roles (all) with lenght of ips
-      $ip_roles = join(values(hash(split(regsubst("${sds_ips},", ',', ',all,', 'G'), ','))), ',')
+      $ip_roles = join(values(hash(split(regsubst("${sds_ips_str},", ',', ',all,', 'G'), ','))), ',')
       $paths = $scaleio['device_paths'] ? {
         udnef   => undef,
         default => join(split($scaleio['device_paths'], ','), ',')
@@ -39,7 +39,7 @@ if $scaleio['metadata']['enabled'] {
       }
       notify {"Devices ${device_paths}": } ->
       notify {"Storage pools ${storage_pools}": } ->
-      notify {"IPs and roles ${sds_ips} /  ${ip_roles}": } ->
+      notify {"IPs and roles ${sds_ips_str} /  ${ip_roles}": } ->
       scaleio::sds {"Configure SDS ${sds_name}":
         ensure             => 'present',
         ensure_properties  => undef,
@@ -47,10 +47,11 @@ if $scaleio['metadata']['enabled'] {
         protection_domain  => $scaleio['protection_domain'],
         fault_set          => undef,
         port               => undef,
-        ips                => $sds_ips,         # "1.2.3.4,1.2.3.5"
-        ip_roles           => $ip_roles,           # "all,all"
-        storage_pools      => $storage_pools,   # "sp1,sp2"
-        device_paths       => $device_paths,    # "/dev/sdb,/dev/sdc",
+        ips                => $sds_ips_str,
+        ip_roles           => $ip_roles,
+        storage_pools      => $storage_pools,
+        device_paths       => $device_paths,
+        require            => Scaleio::Login['login'],
       }
     } else {
       fail('Wrong SDS IPs configuration')
