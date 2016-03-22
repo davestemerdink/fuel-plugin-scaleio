@@ -29,15 +29,15 @@ define mdm_tb() {
 $scaleio = hiera('scaleio')
 if $scaleio['metadata']['enabled'] {
   if $::mdm_ips {
-    $mdm_ips = split($::mdm_ips, ',')
-    $tb_ips = split($::tb_ips, ',')
-    $master_ip = $mdm_ips[0]
+    $mdm_ip_array = split($::mdm_ips, ',')
+    $tb_ip_array = split($::tb_ips, ',')
+    $master_ip = $mdm_ip_array[0]
     if has_ip_address($master_ip) {
-      $stand_by_mds_count = count($mdm_ips) - 1
-      $standby_ips = values_at($mdm_ips, ["1-${stand_by_mds_count}"])
-      $cluster_mode = count($mdm_ips) + count(split($tb_ips, ','))
+      $stand_by_mds_count = count($mdm_ip_array) - 1
+      $standby_ips = values_at($mdm_ip_array, ["1-${stand_by_mds_count}"])
+      $cluster_mode = count($mdm_ip_array) + count(split($tb_ip_array, ','))
       $slave_names = join($standby_ips, ',')
-      $tb_names = join($tb_ips, ',')
+      $tb_names = join($tb_ip_array, ',')
       $password = $scaleio['password']
       notify {"Master MDM ${master_ip}": } ->
       class {'scaleio::mdm_server':
@@ -50,7 +50,7 @@ if $scaleio['metadata']['enabled'] {
       scaleio::login {'First login': password => 'admin'} ->
       scaleio::cluster {'Set password': password=>'admin', new_password=>$password }->
       mdm_standby {$standby_ips: } ->
-      mdm_tb{$tb_ips:} ->
+      mdm_tb{$tb_ip_array:} ->
       scaleio::cluster {'Configure cluster mode':
         ensure              => 'present',
         cluster_mode        => $cluster_mode,
