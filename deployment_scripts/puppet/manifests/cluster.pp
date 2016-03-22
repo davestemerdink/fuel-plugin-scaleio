@@ -25,6 +25,18 @@ define mdm_tb() {
   }
 }
 
+define ensure_password($old_password, $password) {
+  scaleio::login {'First': password => $old_password} ->
+  file_line { "Append a FACTER_mdm_password line to /etc/environment":
+    ensure  => present,
+    path    => '/etc/environment',
+    match   => "^FACTER_mdm_password=",
+    line    => "FACTER_mdm_password=${password}",
+  } ->
+  scaleio::cluster {'Set password': password => $old_password, new_password => $password } ->
+  scaleio::login {'Normal': password => $password }
+}
+
 # The only first mdm which is proposed to be the first master does cluster configuration
 $scaleio = hiera('scaleio')
 if $scaleio['metadata']['enabled'] {
@@ -38,6 +50,11 @@ if $scaleio['metadata']['enabled'] {
       $cluster_mode = count($mdm_ip_array) + count($tb_ip_array)
       $slave_names = join($standby_ips, ',')
       $tb_names = join($tb_ip_array, ',')
+      $env_password = $::mdm_password
+      $old_password = $env_password ? {
+        undef   => 'admin',
+        default => $env_password
+      }
       $password = $scaleio['password']
       notify {"Master MDM ${master_ip}": } ->
       class {'scaleio::mdm_server':
@@ -47,9 +64,7 @@ if $scaleio['metadata']['enabled'] {
         mdm_ips             => $master_ip,
         mdm_management_ips  => $master_ip,
       } ->
-      scaleio::login {'First': password => 'admin'} ->
-      scaleio::cluster {'Set password': password => 'admin', new_password => $password }->
-      scaleio::login {'Normal': password => $password } ->
+      ensure_password {'Set password': old_password => $old_password, password => $password} ->
       mdm_standby {$standby_ips: } ->
       mdm_tb{$tb_ip_array:} ->
       scaleio::cluster {'Configure cluster mode':
