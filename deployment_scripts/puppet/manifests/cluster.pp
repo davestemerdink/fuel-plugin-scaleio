@@ -26,14 +26,20 @@ define mdm_tb() {
 }
 
 define ensure_password($old_password, $password) {
-  scaleio::login {'First': password => $old_password} ->
-  file_line { "Append a FACTER_mdm_password line to /etc/environment":
-    ensure  => present,
-    path    => '/etc/environment',
-    match   => "^FACTER_mdm_password=",
-    line    => "FACTER_mdm_password=${password}",
-  } ->
-  scaleio::cluster {'Set password': password => $old_password, new_password => $password } ->
+  if $old_password != $password {
+    scaleio::login {'First': password => $old_password} ->
+    scaleio::cluster {'Set password':
+      password      => $old_password,
+      new_password  => $password,
+    } ->
+    file_line { "Append a FACTER_mdm_password line to /etc/environment":
+      ensure  => present,
+      path    => '/etc/environment',
+      match   => "^FACTER_mdm_password=",
+      line    => "FACTER_mdm_password=${password}",
+      before  => Scaleio::Login['Normal'],
+    }
+  }
   scaleio::login {'Normal': password => $password }
 }
 
