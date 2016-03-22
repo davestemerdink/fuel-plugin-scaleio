@@ -48,7 +48,7 @@
     timeout: 600
 
 - role: ['primary-controller']
-  stage: post_deployment/2100
+  stage: post_deployment/2150
   type: puppet
   parameters:
     puppet_manifest: puppet/manifests/cluster.pp
@@ -60,7 +60,7 @@
 # ScaleIO storages and clients configuration tasks
 ##############################################################################
 - role: ['compute']
-  stage: post_deployment/2150
+  stage: post_deployment/2200
   type: puppet
   parameters:
     puppet_manifest: puppet/manifests/compute.pp
@@ -68,7 +68,7 @@
     timeout: 600
 
 - role: ['cinder']
-  stage: post_deployment/2150
+  stage: post_deployment/2200
   type: puppet
   parameters:
     puppet_manifest: puppet/manifests/cinder.pp

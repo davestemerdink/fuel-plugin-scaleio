@@ -45,8 +45,6 @@ define ensure_password($old_password, $password) {
 
 define ensure_sds(
   $protection_domain,
-  $ips,
-  $ip_roles,
   $storage_pools,
   $device_paths,
 ) {
