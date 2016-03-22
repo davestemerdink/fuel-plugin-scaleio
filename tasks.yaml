@@ -16,23 +16,7 @@
   stage: post_deployment/2050
   type: puppet
   parameters:
-    puppet_manifest: puppet/manifests/mdm_package.pp
-    puppet_modules: puppet/modules:/etc/puppet/modules
-    timeout: 1800
-
-- role: ['controller']
-  stage: post_deployment/2050
-  type: puppet
-  parameters:
-    puppet_manifest: puppet/manifests/tb_package.pp
-    puppet_modules: puppet/modules:/etc/puppet/modules
-    timeout: 1800
-    
-- role: ['controller']
-  stage: post_deployment/2050
-  type: puppet
-  parameters:
-    puppet_manifest: puppet/manifests/gateway_package.pp
+    puppet_manifest: puppet/manifests/controller_server.pp
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 1800
 
@@ -40,15 +24,7 @@
   stage: post_deployment/2050
   type: puppet
   parameters:
-    puppet_manifest: puppet/manifests/sds_package.pp
-    puppet_modules: puppet/modules:/etc/puppet/modules
-    timeout: 1800
-
-- role: ['compute']
-  stage: post_deployment/2050
-  type: puppet
-  parameters:
-    puppet_manifest: puppet/manifests/compute_package.pp
+    puppet_manifest: puppet/manifests/compute_server.pp
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 1800
 
@@ -56,6 +32,14 @@
 ##############################################################################
 # ScaleIO cluster configuration tasks
 ##############################################################################
+- role: ['primary-controller', 'controller']
+  stage: post_deployment/2100
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/controller.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
+    timeout: 600
+
 - role: ['primary-controller']
   stage: post_deployment/2100
   type: puppet
@@ -68,22 +52,6 @@
 ##############################################################################
 # ScaleIO storages and clients configuration tasks
 ##############################################################################
-- role: ['primary-controller', 'controller']
-  stage: post_deployment/2150
-  type: puppet
-  parameters:
-    puppet_manifest: puppet/manifests/gateway.pp
-    puppet_modules: puppet/modules:/etc/puppet/modules
-    timeout: 600
-    
-- role: ['compute']
-  stage: post_deployment/2150
-  type: puppet
-  parameters:
-    puppet_manifest: puppet/manifests/sds.pp
-    puppet_modules: puppet/modules:/etc/puppet/modules
-    timeout: 600
-    
 - role: ['compute']
   stage: post_deployment/2150
   type: puppet
@@ -99,3 +67,4 @@
     puppet_manifest: puppet/manifests/cinder.pp
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 600
+

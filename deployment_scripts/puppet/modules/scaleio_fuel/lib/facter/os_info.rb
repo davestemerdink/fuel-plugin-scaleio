@@ -17,3 +17,4 @@ end
 Facter.add(:os_auth_url) do
   setcode base_cmd % 'OS_AUTH_URL'
 end
+
