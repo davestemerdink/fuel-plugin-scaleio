@@ -35,7 +35,7 @@ if $scaleio['metadata']['enabled'] {
     if has_ip_address($master_ip) {
       $stand_by_mds_count = count($mdm_ip_array) - 1
       $standby_ips = values_at($mdm_ip_array, ["1-${stand_by_mds_count}"])
-      $cluster_mode = count($mdm_ip_array) + count(split($tb_ip_array, ','))
+      $cluster_mode = count($mdm_ip_array) + count($tb_ip_array)
       $slave_names = join($standby_ips, ',')
       $tb_names = join($tb_ip_array, ',')
       $password = $scaleio['password']
