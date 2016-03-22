@@ -1,9 +1,6 @@
 $scaleio = hiera('scaleio')
 if $scaleio['metadata']['enabled'] {
   if $::mdm_ips {
-    scaleio::login {'login':
-      password => $scaleio['password']
-    } ->
     class {'scaleio::sdc_server':
       ensure  => 'present',
       mdm_ip  => $::mdm_ips,
