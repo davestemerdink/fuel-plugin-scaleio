@@ -105,10 +105,13 @@ if $scaleio['metadata']['enabled'] {
       }
       $paths = $scaleio['device_paths'] ? {
         udnef   => undef,
-        default => join(split($scaleio['device_paths'], ','), ',') # remove possible trailing comas
+        default => split($scaleio['device_paths'], ',')
       }
-      $storage_pools = split($scaleio['storage_pool'], ',')
-      if $paths and count($paths) > 0 {
+      $storage_pools = $scaleio['storage_pool'] ? {
+        undef   => undef,
+        default => split($scaleio['storage_pool'], ',')
+      }
+      if $paths and $storage_pools {
         #generate array of pools with lenght of device_paths
         $device_paths = $paths
         #generate pools for devices if provided one pool
@@ -119,6 +122,7 @@ if $scaleio['metadata']['enabled'] {
           $device_storage_pools = $storage_pools
         }
       } else {
+        notify {'Devices and pool will not be configured':}
         $device_paths = undef
         $device_storage_pools = undef
       }
