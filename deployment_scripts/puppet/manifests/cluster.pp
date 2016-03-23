@@ -53,7 +53,7 @@ define ensure_sds(
   $sds_ips      = $sds_node['storage_address']
   $sds_ip_roles = 'all'
   if count(split($sds_ips, ',')) != 1 {
-    fail("TODO: behaviour changed - storage_address becomes coma-separated list ${storage_address}, so it's needed to add the generation of ip roles")
+    fail("TODO: behaviour changed - storage_address becomes coma-separated list ${sds_ips}, so it's needed to add the generation of ip roles")
   }
   notify {"SDS IPs and roles ${sds_ips} /  ${sds_ip_roles}": } ->
   scaleio::sds {$sds_name:
