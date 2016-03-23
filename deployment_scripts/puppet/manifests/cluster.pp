@@ -48,17 +48,14 @@ define ensure_sds(
   $storage_pools,
   $device_paths,
 ) {
-  $sds_node_name = $title
-  $sds_name = "sds-${sds_node_name}"  
-  $all_nodes = hiera('nodes')
-  $nodes = filter_nodes($all_nodes, 'name', $sds_node_name)
-  $hashes = nodes_to_hash($nodes, 'name', 'storage_address')
-  $sds_ips = ipsort(values($hashes))
-  $sds_ips_str = join($sds_ips, ',')
-  # remove possible trailing comas
-  # generate array of roles (all) with lenght of ips
-  $ip_roles = join(values(hash(split(regsubst("${sds_ips_str},", ',', ',all,', 'G'), ','))), ',')
-  notify {"IPs and roles ${sds_ips_str} /  ${ip_roles}": } ->
+  $sds_node     = $title
+  $sds_name     = $sds_node['name']
+  $sds_ips      = $sds_node['storage_address']
+  $sds_ip_roles = 'all'
+  if count(split($sds_ips, ',')) != 1 {
+    fail("TODO: behaviour changed - storage_address becomes coma-separated list ${storage_address}, so it's needed to add the generation of ip roles")
+  }
+  notify {"SDS IPs and roles ${sds_ips} /  ${sds_ip_roles}": } ->
   scaleio::sds {$sds_name:
     ensure             => 'present',
     ensure_properties  => undef,
@@ -66,11 +63,17 @@ define ensure_sds(
     protection_domain  => $protection_domain,
     fault_set          => undef,
     port               => undef,
-    ips                => $sds_ips_str,
-    ip_roles           => $ip_roles,
+    ips                => $sds_ips,
+    ip_roles           => $sds_ip_roles,
     storage_pools      => $storage_pools,
     device_paths       => $device_paths,
   }
+}
+
+define ensure_storage_pool(
+  $protection_domain
+) {
+  scaleio::storage_pool {"Storage Pool ${name}": name => $name, protection_domain => $protection_domain } 
 }
 
 # The only first mdm which is proposed to be the first master does cluster configuration
@@ -98,14 +101,23 @@ if $scaleio['metadata']['enabled'] {
         udnef   => undef,
         default => join(split($scaleio['device_paths'], ','), ',') # remove possible trailing comas
       }
+      $storage_pools = split($scaleio['storage_pool'], ',')
       if $paths and count($paths) > 0 {
         #generate array of pools with lenght of device_paths
         $device_paths = $paths
-        $storage_pools = join(values(hash(split(regsubst("${device_paths},", ',', ",${scaleio['storage_pool']},", 'G'), ','))), ',')
+        #generate pools for devices if provided one pool
+        #otherwise just use provided array
+        if count($storage_pools) == 1 {
+          $device_storage_pools = join(values(hash(split(regsubst("${device_paths},", ',', ",${storage_pools[0]},", 'G'), ','))), ',')
+        } else {
+          $device_storage_pools = $storage_pools
+        }
       } else {
         $device_paths = undef
-        $storage_pools = undef
+        $device_storage_pools = undef
       }
+      $protection_domain = $scaleio['protection_domain']
+      $storage_pool      = $scaleio['storage_pool']
       notify {"Master MDM ${master_ip}": } ->
       class {'scaleio::mdm_server':
         ensure              => 'present',
@@ -123,11 +135,12 @@ if $scaleio['metadata']['enabled'] {
         slave_names         => $slave_names,
         tb_names            => $tb_names,
       } ->
-      notify {"Devices ${device_paths}": } ->
-      notify {"Storage pools ${storage_pools}": } ->
+      scaleio::protection_domain {"Ensure protection domain ${protection_domain}": name => $protection_domain } ->
+      ensure_storage_pool {$storage_pools: protection_domain => $protection_domain } ->
+      notify {"Pools and Devices ${device_storage_pools} / ${device_paths}": } ->
       ensure_sds {$compute_nodes:
-        protection_domain => $scaleio['protection_domain'],
-        storage_pools     => $storage_pools,
+        protection_domain => $protection_domain,
+        storage_pools     => $device_storage_pools,
         device_paths      => $device_paths,
       }
     } else {
