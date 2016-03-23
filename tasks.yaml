@@ -20,7 +20,7 @@
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 1800
 
-- role: ['compute']
+- role: ['primary-controller', 'controller', 'compute']
   stage: post_deployment/2050
   type: puppet
   parameters:
@@ -28,7 +28,7 @@
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 1800
 
-- role: ['compute']
+- role: ['primary-controller', 'controller', 'compute']
   stage: post_deployment/2050
   type: puppet
   parameters:

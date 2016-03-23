@@ -7,11 +7,11 @@ Facter.add("ip_address_array") do
     ip_address_array = []
     interfaces_array.each do |interface|
       ipaddress = Facter.value("ipaddress_#{interface}")
-      ip_address_array.push(ipaddress)
+      ip_address_array.push(ipaddress) unless !ipaddress
     end
     ssh_ip = Facter.value(:ssh_ip)
     ip_address_array.push(ssh_ip) unless !ssh_ip
-    ip_address_array
+    ip_address_array.join(',')
   end
 end
 
