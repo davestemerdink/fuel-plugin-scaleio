@@ -97,6 +97,13 @@ if $scaleio['metadata']['enabled'] {
       $password = $scaleio['password']
       $all_nodes = hiera('nodes')
       $compute_nodes  = filter_nodes($all_nodes, 'role', 'compute')
+      if $scaleio['sds_on_controller'] {
+        $controller_nodes  = filter_nodes($all_nodes, 'role', 'controller')
+        $pr_controller_nodes = filter_nodes($all_nodes, 'role', 'primary-controller')
+        $sds_nodes = concat(concat($pr_controller_nodes, $controller_nodes), $compute_nodes)
+      } else {
+        $sds_nodes = $compute_nodes
+      }
       $paths = $scaleio['device_paths'] ? {
         udnef   => undef,
         default => join(split($scaleio['device_paths'], ','), ',') # remove possible trailing comas
@@ -138,7 +145,7 @@ if $scaleio['metadata']['enabled'] {
       scaleio::protection_domain {"Ensure protection domain ${protection_domain}": name => $protection_domain } ->
       ensure_storage_pool {$storage_pools: protection_domain => $protection_domain } ->
       notify {"Pools and Devices ${device_storage_pools} / ${device_paths}": } ->
-      ensure_sds {$compute_nodes:
+      ensure_sds {$sds_nodes:
         protection_domain => $protection_domain,
         storage_pools     => $device_storage_pools,
         device_paths      => $device_paths,

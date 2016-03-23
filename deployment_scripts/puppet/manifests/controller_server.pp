@@ -18,4 +18,10 @@ if $scaleio['metadata']['enabled'] {
     mdm_ips                  => undef,
     mdm_management_ips       => undef,
   }
+  if $scaleio['sds_on_controller'] {
+    class {'scaleio::sds_server':
+      ensure  => 'present',
+    }
+  }
 }
+
