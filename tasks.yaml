@@ -57,7 +57,7 @@
 
 
 ##############################################################################
-# ScaleIO storages and clients configuration tasks
+# Openstack components (Cinder, Nova) configuration tasks
 ##############################################################################
 - role: ['compute']
   stage: post_deployment/2200
@@ -67,7 +67,7 @@
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 600
 
-- role: ['cinder']
+- role: ['primary-controller', 'controller']
   stage: post_deployment/2200
   type: puppet
   parameters:
