@@ -106,9 +106,9 @@ if $scaleio['metadata']['enabled'] {
         udnef   => undef,
         default => split($scaleio['device_paths'], ',')
       }
-      $storage_pools = $scaleio['storage_pool'] ? {
+      $storage_pools = $scaleio['storage_pools'] ? {
         undef   => undef,
-        default => split($scaleio['storage_pool'], ',')
+        default => split($scaleio['storage_pools'], ',')
       }
       if $paths and $storage_pools {
         #generate array of pools with lenght of device_paths
