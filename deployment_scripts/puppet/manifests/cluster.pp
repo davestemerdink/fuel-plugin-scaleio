@@ -53,7 +53,7 @@ define ensure_sds(
   $sds_ips      = $sds_node['storage_address']
   $sds_ip_roles = undef # TODO: set to 'all' as unless_query appears in scaleio::sds for role updates
   if count(split($sds_ips, ',')) != 1 {
-    fail("TODO: behaviour changed - storage_address becomes coma-separated list ${sds_ips}, so it's needed to add the generation of ip roles")
+    fail("TODO: behaviour changed - storage_address becomes coma-separated list ${sds_ips}, so it is needed to add the generation of ip roles")
   }
   scaleio::sds {$sds_name:
     ensure             => 'present',
