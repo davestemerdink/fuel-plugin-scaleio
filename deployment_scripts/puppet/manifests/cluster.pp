@@ -112,13 +112,13 @@ if $scaleio['metadata']['enabled'] {
       }
       if $paths and $storage_pools {
         #generate array of pools with lenght of device_paths
-        $device_paths = $paths
+        $device_paths = join($paths, ',')
         #generate pools for devices if provided one pool
         #otherwise just use provided array
         if count($storage_pools) == 1 {
           $device_storage_pools = join(values(hash(split(regsubst("${device_paths},", ',', ",${storage_pools[0]},", 'G'), ','))), ',')
         } else {
-          $device_storage_pools = $storage_pools
+          $device_storage_pools = join($storage_pools, ',')
         }
       } else {
         notify {'Devices and pool will not be configured':}
