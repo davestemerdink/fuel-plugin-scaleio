@@ -13,7 +13,7 @@ if $scaleio['metadata']['enabled'] {
       gateway_password           => $scaleio['gateway_password'],
       gateway_ip                 => $::gateway_ips,
       protection_domains         => $scaleio['protection_domain'],
-      storage_pools              => $scaleio['storage_pool'],
+      storage_pools              => $scaleio['storage_pools'],
     }
   } else {
     fail('Empty Gateway IPs configuration')
