@@ -69,10 +69,9 @@ define ensure_sds(
   }
 }
 
-define ensure_storage_pool(
-  $protection_domain
-) {
-  scaleio::storage_pool {"Storage Pool ${name}": name => $name, protection_domain => $protection_domain } 
+define storage_pool_ensure($protection_domain) {
+  $sp_name = $title
+  scaleio::storage_pool {"Storage Pool ${protection_domain}:${sp_name}": name => $sp_name, protection_domain => $protection_domain } 
 }
 
 # The only first mdm which is proposed to be the first master does cluster configuration
@@ -146,7 +145,7 @@ if $scaleio['metadata']['enabled'] {
         tb_names            => $tb_names,
       } ->
       scaleio::protection_domain {"Ensure protection domain ${protection_domain}": name => $protection_domain } ->
-      ensure_storage_pool {$storage_pools: protection_domain => $protection_domain } ->
+      storage_pool_ensure {$storage_pools: protection_domain => $protection_domain } ->
       notify {"Pools and Devices ${device_storage_pools} / ${device_paths}": } ->
       ensure_sds {$sds_nodes:
         protection_domain => $protection_domain,
