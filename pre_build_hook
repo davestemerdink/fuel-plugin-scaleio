@@ -64,7 +64,7 @@ do
         
         git clone "$puppet_url" "$destination"
     else
-        if [ ! -z "${SKIP_PULL+x}" ]
+        if [ -z "${SKIP_PULL+x}" ]
         then
             pushd "$destination"
             git pull
