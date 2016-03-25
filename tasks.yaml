@@ -55,19 +55,11 @@
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 600
 
-- role: ['primary-controller', 'controller', 'compute']
-  stage: post_deployment/2200
-  type: puppet
-  parameters:
-    puppet_manifest: puppet/manifests/sds_device.pp
-    puppet_modules: puppet/modules:/etc/puppet/modules
-    timeout: 600
-
 ##############################################################################
 # Openstack components (Cinder, Nova) configuration tasks
 ##############################################################################
 - role: ['compute']
-  stage: post_deployment/2250
+  stage: post_deployment/2200
   type: puppet
   parameters:
     puppet_manifest: puppet/manifests/compute.pp
@@ -75,7 +67,7 @@
     timeout: 600
 
 - role: ['primary-controller', 'controller']
-  stage: post_deployment/2250
+  stage: post_deployment/2200
   type: puppet
   parameters:
     puppet_manifest: puppet/manifests/cinder.pp
