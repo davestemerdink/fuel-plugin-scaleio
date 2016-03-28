@@ -14,11 +14,12 @@ if $scaleio['metadata']['enabled'] {
   }
   #TODO: after HA impl replace gw_ip  with  hiera('management_vip')
   #      for now just use own gateway or GW on master-controller 
-  $possible_ips = intersection(split($::gateway_ips, ','), split($::ip_address_array, ','))
+  $ips = split($::gateway_ips, ',')
+  $possible_ips = intersection($ips, split($::ip_address_array, ','))
   if count($possible_ips) > 0 {
     $gw_ip = $possible_ips[0]
   } else {
-    $gw_ip = $::gateway_ips[0]
+    $gw_ip = $ips[0]
   }
   class {'scaleio::sdc_server':
     ensure  => 'present',
