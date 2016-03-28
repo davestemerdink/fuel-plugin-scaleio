@@ -7,14 +7,28 @@ attributes:
     description: "Do not deploy ScaleIO cluster, just use existing cluster."
     weight: 10
 
-  mdm_ips:
+  gateway_ip:
     type: "text"
     value: ""
-    label: "MDM IPs"
-    description: "Coma separated list of MDM addresses."
+    label: "Gateway IP address"
+    description: "Cinder and Nova use it for requests to ScaleIO."
     weight: 20
     regex:
-        source: '^\w+$'
+        source: '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'
+        error: "Gateway address is requried parameter"
+    restrictions:
+      - condition: "settings:scaleio.existing_cluster.value == false"
+        action: hide
+
+  gateway_port:
+    type: "text"
+    value: "4443"
+    label: "Gateway port"
+    description: "Cinder and Nova use it for requests to ScaleIO."
+    weight: 25
+    regex:
+        source: '^[0-9]+$'
+        error: "Gateway port is required parameter"
     restrictions:
       - condition: "settings:scaleio.existing_cluster.value == false"
         action: hide
@@ -30,6 +44,18 @@ attributes:
       error: "You must provide a password with between 8 and 15 characters, one uppercase, and one number"
     restrictions:
       - condition: "settings:scaleio.existing_cluster.value == true"
+        action: hide
+
+  gateway_user:
+    type: "text"
+    value: "admin"
+    label: "Gateway user"
+    description: "Type a user name for the gateway"
+    weight: 35
+    regex:
+        source: '^\w+$'
+    restrictions:
+      - condition: "settings:scaleio.existing_cluster.value == false"
         action: hide
 
   gateway_password:
@@ -97,7 +123,7 @@ attributes:
     weight: 100
     regex:
       source: '^(/dev/[a-zA-Z0-9:-_/]+){1}((,){1}(?=/dev/[a-zA-Z0-9:-_/]+))*'
-      error: 'List of path is incorrect'
+      error: 'List of path is incorrect. It is coma separated list aka /dev/sdb,/dev/sdc'
     restrictions:
       - condition: "settings:scaleio.existing_cluster.value == true"
         action: hide

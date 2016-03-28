@@ -1,4 +1,13 @@
 # Helper for array processing
+define env_fact($role, $fact, $value) {
+  file_line { "Append a FACTER_${role}_${fact} line to /etc/environment":
+    ensure  => present,
+    path    => '/etc/environment',
+    match   => "^FACTER_${role}_${fact}=",
+    line    => "FACTER_${role}_${fact}=${value}",
+  }  
+}
+
 define environment() {
   $fuel_version = hiera('fuel_version')
   $all_nodes = hiera('nodes')
@@ -37,12 +46,10 @@ define environment() {
     $ips_array = $ips_array_
   }
   $ips = join($ips_array, ',')
-  notify {"Environment role: ${role}, nodes: ${nodes}, ips: ${ips}": } ->
-  file_line { "Append a FACTER_${role}_ips line to /etc/environment":
-    ensure  => present,
-    path    => '/etc/environment',
-    match   => "^FACTER_${role}_ips=",
-    line    => "FACTER_${role}_ips=${ips}",
+  env_fact {"Environment fact: ${role}, nodes: ${nodes}, ips: ${ips}":
+    role  => $role,
+    fact  => 'ips',
+    value => $ips,
   }
 }
 
@@ -51,7 +58,7 @@ if $scaleio['metadata']['enabled'] {
   notify{'ScaleIO plugin enabled': }
   case $::osfamily {
     'RedHat': {
-      fail('This is temporary limitation. The only Ubuntu is supported for now.')
+      fail('This is temporary limitation. ScaleIO supports only Ubuntu for now.')
     }
     'Debian': {
       # nothing to do
@@ -60,7 +67,58 @@ if $scaleio['metadata']['enabled'] {
       fail("Unsupported osfamily: ${::osfamily} operatingsystem: ${::operatingsystem}, module ${module_name} only support osfamily RedHat and Debian")
     }
   }
-  environment{['mdm', 'tb', 'gateway']: }
+  if $scaleio['existing_cluster'] {
+    notify{'Use existing ScaleIO cluster': }
+    $existing_mdm_ips = $::existing_cluster_mdm_ips
+    env_fact{"Environment fact: role gateway, ips: ${scaleio['gateway_ip']}":
+      role => 'gateway',
+      fact => 'ips',
+      value => $scaleio['gateway_ip']
+    } ->
+    env_fact{"Environment fact: role mdm, ips: ${existing_mdm_ips}":
+      role => 'mdm',
+      fact => 'ips',
+      value => $existing_mdm_ips
+    } ->
+    env_fact{"Environment fact: role gateway, user: ${scaleio['gateway_user']}":
+      role => 'gateway',
+      fact => 'user',
+      value => $scaleio['gateway_user']
+    } ->
+    env_fact{"Environment fact: role gateway, password: ${scaleio['gateway_password']}":
+      role => 'gateway',
+      fact => 'password',
+      value => $scaleio['gateway_password']
+    } ->
+    env_fact{"Environment fact: role gateway, port: ${scaleio['gateway_port']}":
+      role => 'gateway',
+      fact => 'port',
+      value => $scaleio['gateway_port']
+    } ->
+    env_fact{"Environment fact: role storage, pools: ${scaleio['existing_storage_pools']}":
+      role => 'storage',
+      fact => 'pools',
+      value => $scaleio['existing_storage_pools']
+    }
+  } else {
+    notify{'Deploy new ScaleIO cluster': }
+    environment{['mdm', 'tb', 'gateway']: } ->
+    env_fact{'Environment fact: role gateway, user: admin':
+      role => 'gateway',
+      fact => 'user',
+      value => 'admin'
+    } ->
+    env_fact{'Environment fact: role gateway, port: 4443':
+      role => 'gateway',
+      fact => 'port',
+      value => 4443
+    } ->
+    env_fact{"Environment fact: role storage, pools: ${scaleio['storage_pools']}":
+      role => 'storage',
+      fact => 'pools',
+      value => $scaleio['storage_pools']
+    }
+  }
 } else {
     notify{'ScaleIO plugin disabled': }
 }
