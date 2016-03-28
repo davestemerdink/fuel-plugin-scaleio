@@ -2,7 +2,7 @@
 # ScaleIO prerequisites tasks
 ##############################################################################
 - role: ['primary-controller', 'controller', 'compute', 'cinder']
-  stage: post_deployment/2000
+  stage: pre_deployment
   type: puppet
   parameters:
     puppet_manifest: puppet/manifests/environment.pp
@@ -16,11 +16,19 @@
   stage: post_deployment/2050
   type: puppet
   parameters:
-    puppet_manifest: puppet/manifests/controller_server.pp
+    puppet_manifest: puppet/manifests/mdm_server.pp
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 1800
 
-- role: ['primary-controller', 'controller', 'compute']
+- role: ['primary-controller', 'controller']
+  stage: post_deployment/2050
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/gateway_server.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
+    timeout: 600
+    
+- role: ['primary-controller', 'controller', 'compute', 'cinder']
   stage: post_deployment/2050
   type: puppet
   parameters:
@@ -28,7 +36,7 @@
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 1800
 
-- role: ['primary-controller', 'controller', 'compute']
+- role: ['compute', 'cinder']
   stage: post_deployment/2050
   type: puppet
   parameters:
@@ -39,14 +47,6 @@
 ##############################################################################
 # ScaleIO cluster configuration tasks
 ##############################################################################
-- role: ['primary-controller', 'controller']
-  stage: post_deployment/2100
-  type: puppet
-  parameters:
-    puppet_manifest: puppet/manifests/controller.pp
-    puppet_modules: puppet/modules:/etc/puppet/modules
-    timeout: 600
-
 - role: ['primary-controller', 'controller']
   stage: post_deployment/2150
   type: puppet
@@ -66,7 +66,7 @@
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 600
 
-- role: ['primary-controller', 'controller']
+- role: ['cinder']
   stage: post_deployment/2200
   type: puppet
   parameters:

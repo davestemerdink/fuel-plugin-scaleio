@@ -77,83 +77,87 @@ define sds_device(
 # The only first mdm which is proposed to be the first master does cluster configuration
 $scaleio = hiera('scaleio')
 if $scaleio['metadata']['enabled'] {
-  if $::mdm_ips {
-    $mdm_ip_array = split($::mdm_ips, ',')
-    $tb_ip_array = split($::tb_ips, ',')
-    $master_ip = $mdm_ip_array[0]
-    if has_ip_address($master_ip) {
-      $stand_by_mds_count = count($mdm_ip_array) - 1
-      $standby_ips = values_at($mdm_ip_array, ["1-${stand_by_mds_count}"])
-      $cluster_mode = count($mdm_ip_array) + count($tb_ip_array)
-      $slave_names = join($standby_ips, ',')
-      $tb_names = join($tb_ip_array, ',')
-      $env_password = $::mdm_password
-      $old_password = $env_password ? {
-        undef   => 'admin',
-        default => $env_password
-      }
-      $password = $scaleio['password']
-      $protection_domain = $scaleio['protection_domain']
-      $storage_pools = $scaleio['storage_pools'] ? {
-        undef   => undef,
-        default => split($scaleio['storage_pools'], ',')
-      }
-      $all_nodes = hiera('nodes')
-      $compute_nodes  = filter_nodes($all_nodes, 'role', 'compute')		
-      if $scaleio['sds_on_controller'] {		
-        $controller_nodes  = filter_nodes($all_nodes, 'role', 'controller')		
-        $pr_controller_nodes = filter_nodes($all_nodes, 'role', 'primary-controller')		
-        $sds_nodes = concat(concat($pr_controller_nodes, $controller_nodes), $compute_nodes)		
-      } else {		
-        $sds_nodes = $compute_nodes		
-      }
-      $paths = $scaleio['device_paths'] ? {
-        udnef   => undef,
-        default => split($scaleio['device_paths'], ',')
-      }
-      if $paths and $storage_pools {
-        $device_paths = join($paths, ',')
-        #generate pools for devices if provided one pool
-        #otherwise just use provided array
-        if count($storage_pools) == 1 {
-          $device_storage_pools = join(values(hash(split(regsubst("${device_paths},", ',', ",${storage_pools[0]},", 'G'), ','))), ',')
+  if ! $scaleio['existing_cluster'] {
+    if $::mdm_ips {
+      $mdm_ip_array = split($::mdm_ips, ',')
+      $tb_ip_array = split($::tb_ips, ',')
+      $master_ip = $mdm_ip_array[0]
+      if has_ip_address($master_ip) {
+        $stand_by_mds_count = count($mdm_ip_array) - 1
+        $standby_ips = values_at($mdm_ip_array, ["1-${stand_by_mds_count}"])
+        $cluster_mode = count($mdm_ip_array) + count($tb_ip_array)
+        $slave_names = join($standby_ips, ',')
+        $tb_names = join($tb_ip_array, ',')
+        $env_password = $::mdm_password
+        $old_password = $env_password ? {
+          undef   => 'admin',
+          default => $env_password
+        }
+        $password = $scaleio['password']
+        $protection_domain = $scaleio['protection_domain']
+        $storage_pools = $scaleio['storage_pools'] ? {
+          undef   => undef,
+          default => split($scaleio['storage_pools'], ',')
+        }
+        $all_nodes = hiera('nodes')
+        $compute_nodes  = filter_nodes($all_nodes, 'role', 'compute')		
+        if $scaleio['sds_on_controller'] {		
+          $controller_nodes  = filter_nodes($all_nodes, 'role', 'controller')		
+          $pr_controller_nodes = filter_nodes($all_nodes, 'role', 'primary-controller')		
+          $sds_nodes = concat(concat($pr_controller_nodes, $controller_nodes), $compute_nodes)		
+        } else {		
+          $sds_nodes = $compute_nodes		
+        }
+        $paths = $scaleio['device_paths'] ? {
+          udnef   => undef,
+          default => split($scaleio['device_paths'], ',')
+        }
+        if $paths and $storage_pools {
+          $device_paths = join($paths, ',')
+          #generate pools for devices if provided one pool
+          #otherwise just use provided array
+          if count($storage_pools) == 1 {
+            $device_storage_pools = join(values(hash(split(regsubst("${device_paths},", ',', ",${storage_pools[0]},", 'G'), ','))), ',')
+          } else {
+            $device_storage_pools = join($storage_pools, ',')
+          }
         } else {
-          $device_storage_pools = join($storage_pools, ',')
+         notify {'Devices and pool will not be configured':}
+         $device_paths = undef
+         $device_storage_pools = undef
+        }
+  
+        notify {"Master MDM ${master_ip}": } ->
+        class {'scaleio::mdm_server':
+          ensure              => 'present',
+          is_manager          => undef,
+          master_mdm_name     => $master_ip,
+          mdm_ips             => $master_ip,
+          mdm_management_ips  => $master_ip,
+        } ->
+        ensure_password {'Set password': old_password => $old_password, password => $password} ->
+        mdm_standby {$standby_ips: } ->
+        mdm_tb{$tb_ip_array:} ->
+        scaleio::cluster {'Configure cluster mode':
+          ensure              => 'present',
+          cluster_mode        => $cluster_mode,
+          slave_names         => $slave_names,
+          tb_names            => $tb_names,
+        } ->
+        scaleio::protection_domain {"Ensure protection domain ${protection_domain}": name => $protection_domain } ->
+        storage_pool_ensure {$storage_pools: protection_domain => $protection_domain } ->
+        sds_device {$sds_nodes:		
+            protection_domain => $protection_domain,		
+            storage_pools     => $device_storage_pools,		
+            device_paths      => $device_paths,		
         }
       } else {
-       notify {'Devices and pool will not be configured':}
-       $device_paths = undef
-       $device_storage_pools = undef
-      }
-
-      notify {"Master MDM ${master_ip}": } ->
-      class {'scaleio::mdm_server':
-        ensure              => 'present',
-        is_manager          => undef,
-        master_mdm_name     => $master_ip,
-        mdm_ips             => $master_ip,
-        mdm_management_ips  => $master_ip,
-      } ->
-      ensure_password {'Set password': old_password => $old_password, password => $password} ->
-      mdm_standby {$standby_ips: } ->
-      mdm_tb{$tb_ip_array:} ->
-      scaleio::cluster {'Configure cluster mode':
-        ensure              => 'present',
-        cluster_mode        => $cluster_mode,
-        slave_names         => $slave_names,
-        tb_names            => $tb_names,
-      } ->
-      scaleio::protection_domain {"Ensure protection domain ${protection_domain}": name => $protection_domain } ->
-      storage_pool_ensure {$storage_pools: protection_domain => $protection_domain } ->
-      sds_device {$sds_nodes:		
-          protection_domain => $protection_domain,		
-          storage_pools     => $device_storage_pools,		
-          device_paths      => $device_paths,		
+        notify {"Not Master MDM ${master_ip}": }
       }
     } else {
-      notify {"Not Master MDM ${master_ip}": }
+      fail('Empty MDM IPs configuration')
     }
   } else {
-    fail('Empty MDM IPs configuration')
+    notify{'Skip configuring cluster because of usign existing cluster': }
   }
 }
