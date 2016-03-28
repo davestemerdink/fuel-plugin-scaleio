@@ -1,18 +1,40 @@
 attributes:
 
+  existing_cluster:
+    type: "checkbox"
+    value: false
+    label: "Use existing ScaleIO."
+    description: "Do not deploy ScaleIO cluster, just use existing cluster."
+    weight: 10
+
+  mdm_ips:
+    type: "text"
+    value: ""
+    label: "MDM IPs"
+    description: "Coma separated list of MDM addresses."
+    weight: 20
+    regex:
+        source: '^\w+$'
+    restrictions:
+      - condition: "settings:scaleio.existing_cluster.value == false"
+        action: hide
+ 
   password:
     type: "password"
-    weight: 10
+    weight: 30
     value: ""
     label: "Admin password"
     description: "Type ScaleIO Admin password"
     regex:
       source: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,15}$'
       error: "You must provide a password with between 8 and 15 characters, one uppercase, and one number"
+    restrictions:
+      - condition: "settings:scaleio.existing_cluster.value == true"
+        action: hide
 
   gateway_password:
     type: "password"
-    weight: 20
+    weight: 40
     value: ""
     label: "Gateway password"
     description: "Type a password for the gateway"
@@ -25,49 +47,70 @@ attributes:
 #    value: true
 #    label: "Use ScaleIO as ephemeral storage."
 #    description: "Configure OpenStack Nova to keep ephemeral volumes on ScaleIO."
-#    weight: 30
+#    weight: 50
 
 #  image_storage:
 #    type: "checkbox"
 #    value: true
 #    label: "Use ScaleIO as image storage."
 #    description: "Configure OpenStack Glance and Nova to use ScaleIO as storage for VM images."
-#    weight: 40
-  
+#    weight: 60
+
   protection_domain:
     type: "text"
     value: "default"
-    label: "Protection domain name"
-    description: "Name of protection domains to be created if absent."
-    weight: 60
+    label: "Protection domain"
+    description: "Name of protection domain."
+    weight: 70
     regex:
         source: '^\w+$'
 
   storage_pools:
     type: "text"
     value: "default"
-    label: "Storage pool names"
-    description: "Name of storage pool to be created. Could be a coma separated list for splitting devices between them."
-    weight: 70
+    label: "Storage pools"
+    description: "Coma separated list for splitting devices between them, it could be just one element if all devices are belong to the one pool."
+    weight: 80
     regex:
         source: '^\w+$'
+    restrictions:
+      - condition: "settings:scaleio.existing_cluster.value == true"
+        action: hide
+
+  existing_storage_pools:
+    type: "text"
+    value: "default"
+    label: "Storage pools"
+    description: "Storage pools which are allowed to be used in new Cloud."
+    weight: 90
+    regex:
+        source: '^\w+$'
+    restrictions:
+      - condition: "settings:scaleio.existing_cluster.value == false"
+        action: hide
 
   device_paths:
     type: "text"
     value: ""
     label: "Storage devices"
     description: "Coma separated list of devices, e.g. /dev/sdb,/dev/sdc."
-    weight: 80
+    weight: 100
     regex:
       source: '^(/dev/[a-zA-Z0-9:-_/]+){1}((,){1}(?=/dev/[a-zA-Z0-9:-_/]+))*'
       error: 'List of path is incorrect'
+    restrictions:
+      - condition: "settings:scaleio.existing_cluster.value == true"
+        action: hide
 
   sds_on_controller:
     type: "checkbox"
     value: true
     label: "Controller as Storage"
     description: "Setup SDS-es on controller nodes."
-    weight: 90
+    weight: 110
+    restrictions:
+      - condition: "settings:scaleio.existing_cluster.value == true"
+        action: hide
         
   version:
     type: "select"
