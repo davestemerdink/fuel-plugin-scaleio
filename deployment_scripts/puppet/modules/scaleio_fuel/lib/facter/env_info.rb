@@ -30,3 +30,32 @@ Facter.add('existing_cluster_mdm_ips') do
     mdm_ips
   end
 end
+
+Facter.add('existing_cluster_mdm_ips') do
+  setcode do
+    user        = Facter.value('gateway_user')
+    password    = Facter.value('gateway_password')
+    host        = Facter.value('gateway_ips').split(',')[0]
+    port        = Facter.value('gateway_port')
+    base_url    = "https://%s:%s/api/%s"
+    login_url   = base_url % [host, port, 'login']
+    config_url  = base_url % [host, port, 'Configuration']
+    login_req   = "curl -k --basic --user #{user}:#{password} #{login_url} 2>/dev/null | sed 's/\"//g'"
+    token       = Facter::Util::Resolution.exec(login_req)
+    req_url     = "curl -k --basic --user #{user}:#{token} #{config_url} 2>/dev/null"
+    config_str  = Facter::Util::Resolution.exec(req_url)
+    config      = JSON.parse(config_str)
+    mdm_ips     = config['mdmAddresses'].join(',')
+    mdm_ips
+  end
+end
+
+Facter.add('node_role_config_file') do
+  setcode do
+    templ = "/etc/%s.yaml"
+    roles = ['primary-controller', 'controller', 'cinder', 'compute']
+    res   = roles.select { |r| File.exist?(templ % r)  }
+    templ % res[0]
+  end
+end
+
