@@ -9,6 +9,14 @@
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 360
 
+- role: ['compute', 'cinder']
+  stage: post_deployment/2020
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/environment_existing_mdm_ips.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
+    timeout: 360
+
 ##############################################################################
 # ScaleIO installation tasks
 ##############################################################################

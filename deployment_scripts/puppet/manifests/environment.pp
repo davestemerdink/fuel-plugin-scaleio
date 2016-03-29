@@ -1,13 +1,3 @@
-# Helper for array processing
-define env_fact($role, $fact, $value) {
-  file_line { "Append a FACTER_${role}_${fact} line to /etc/environment":
-    ensure  => present,
-    path    => '/etc/environment',
-    match   => "^FACTER_${role}_${fact}=",
-    line    => "FACTER_${role}_${fact}=${value}",
-  }  
-}
-
 define environment() {
   $fuel_version = hiera('fuel_version')
   $all_nodes = hiera('nodes')
@@ -99,15 +89,8 @@ if $scaleio['metadata']['enabled'] {
       role => 'storage',
       fact => 'pools',
       value => $scaleio['existing_storage_pools']
-    } ->
-    env_fact{"Environment fact: role mdm, ips from existing cluster":
-      role => 'mdm',
-      fact => 'ips',
-      value => $::existing_cluster_mdm_ips
     }
-    if ! $::existing_cluster_mdm_ips or $::existing_cluster_mdm_ips == '' {
-      fail('Cannot request MDM IPs from existing cluster. Check Gateway address/port and  user name with password.')
-    }
+    # mdm_ips are requested from gateways in separate manifest because no way to pass args to facter
   } else {
     $controller_sds_coount = $scaleio['sds_on_controller'] ? {
       true    => count(concat(filter_nodes($all_nodes, 'role', 'primary-controller'), filter_nodes($all_nodes, 'role', 'controller'))),
