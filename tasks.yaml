@@ -2,7 +2,7 @@
 # ScaleIO prerequisites tasks
 ##############################################################################
 - role: ['primary-controller', 'controller', 'compute', 'cinder']
-  stage: pre_deployment
+  stage: post_deployment/2000
   type: puppet
   parameters:
     puppet_manifest: puppet/manifests/environment.pp
