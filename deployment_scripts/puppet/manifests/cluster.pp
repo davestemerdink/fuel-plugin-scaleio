@@ -83,13 +83,13 @@ if $scaleio['metadata']['enabled'] {
       $tb_ip_array = split($::tb_ips, ',')
       $master_ip = $mdm_ip_array[0]
       if has_ip_address($master_ip) {
-        $stand_by_mds_count = count($mdm_ip_array) - 1
-        if $stand_by_mds_count == 0 {
+        $standby_mds_count = count($mdm_ip_array) - 1
+        if $standby_mds_count == 0 {
           $standby_ips = []
           $slave_names = undef
           $tb_names    = undef
         } else {
-          $standby_ips = values_at($mdm_ip_array, ["1-${stand_by_mds_count}"])
+          $standby_ips = values_at($mdm_ip_array, ["1-${standby_mds_count}"])
           $slave_names = join($standby_ips, ',')
           $tb_names    = join($tb_ip_array, ',')
         }
