@@ -1,5 +1,6 @@
 # This is a workaround because FUEL daemons dont inherit evnironment variables
 require 'facter'
+require 'json'
 
 base_cmd = "bash -c 'source /etc/environment; echo $FACTER_%s'"
 facters = ['tb_ips', 'mdm_ips', 'gateway_user', 'gateway_port', 'gateway_ips', 'gateway_password', 'mdm_password', 'storage_pools']
