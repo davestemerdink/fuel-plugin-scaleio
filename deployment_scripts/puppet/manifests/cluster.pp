@@ -84,10 +84,16 @@ if $scaleio['metadata']['enabled'] {
       $master_ip = $mdm_ip_array[0]
       if has_ip_address($master_ip) {
         $stand_by_mds_count = count($mdm_ip_array) - 1
-        $standby_ips = values_at($mdm_ip_array, ["1-${stand_by_mds_count}"])
+        if $stand_by_mds_count == 0 {
+          $standby_ips = []
+          $slave_names = undef
+          $tb_names    = undef
+        } else {
+          $standby_ips = values_at($mdm_ip_array, ["1-${stand_by_mds_count}"])
+          $slave_names = join($standby_ips, ',')
+          $tb_names    = join($tb_ip_array, ',')
+        }
         $cluster_mode = count($mdm_ip_array) + count($tb_ip_array)
-        $slave_names = join($standby_ips, ',')
-        $tb_names = join($tb_ip_array, ',')
         $env_password = $::mdm_password
         $old_password = $env_password ? {
           undef   => 'admin',

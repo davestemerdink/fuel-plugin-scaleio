@@ -23,6 +23,7 @@ define environment() {
     case $role {
       'tb': {
         $ips_array = $count ? {
+          1 => [],
           3 => values_at($ips_array_, 2),
           5 => values_at($ips_array_, ['3-4']),
           default => fail("Only configuration cluster_3 and cluster_5 are supported, actualy ${count}")
@@ -30,6 +31,7 @@ define environment() {
       }
       'mdm': {
         $ips_array = $count ? {
+          1 => $ips_array_,
           3 => values_at($ips_array_, ['0-1']),
           5 => values_at($ips_array_, ['0-2']),
           default => fail("Only configuration cluster_3 and cluster_5 are supported, actualy ${count}")
@@ -67,6 +69,10 @@ if $scaleio['metadata']['enabled'] {
       fail("Unsupported osfamily: ${::osfamily} operatingsystem: ${::operatingsystem}, module ${module_name} only support osfamily RedHat and Debian")
     }
   }
+  $all_nodes = hiera('nodes')
+  if count(filter_nodes($all_nodes, 'role', 'cinder')) == 0 {
+    fail('At least one Node with Cinder role is required')
+  }
   if $scaleio['existing_cluster'] {
     notify{'Use existing ScaleIO cluster': }
     $existing_mdm_ips = $::existing_cluster_mdm_ips
@@ -101,6 +107,12 @@ if $scaleio['metadata']['enabled'] {
       value => $scaleio['existing_storage_pools']
     }
   } else {
+    #TODO: check number of possible SDS-es 
+    $nodes = filter_nodes($all_nodes, 'name', $::hostname)
+    if ! empty(filter_nodes($nodes, 'role', 'cinder')) {
+      notify {"Ensure devices size are greater than 100GB for Cinder Node ${::hostname}": }
+      #TODO: add check devices sizes
+    }
     notify{'Deploy new ScaleIO cluster': }
     environment{['mdm', 'tb', 'gateway']: } ->
     env_fact{'Environment fact: role gateway, user: admin':
