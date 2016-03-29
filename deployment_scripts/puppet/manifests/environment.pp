@@ -75,16 +75,10 @@ if $scaleio['metadata']['enabled'] {
   }
   if $scaleio['existing_cluster'] {
     notify{'Use existing ScaleIO cluster': }
-    $existing_mdm_ips = $::existing_cluster_mdm_ips
     env_fact{"Environment fact: role gateway, ips: ${scaleio['gateway_ip']}":
       role => 'gateway',
       fact => 'ips',
       value => $scaleio['gateway_ip']
-    } ->
-    env_fact{"Environment fact: role mdm, ips: ${existing_mdm_ips}":
-      role => 'mdm',
-      fact => 'ips',
-      value => $existing_mdm_ips
     } ->
     env_fact{"Environment fact: role gateway, user: ${scaleio['gateway_user']}":
       role => 'gateway',
@@ -105,9 +99,24 @@ if $scaleio['metadata']['enabled'] {
       role => 'storage',
       fact => 'pools',
       value => $scaleio['existing_storage_pools']
+    } ->
+    env_fact{"Environment fact: role mdm, ips from existing cluster":
+      role => 'mdm',
+      fact => 'ips',
+      value => $::existing_cluster_mdm_ips
+    }
+    if ! $::existing_cluster_mdm_ips or $::existing_cluster_mdm_ips == '' {
+      fail('Cannot request MDM IPs from existing cluster. Check Gateway address/port and  user name with password.')
     }
   } else {
-    #TODO: check number of possible SDS-es 
+    $controller_sds_coount = $scaleio['sds_on_controller'] ? {
+      true    => count(concat(filter_nodes($all_nodes, 'role', 'primary-controller'), filter_nodes($all_nodes, 'role', 'controller'))),
+      default => 0  
+    }
+    $total_sds_count = count(filter_nodes($all_nodes, 'role', 'compute')) + $controller_sds_coount
+    if $total_sds_count < 3 {
+      fail('There should be at least 3 nodes with SDSs, either add Compute node or use Controllers as SDS.')
+    }
     $nodes = filter_nodes($all_nodes, 'name', $::hostname)
     if ! empty(filter_nodes($nodes, 'role', 'cinder')) {
       notify {"Ensure devices size are greater than 100GB for Cinder Node ${::hostname}": }
