@@ -3,9 +3,6 @@ if $scaleio['metadata']['enabled'] {
   if ! $::gateway_ips {
     fail('Empty Gateway IPs configuration')    
   }
-  if ! $::mdm_ips {
-    fail('Empty MDM IPs configuration')    
-  }
   $all_nodes = hiera('nodes')
   $nodes = filter_nodes($all_nodes, 'name', $::hostname)
   if empty(filter_nodes($nodes, 'role', 'compute')) {
@@ -20,10 +17,6 @@ if $scaleio['metadata']['enabled'] {
   } else {
     $gw_ip = $ips[0]
   }
-  class {'scaleio::sdc_server':
-    ensure  => 'present',
-    mdm_ip  => $::mdm_ips,
-  } ->
   class {'scaleio_openstack::nova':
     ensure              => present,
     gateway_user        => $::gateway_user,

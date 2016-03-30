@@ -63,19 +63,27 @@
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 600
 
+- role: ['cinder', 'compute']
+  stage: post_deployment/2200
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/sdc.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
+    timeout: 600
+
 ##############################################################################
 # Openstack components (Cinder, Nova) configuration tasks
 ##############################################################################
 - role: ['compute']
-  stage: post_deployment/2200
+  stage: post_deployment/2250
   type: puppet
   parameters:
-    puppet_manifest: puppet/manifests/compute.pp
+    puppet_manifest: puppet/manifests/nova.pp
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 600
 
 - role: ['cinder']
-  stage: post_deployment/2200
+  stage: post_deployment/2250
   type: puppet
   parameters:
     puppet_manifest: puppet/manifests/cinder.pp
