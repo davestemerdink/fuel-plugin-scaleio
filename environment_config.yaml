@@ -68,20 +68,6 @@ attributes:
       source: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,15}$'
       error: "You must provide a password with between 8 and 15 characters, one uppercase, and one number"
 
-#  ephemeral_storage:
-#    type: "checkbox"
-#    value: true
-#    label: "Use ScaleIO as ephemeral storage."
-#    description: "Configure OpenStack Nova to keep ephemeral volumes on ScaleIO."
-#    weight: 50
-
-#  image_storage:
-#    type: "checkbox"
-#    value: true
-#    label: "Use ScaleIO as image storage."
-#    description: "Configure OpenStack Glance and Nova to use ScaleIO as storage for VM images."
-#    weight: 60
-
   protection_domain:
     type: "text"
     value: "default"

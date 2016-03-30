@@ -5,13 +5,15 @@
 The `ScaleIO` plugin allows to:
   * deploy an EMC ScaleIO v.2.0 cluster together with OpenStack and configure OpenStack to use ScaleIO as a volume backend
   * configure OpenStack to use an existing ScaleIO cluster as a volume backend
+  * deploy ScaleIO cluster in the following modes: 1_node, 3_node and 5_node
+  ** the mode is chosen automatically depending on the number of controller nodes
 
 
 ## Requirements
 
 | Requirement                      | Version/Comment |
 |----------------------------------|-----------------|
-| Mirantis OpenStack compatibility | 6.1             |
+| Mirantis OpenStack compatibility | 6.1, 7.         |
 
 
 ## Recommendations
@@ -20,8 +22,10 @@ TODO.
 
 ## Limitations
 
-  * plugin is currently only compatible with Mirantis 6.1 and Ubuntu
+  * plugin is currently only compatible with Mirantis 6.1 and 7.0
+  * plugin supports the onyl Ubuntu environment
   * the only hyper converged environment is supported - there is no separate ScaleIO Storage nodes
+  * disks for SDS-es should be unallocated, they will be cleaned up
   * MDMs and Gateways are deployed together and only onto controller nodes
   * There is no ability to separate data network traffic from replication traffic
   * There is no fault sets support
@@ -35,12 +39,12 @@ TODO.
 
 2. Copy the plugin file to the Fuel Master node. Follow the [Quick start guide](https://software.mirantis.com/quick-start/) if you don't have a running Fuel Master node yet.
     ```
-    $ scp scaleio-2.0-1.0.1-1.noarch.rpm root@<Fuel Master node IP address>:/tmp/
+    $ scp scaleio-3.0-3.0-1.noarch.rpm root@<Fuel Master node IP address>:/tmp/
     ```
 
 3. Log into the Fuel Master node and install the plugin using the fuel command line.
     ```
-    $ fuel plugins --install /tmp/scaleio-2.0-1.0.1-1.noarch.rpm
+    $ fuel plugins --install /tmp/scaleio-3.0-3.0-1.noarch.rpm
     ```
 
 4. Verify that the plugin is installed correctly.
@@ -92,7 +96,7 @@ need further instructions about how to build the Fuel Plugin Builder.*
 
 7. Now you have created an RPM file that you can install using the steps described above. The RPM file will be located in:
     ```
-    $ ./fuel-plugin-scaleio/scaleio-1.0-1.0.1-1.noarch.rpm
+    $ ./fuel-plugin-scaleio/scaleio-3.0-3.0-1.noarch.rpm
     ```
 
 # User Guide

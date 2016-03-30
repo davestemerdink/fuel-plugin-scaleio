@@ -2,7 +2,7 @@
 name: scaleio
 
 # Human-readable name for your plugin
-title: ScaleIO plugin
+title: ScaleIOv2.0 plugin
 
 # Plugin version
 version: '3.0'
@@ -11,7 +11,7 @@ version: '3.0'
 description: This plugin deploys and enables EMC ScaleIO ver. 2.0 as the block storage backend
 
 # Required fuel version
-fuel_version: ['6.1']
+fuel_version: ['6.1', '7.0']
 
 # Specify license of your plugin
 licenses: ['Apache License Version 2.0']
@@ -20,7 +20,7 @@ licenses: ['Apache License Version 2.0']
 authors: ['EMC']
 
 # A link to the plugin's page
-homepage: 'TODO'
+homepage: 'https://github.com/cloudscaling/fuel-plugin-scaleio'
 
 # Specify a group which your plugin implements, possible options:
 # network, storage, storage::cinder, storage::glance, hypervisor
