@@ -13,11 +13,12 @@ facters.each { |f|
 }
 
 #skip fact for existing cluster if no gateway password that means deploying new cluster
-if ! Facter.value('gateway_password').blank?
+gw_passw = Facter.value('gateway_password')
+if gw_passw && gw_passw != ''
   Facter.add('existing_cluster_mdm_ips') do
     setcode do
       user        = Facter.value('gateway_user')
-      password    = Facter.value('gateway_password')
+      password    = gw_passw
       host        = Facter.value('gateway_ips').split(',')[0]
       port        = Facter.value('gateway_port')
       base_url    = "https://%s:%s/api/%s"
@@ -25,7 +26,7 @@ if ! Facter.value('gateway_password').blank?
       config_url  = base_url % [host, port, 'Configuration']
       login_req   = "curl -k --basic --connect-timeout 5 --user #{user}:#{password} #{login_url} 2>/dev/null | sed 's/\"//g'"
       token       = Facter::Util::Resolution.exec(login_req)
-      if ! token.blank?
+      if token && token != ''
         req_url     = "curl -k --basic --connect-timeout 10 --user #{user}:#{token} #{config_url} 2>/dev/null"
         config_str  = Facter::Util::Resolution.exec(req_url)
         config      = JSON.parse(config_str)
