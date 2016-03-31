@@ -3,18 +3,19 @@
 ## Overview
 
 The `ScaleIO` plugin allows to:
-  * deploy an EMC ScaleIO v.2.0 cluster together with OpenStack and configure OpenStack to use ScaleIO as a volume backend
-  * configure OpenStack to use an existing ScaleIO cluster as a volume backend
-  * deploy ScaleIO cluster in the following modes: 1_node, 3_node and 5_node
-  ** the mode is chosen automatically depending on the number of controller nodes
+  * Deploy an EMC ScaleIO v.2.0 cluster together with OpenStack and configure OpenStack to use ScaleIO
+    as the storage for persistent and ephemeral volumes
+  * Configure OpenStack to use an existing ScaleIO cluster as a volume backend
+  * Support the following ScaleIO custer modes: 1_node, 3_node and 5_node
+    the mode is chosen automatically depending on the number of controller nodes
 
 
 ## Requirements
 
 | Requirement                      | Version/Comment |
 |----------------------------------|-----------------|
-| Mirantis OpenStack compatibility | 6.1, 7.         |
-
+| Mirantis OpenStack               | 6.1             |
+| Mirantis OpenStack               | 7.0             |
 
 ## Recommendations
 
@@ -22,35 +23,19 @@ TODO.
 
 ## Limitations
 
-  * plugin is currently only compatible with Mirantis 6.1 and 7.0
-  * plugin supports the onyl Ubuntu environment
-  * the only hyper converged environment is supported - there is no separate ScaleIO Storage nodes
-  * disks for SDS-es should be unallocated, they will be cleaned up
-  * MDMs and Gateways are deployed together and only onto controller nodes
-  * There is no ability to separate data network traffic from replication traffic
-  * There is no fault sets support
-
+1. Plugin is currently only compatible with Mirantis 6.1 and 7.0.
+2. Plugin supports the only Ubuntu environment.
+3. The only hyper converged environment is supported - there is no separate ScaleIO Storage nodes.
+4. Multi storage backend is not supported.
+5. It is not possible to use different backends for persistend and ephemeral volumes.
+6. Disks for SDS-es should be unallocated, they will be cleaned up.
+7. MDMs and Gateways are deployed together and only onto controller nodes.
+8. There is no ability to separate data network traffic from replication traffic.
+9. There is no fault sets support.
+10. Adding and removing node(s) to/from the OpenStack cluster won't re-configure the ScaleIO.
+     This is a limitation of the Fuel Plugin Framework which doesn't trigger task when those actions are performed.
 
 # Installation Guide
-
-## ScaleIO Plugin install from RPM file
-
-1. Download the plugin from the [Fuel Plugins Catalog](TODO).
-
-2. Copy the plugin file to the Fuel Master node. Follow the [Quick start guide](https://software.mirantis.com/quick-start/) if you don't have a running Fuel Master node yet.
-    ```
-    $ scp scaleio-3.0-3.0-1.noarch.rpm root@<Fuel Master node IP address>:/tmp/
-    ```
-
-3. Log into the Fuel Master node and install the plugin using the fuel command line.
-    ```
-    $ fuel plugins --install /tmp/scaleio-3.0-3.0-1.noarch.rpm
-    ```
-
-4. Verify that the plugin is installed correctly.
-    ```
-    $ fuel plugins
-    ```
 
 ## ScaleIO Plugin install from source code
 
@@ -81,23 +66,25 @@ need further instructions about how to build the Fuel Plugin Builder.*
 
 4. Clone the ScaleIO Plugin git repository (note the `--recursive` option):
     ```
-    $ git clone --recursive TODO
+    $ git clone https://github.com/cloudscaling/fuel-plugin-scaleio.git
+    $ cd fuel-plugin-scaleio
     ```
 
 5. Check that the plugin is valid:
     ```
-    $ fpb --check ./fuel-plugin-scaleio
+    $ fpb --check .
     ```
 
 6. Build the plugin:
     ```
-    $ fpb --build ./fuel-plugin-scaleio
+    $ fpb --build .
     ```
 
-7. Now you have created an RPM file that you can install using the steps described above. The RPM file will be located in:
+7. Install plugin:
     ```
-    $ ./fuel-plugin-scaleio/scaleio-3.0-3.0-1.noarch.rpm
+    $ fuel plugins --install ./scaleio-3.0-3.0-1.noarch.rpm
     ```
+
 
 # User Guide
 
