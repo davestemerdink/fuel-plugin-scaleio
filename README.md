@@ -19,31 +19,35 @@ The `ScaleIO` plugin allows to:
 
 ## Recommendations
 
-1. Use configuration with 3 controllers
+1. Use configuration with 3 controllers or 5 controllers.
+    Although 1 controller mode is supported is suitable for testing purposees only.
 2. Assign Cinder role for all controllers with allocating minimal diskspace for this role.
-   Some space is needed because of FUEL6.1/7.0 framework limitation (this space will not used).
-   Rest of the space keep for images.
-3. Use nodes with similar HW configuration within one group of roles.
+    Some space is needed because of FUEL6.1/7.0 framework limitation (this space will not used).
+    Rest of the space keep for images.
+3.  Use nodes with similar HW configuration within one group of roles.
 4. Deploy SDS coponents only on compute nodes.
     Deploymen SDS-es on controllers is supported but it is more suitable for testing than for production environment.
-5. On compute nodes keep minimal space for virtual storage.
-    It is needed because of FUEL6.1/7.0 framework limitations. Other disks should be unallocated and can be used for ScaleIO.
+5. On compute nodes keep minimal space for virtual storage on the first disk, rest disks use for ScaleIO.
+    Some space is needed because of FUEL6.1/7.0 framework limitations.
+    Other disks should be unallocated and can be used for ScaleIO.
+6. In case of extending cluster with new compute nodes not to forget to run update_hosts tasks on controller nodes via FUEL cli. 
 
 ## Limitations
 
-1. Plugin is currently only compatible with Mirantis 6.1 and 7.0.
+1. Plugin is only compatible with Mirantis 6.1 and 7.0.
 2. Plugin supports the only Ubuntu environment.
 3. The only hyper converged environment is supported - there is no separate ScaleIO Storage nodes.
 4. Multi storage backend is not supported.
 5. It is not possible to use different backends for persistend and ephemeral volumes.
-6. Disks for SDS-es should be unallocated, they will be cleaned up.
+6. Disks for SDS-es should be unallocated before deployment via FUEL UI or cli.
 7. MDMs and Gateways are deployed together and only onto controller nodes.
-8. There is no ability to separate data network traffic from replication traffic.
+8. There is no ability to split data network traffic from replication traffic.
 9. There is no fault sets support.
 10. Adding and removing node(s) to/from the OpenStack cluster won't re-configure the ScaleIO.
      This is a limitation of the Fuel Plugin Framework which doesn't trigger task when those actions are performed.
-     Automatically only SDC compupents are registered in ScaleIO.
-     For adding nodes it is needed to run the task 'update_hosts' on controllers via FUEL cli.
+     One exception here is new SDC compupents are registered in ScaleIO automatically.
+     Registering other components is possible either vi running the task 'update_hosts' on controllers via FUEL cli or
+     via adding component into ScaleIO cluster vi ScaleIO cli (scli) that available on controller nodes.
      For removal nodes it is needed to remove nodes from ScaleIO vi ScaleIO cli (scli).
 
 # Installation Guide
