@@ -22,18 +22,28 @@ define environment() {
     case $role {
       'tb': {
         $ips_array = $count ? {
-          1 => [],
-          3 => values_at($ips_array_, 2),
-          5 => values_at($ips_array_, ['3-4']),
-          default => fail("Only configuration cluster_3 and cluster_5 are supported, actualy ${count}")
+          0       => undef,
+          1       => [],
+          2       => [],
+          3       => values_at($ips_array_, 2),
+          4       => values_at($ips_array_, 2),
+          default => values_at($ips_array_, ['3-4']),
+        }
+        if ! $ips_array {
+          fail("Only configuration cluster_3 and cluster_5 are supported, actualy ${count}")
         }
       }
       'mdm': {
         $ips_array = $count ? {
-          1 => $ips_array_,
-          3 => values_at($ips_array_, ['0-1']),
-          5 => values_at($ips_array_, ['0-2']),
-          default => fail("Only configuration cluster_3 and cluster_5 are supported, actualy ${count}")
+          0       => undef,
+          1       => $ips_array_,
+          2       => values_at($ips_array_, 0),
+          3       => values_at($ips_array_, ['0-1']),
+          4       => values_at($ips_array_, ['0-1']),
+          default => values_at($ips_array_, ['0-2']),
+        }
+        if ! $ips_array {
+          fail("Only configuration cluster_3 and cluster_5 are supported, actualy ${count}")
         }
       }
       'gateway': {
