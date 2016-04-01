@@ -55,7 +55,7 @@ Prepare an environment for building the plugin on the **Fuel Master node**.
 
 1. Install the standard Linux development tools:
     ```
-    $ yum install createrepo rpm rpm-build dpkg-devel
+    $ yum install createrepo rpm rpm-build dpkg-devel git
     ```
 
 2. Install the Fuel Plugin Builder. To do that, you should first get pip:
