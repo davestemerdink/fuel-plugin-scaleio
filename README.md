@@ -19,7 +19,15 @@ The `ScaleIO` plugin allows to:
 
 ## Recommendations
 
-TODO.
+1. Use configuration with 3 controllers
+2. Assign Cinder role for all controllers with allocating minimal diskspace for this role.
+   Some space is needed because of FUEL6.1/7.0 framework limitation (this space will not used).
+   Rest of the space keep for images.
+3. Use Compute nodes with similar HW configuration. 
+4. Deploy SDS coponents only on compute nodes.
+    Deploymen SDS-es on controllers is supported but it is more suitable for testing than for production environment.
+5. On compute nodes keep minimal space for virtual storage.
+    It is needed because of FUEL6.1/7.0 framework limitations. Other disks should be unallocated and can be used for ScaleIO.
 
 ## Limitations
 
@@ -34,6 +42,8 @@ TODO.
 9. There is no fault sets support.
 10. Adding and removing node(s) to/from the OpenStack cluster won't re-configure the ScaleIO.
      This is a limitation of the Fuel Plugin Framework which doesn't trigger task when those actions are performed.
+     Automatically only SDC compupents are registered in ScaleIO.
+     For others  it is needed to run the task 'update_hosts' on controllers via FUEL cli.
 
 # Installation Guide
 
