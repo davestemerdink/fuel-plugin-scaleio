@@ -23,7 +23,7 @@ The `ScaleIO` plugin allows to:
 2. Assign Cinder role for all controllers with allocating minimal diskspace for this role.
    Some space is needed because of FUEL6.1/7.0 framework limitation (this space will not used).
    Rest of the space keep for images.
-3. Use Compute nodes with similar HW configuration. 
+3. Use nodes with similar HW configuration within one group of roles.
 4. Deploy SDS coponents only on compute nodes.
     Deploymen SDS-es on controllers is supported but it is more suitable for testing than for production environment.
 5. On compute nodes keep minimal space for virtual storage.
@@ -43,7 +43,8 @@ The `ScaleIO` plugin allows to:
 10. Adding and removing node(s) to/from the OpenStack cluster won't re-configure the ScaleIO.
      This is a limitation of the Fuel Plugin Framework which doesn't trigger task when those actions are performed.
      Automatically only SDC compupents are registered in ScaleIO.
-     For others  it is needed to run the task 'update_hosts' on controllers via FUEL cli.
+     For adding nodes it is needed to run the task 'update_hosts' on controllers via FUEL cli.
+     For removal nodes it is needed to remove nodes from ScaleIO vi ScaleIO cli (scli).
 
 # Installation Guide
 
