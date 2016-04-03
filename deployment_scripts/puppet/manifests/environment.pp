@@ -67,6 +67,17 @@ define environment() {
 $scaleio = hiera('scaleio')
 if $scaleio['metadata']['enabled'] {
   notify{'ScaleIO plugin enabled': }
+  # The following exec allows interrupt for debugging at the very beginning of the plugin deployment
+  # because Fuel doesn't provide any tools for this and deployment can last for more than two hours.
+  # Timeouts in tasks.yaml and in the deployment_tasks.yaml (which in 6.1 is not user-exposed and
+  # can be found for example in astute docker container during deloyment) should be set to high values.
+  # It'll be invoked only if /tmp/scaleio_debug file exists on particular node and you can use 
+  # "touch /tmp/go" when you're ready to resume.
+  exec { "Wait on debug interrupt: use touch /tmp/go to resume":
+    command => "bash -c 'while [ ! -f /tmp/go ]; '",
+    path => [ '/bin/' ],
+    onlyif => "ls /tmp/scaleio_debug",
+  }
   case $::osfamily {
     'RedHat': {
       fail('This is temporary limitation. ScaleIO supports only Ubuntu for now.')
