@@ -76,7 +76,7 @@ if $scaleio['metadata']['enabled'] {
   # It'll be invoked only if /tmp/scaleio_debug file exists on particular node and you can use 
   # "touch /tmp/go" when you're ready to resume.
   exec { "Wait on debug interrupt: use touch /tmp/go to resume":
-    command => "bash -c 'while [ ! -f /tmp/go ]; '",
+    command => "bash -c 'while [ ! -f /tmp/go ]; do :; done'",
     path => [ '/bin/' ],
     onlyif => "ls /tmp/scaleio_debug",
   }
