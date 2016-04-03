@@ -80,7 +80,7 @@ if $scaleio['metadata']['enabled'] {
   }
   case $::osfamily {
     'RedHat': {
-      fail('This is temporary limitation. ScaleIO supports only Ubuntu for now.')
+      fail('This is a temporary limitation. ScaleIO supports only Ubuntu for now.')
     }
     'Debian': {
       # nothing to do
@@ -122,11 +122,11 @@ if $scaleio['metadata']['enabled'] {
     }
     # mdm_ips are requested from gateways in separate manifest because no way to pass args to facter
   } else {
-    $controller_sds_coount = $scaleio['sds_on_controller'] ? {
+    $controller_sds_count = $scaleio['sds_on_controller'] ? {
       true    => count(concat(filter_nodes($all_nodes, 'role', 'primary-controller'), filter_nodes($all_nodes, 'role', 'controller'))),
       default => 0  
     }
-    $total_sds_count = count(filter_nodes($all_nodes, 'role', 'compute')) + $controller_sds_coount
+    $total_sds_count = count(filter_nodes($all_nodes, 'role', 'compute')) + $controller_sds_count
     if $total_sds_count < 3 {
       fail('There should be at least 3 nodes with SDSs, either add Compute node or use Controllers as SDS.')
     }
