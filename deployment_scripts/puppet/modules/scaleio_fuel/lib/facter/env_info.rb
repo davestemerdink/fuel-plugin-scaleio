@@ -1,4 +1,4 @@
-# This is a workaround because FUEL daemons dont inherit evnironment variables
+# This is a workaround because FUEL daemons don't inherit environment variables
 require 'facter'
 require 'json'
 
