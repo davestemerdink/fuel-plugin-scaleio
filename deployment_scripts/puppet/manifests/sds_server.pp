@@ -26,7 +26,7 @@ if $scaleio['metadata']['enabled'] {
       }
     }
   } else {
-    notify{'Skip sds server because of usign existing cluster': }
+    notify{'Skip sds server because of using existing cluster': }
   }
 }
 

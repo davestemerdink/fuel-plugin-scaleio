@@ -23,7 +23,7 @@ if $scaleio['metadata']['enabled'] {
       notify{'Skip deploying mdm server because it is not mdm and tb': }
     }
   } else {
-    notify{'Skip deploying mdm server because of usign existing cluster': }
+    notify{'Skip deploying mdm server because of using existing cluster': }
   }
 }
 

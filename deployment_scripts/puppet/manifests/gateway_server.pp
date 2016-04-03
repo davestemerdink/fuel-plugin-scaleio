@@ -12,7 +12,7 @@ if $scaleio['metadata']['enabled'] {
       fail('Empty MDM IPs configuration')
     }  
   } else {
-    notify{'Skip deploying gateway server because of usign existing cluster': }
+    notify{'Skip deploying gateway server because of using existing cluster': }
   }
   
 }

@@ -94,6 +94,7 @@ if $scaleio['metadata']['enabled'] {
     fail('At least one Node with Cinder role is required')
   }
   if $scaleio['existing_cluster'] {
+    # Existing ScaleIO cluster attaching
     notify{'Use existing ScaleIO cluster': }
     env_fact{"Environment fact: role gateway, ips: ${scaleio['gateway_ip']}":
       role => 'gateway',
@@ -121,7 +122,9 @@ if $scaleio['metadata']['enabled'] {
       value => $scaleio['existing_storage_pools']
     }
     # mdm_ips are requested from gateways in separate manifest because no way to pass args to facter
-  } else {
+  } 
+  else {
+    # New ScaleIO cluster deployment
     $controller_sds_count = $scaleio['sds_on_controller'] ? {
       true    => count(concat(filter_nodes($all_nodes, 'role', 'primary-controller'), filter_nodes($all_nodes, 'role', 'controller'))),
       default => 0  

@@ -164,6 +164,6 @@ if $scaleio['metadata']['enabled'] {
       fail('Empty MDM IPs configuration')
     }
   } else {
-    notify{'Skip configuring cluster because of usign existing cluster': }
+    notify{'Skip configuring cluster because of using existing cluster': }
   }
 }
