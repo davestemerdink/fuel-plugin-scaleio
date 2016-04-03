@@ -28,24 +28,6 @@ define mdm_tb() {
   }
 }
 
-define ensure_password($old_password, $password) {
-  if $old_password != $password {
-    scaleio::login {'First': password => $old_password} ->
-    scaleio::cluster {'Set password':
-      password      => $old_password,
-      new_password  => $password,
-    } ->
-    file_line { "Append a FACTER_mdm_password line to /etc/environment":
-      ensure  => present,
-      path    => '/etc/environment',
-      match   => "^FACTER_mdm_password=",
-      line    => "FACTER_mdm_password=${password}",
-      before  => Scaleio::Login['Normal'],
-    }
-  }
-  scaleio::login {'Normal': password => $password }
-}
-
 define storage_pool_ensure($protection_domain) {
   $sp_name = $title
   scaleio::storage_pool {"Storage Pool ${protection_domain}:${sp_name}": name => $sp_name, protection_domain => $protection_domain } 
@@ -97,11 +79,6 @@ if $scaleio['metadata']['enabled'] {
           $tb_names    = join($tb_ip_array, ',')
         }
         $cluster_mode = count($mdm_ip_array) + count($tb_ip_array)
-        $env_password = $::mdm_password
-        $old_password = $env_password ? {
-          undef   => 'admin',
-          default => $env_password
-        }
         $password = $scaleio['password']
         $protection_domain = $scaleio['protection_domain']
         $pools = $scaleio['storage_pools'] ? {
@@ -134,17 +111,9 @@ if $scaleio['metadata']['enabled'] {
          notify {'Devices and pool will not be configured':}
          $device_paths = undef
          $device_storage_pools = undef
-        }
-  
-        notify {"Master MDM ${master_ip}": } ->
-        class {'scaleio::mdm_server':
-          ensure              => 'present',
-          is_manager          => undef,
-          master_mdm_name     => $master_ip,
-          mdm_ips             => $master_ip,
-          mdm_management_ips  => $master_ip,
-        } ->
-        ensure_password {'Set password': old_password => $old_password, password => $password} ->
+        }  
+        notify {"Configure cluster MDM: ${master_ip}": } ->
+        scaleio::login {'Normal': password => $password } ->
         mdm_standby {$standby_ips: } ->
         mdm_tb{$tb_ip_array:} ->
         scaleio::cluster {'Configure cluster mode':
