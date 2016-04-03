@@ -1,3 +1,5 @@
+# The puppet installs ScaleIO SDS packages
+
 # helping define for array processing
 define sds_device_cleanup() {
   $device = $title

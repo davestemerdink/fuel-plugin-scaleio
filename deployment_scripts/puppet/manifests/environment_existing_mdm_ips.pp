@@ -1,4 +1,4 @@
-#TODO: move it from this file nad from environment.pp into modules
+#TODO: move it from this file and from environment.pp into modules
 define env_fact($role, $fact, $value) {
   file_line { "Append a FACTER_${role}_${fact} line to /etc/environment":
     ensure  => present,

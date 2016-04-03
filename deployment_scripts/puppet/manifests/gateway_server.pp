@@ -1,4 +1,5 @@
-# Set password and connect to MDMs
+# The puppet configures ScaleIO Gateway. Sets the password and connects to MDMs.
+
 $scaleio = hiera('scaleio')
 if $scaleio['metadata']['enabled'] {
   if ! $scaleio['existing_cluster'] {

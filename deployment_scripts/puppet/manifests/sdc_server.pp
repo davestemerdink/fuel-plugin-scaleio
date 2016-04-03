@@ -1,4 +1,5 @@
-# Just install packages
+# The puppet installs ScaleIO SDS packages.
+
 $scaleio = hiera('scaleio')
 if $scaleio['metadata']['enabled'] {
   class {'scaleio::sdc_server':

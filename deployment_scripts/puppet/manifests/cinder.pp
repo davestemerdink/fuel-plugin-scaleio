@@ -1,4 +1,5 @@
-# Configure Cinder to use ScaleIO
+# The puppet configures OpenStack cinder to use ScaleIO.
+
 $scaleio = hiera('scaleio')
 if $scaleio['metadata']['enabled'] {
   if ! $::gateway_ips {

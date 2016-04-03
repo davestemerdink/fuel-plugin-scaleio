@@ -1,3 +1,5 @@
+# The puppet configures OpenStack nova to use ScaleIO.
+
 $scaleio = hiera('scaleio')
 if $scaleio['metadata']['enabled'] {
   if ! $::gateway_ips {

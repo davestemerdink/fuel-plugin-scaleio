@@ -1,4 +1,5 @@
-# Configure Cinder to use ScaleIO
+# The puppet installs ScaleIO SDC packages and connect to MDMs.
+
 $scaleio = hiera('scaleio')
 if $scaleio['metadata']['enabled'] {
   if ! $::mdm_ips {

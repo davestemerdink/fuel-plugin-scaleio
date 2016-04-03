@@ -1,3 +1,6 @@
+# The puppet configures ScaleIO cluster - adds MDMs, SDSs, sets up
+# Protection domains and Storage Pools.
+
 #Helpers for array processing
 define mdm_standby() {
   $ip = $name
