@@ -60,6 +60,8 @@ To install the ScaleIO Plugin from source code, you first need to prepare an env
 
 Prepare an environment for building the plugin on the **Fuel Master node**.
 
+0. You might want to make sure that kernel you have on the nodes for ScaleIO SDC installation (compute and cinder nodes) is suitable for the drivers present here: ``` ftp://QNzgdxXix:Aw3wFAwAq3@ftp.emc.com/ ```. Look for something like ``` Ubuntu/2.0.5014.0/4.2.0-30-generic ```. Local kernel version can be found with ``` uname -a ``` command.
+
 1. Install the standard Linux development tools:
     ```
     $ yum install createrepo rpm rpm-build dpkg-devel git
