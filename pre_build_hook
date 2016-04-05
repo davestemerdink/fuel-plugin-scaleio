@@ -11,6 +11,8 @@
 
 set -eux
 
+RELEASE=${RELEASE_TAG:-"v0.1"}
+
 #TODO: use ftp.emc.com
 BASE_REPO_URL="http://ec2-52-37-140-129.us-west-2.compute.amazonaws.com"
 BASE_PUPPET_URL="https://github.com/cloudscaling"
@@ -64,6 +66,9 @@ do
         fi
         
         git clone "$puppet_url" "$destination"
+        pushd "$destination"
+        git checkout "tags/$RELEASE"
+        popd
     else
         if [ -z "${SKIP_PULL+x}" ]
         then
