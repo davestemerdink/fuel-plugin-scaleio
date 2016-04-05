@@ -2,6 +2,8 @@
 
 ## Overview
 
+Disclaimer: Current version is Beta 1.
+
 The `ScaleIO` plugin allows to:
   * Deploy an EMC ScaleIO v.2.0 cluster together with OpenStack and configure OpenStack to use ScaleIO
     as the storage for persistent and ephemeral volumes
@@ -57,6 +59,8 @@ The `ScaleIO` plugin allows to:
 To install the ScaleIO Plugin from source code, you first need to prepare an environment to build the RPM file of the plugin. The recommended approach is to build the RPM file directly onto the Fuel Master node so that you won't have to copy that file later.
 
 Prepare an environment for building the plugin on the **Fuel Master node**.
+
+0. You might want to make sure that kernel you have on the nodes for ScaleIO SDC installation (compute and cinder nodes) is suitable for the drivers present here: ``` ftp://QNzgdxXix:Aw3wFAwAq3@ftp.emc.com/ ```. Look for something like ``` Ubuntu/2.0.5014.0/4.2.0-30-generic ```. Local kernel version can be found with ``` uname -a ``` command.
 
 1. Install the standard Linux development tools:
     ```
