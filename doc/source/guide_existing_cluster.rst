@@ -1,9 +1,9 @@
-Openstack with new ScaleIO cluster
-==================================
+Openstack with existing ScaleIO cluster
+==============================================
 
 Once the Fuel ScaleIOv2.0 plugin has been installed (following the
 :ref:`Installation Guide <installation>`), you can create an *OpenStack* environments that
-uses ScaleIO as the block storage backend.
+uses existing ScaleIO cluster as the block storage backend.
 
 Prepare infrastructure
 ----------------------
@@ -22,29 +22,11 @@ Each node shall have at least 2 CPUs, 4GB RAM, 200GB disk, 3 Network interfaces.
 #. Public, Management and Storage networks: All of the OpenStack management traffic will flow over this network (“Management” and “Storage” will be separated by VLANs), and to re-use the network it will also host the public network used by OpenStack service nodes and the floating IP address range.
 #. Private network: This network will be added to Virtual Machines when they boot. It will therefore be the route where traffic flows in and out of the VM.
 
-Controllers 1, 2, and 3 will be used as ScaleIO MDMs, being the primary, secondary, and tie-breaker, respectively. Moreover, they will also host the ScaleIO Gateway in HA mode. Additionally Cotrollers should play Cinder role, because of lack of custom role support in Fuel6.1.
+At least on of controllers 1, 2, and 3 should play Cinder role, because of lack of custom role support in Fuel6.1.
 
-All Compute nodes are used as ScaleIO SDS and, therefore, contribute to the default storage pool. It is possible to enable SDS on Controllers node, that is usefull for evaluation and test puproses but usually it is not recommended in production environment.
+In that deployment option plugin installs the only client component on the nodes with Cinder and Compute roles and configure them to use existing ScaleIO cluster.
 
-All nodes that will be used as ScaleIO SDS should have equal disk configuration. All disks that will be used as SDS devices should be unallocated in Fuel.
-
-The ScaleIO cluster will use the storage network for all volume and cluster maintenance operations.
-
-.. _scaleiogui:
-
-Install ScaleIO GUI
--------------------
-
-It is recommended to install the ScaleIO GUI to easily access and manage the ScaleIO cluster.
-
-#. Make sure the machine in which you will install the ScaleIO GUI has access to the Controller nodes.
-#. Download the ScaleIO for your operating system from the following link: http://www.emc.com/products-solutions/trial-software-download/scaleio.htm
-#. Unzip the file and install the ScaleIO GUI component.
-#. Once installed, run the application and you will be prompted with the following login window. We will use it once the deployment is completed.
-
-    .. image:: images/scaleio-login.png
-       :width: 50%
-
+ScaleIO cluster should be available for the Cinder and Compute nodes via storage network, ScaleIO Gateway should be available via management interface (management_vip).
 
 
 Select Environment
@@ -63,18 +45,8 @@ Plugin configuration
 
 #. Go to the Settings tab and scroll down to "ScaleIO plugin" section. You need to fill all fields with your preferred ScaleIO configuration. If you do not know the purpose of a field you can leave it with its default value.
 
-    .. image:: images/settings.png
+    .. image:: images/settings_existing_cluster.png
        :width: 70%
-
-#. Make disks for SDS devices unallocated. This disks will be cleand up and added to SDS-es as storage devices. Note, that because of current Fuel framwork limitation it is needed to keep some spcae for Cinder and Nova roles.
-
-    .. image:: images/devices_compute.png
-       :width: 70%
-
-    .. image:: images/devices_controller.png
-       :width: 70%
-
-#. In case you want to speciafy different storage pools for different devices provide corresponding to device paths list of pools, e.g. 'pool1,pool2' and '/dev/sdb,/dev/sdc' will assign /dev/sdb for the pool1 and /dev/sdc for the pool2
 
 #. Take the time to review and configure other environment settings such as the DNS and NTP servers, URLs for the repositories, etc.
 

@@ -11,4 +11,5 @@ Plugin Guide
    introduction
    installation
    guide
+   guide_existing_cluster
    appendix
