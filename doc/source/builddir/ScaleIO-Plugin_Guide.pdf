@@ -334,7 +334,7 @@ stream
 Gb"0;JH,ZM!5fq/lJ:A$<<3("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz!!!#g$s60_hu~>endstream
 endobj
 87 0 obj
-<< /Border [ 0 0 0 ] /Contents () /Dest [ 62 0 R /XYZ 40.01575 611.4394 0 ] /Rect [ 180.5628 535.3987 305.2171 547.3987 ] /Subtype /Link /Type /Annot >>
+<< /Border [ 0 0 0 ] /Contents () /Dest [ 62 0 R /XYZ 40.01575 611.4394 0 ] /Rect [ 309.4926 535.3987 434.4416 547.3987 ] /Subtype /Link /Type /Annot >>
 endobj
 88 0 obj
 << /BitsPerComponent 8 /ColorSpace /DeviceRGB /Filter [ /ASCII85Decode /FlateDecode ] /Height 684 /Length 103542 /SMask 89 0 R 
@@ -405,7 +405,7 @@ endobj
 << /Outlines 103 0 R /PageLabels 138 0 R /PageMode /UseNone /Pages 124 0 R /Type /Catalog >>
 endobj
 102 0 obj
-<< /Author () /CreationDate <rst2pdf.createpdf.PDFDate instance at 0x1139f4050> /Creator (\(unspecified\)) /Keywords () /ModDate <rst2pdf.createpdf.PDFDate instance at 0x1139f4050> /Producer (ReportLab PDF Library - www.reportlab.com) 
+<< /Author () /CreationDate <rst2pdf.createpdf.PDFDate instance at 0x10d6bda70> /Creator (\(unspecified\)) /Keywords () /ModDate <rst2pdf.createpdf.PDFDate instance at 0x10d6bda70> /Producer (ReportLab PDF Library - www.reportlab.com) 
   /Subject (\(unspecified\)) /Title () /Trapped /False >>
 endobj
 103 0 obj
@@ -2658,7 +2658,7 @@ q
 1 0 0 1 20 6 cm
 q
 0 0 0 rg
-BT 1 0 0 1 0 26 Tm /F1 10 Tf 12 TL 1.60745 Tw (d. Make disks for ScaleIO SDS devices unallocated. This disks will be cleand up and added to SDS-es as) Tj T* 0 Tw 1.276711 Tw (storage devices. Note, that because of current Fuel framwork limitation it is needed to keep some space for) Tj T* 0 Tw (Cinder and Nova roles.) Tj T* ET
+BT 1 0 0 1 0 26 Tm /F1 10 Tf 12 TL 1.60745 Tw (d. Make disks for ScaleIO SDS devices unallocated. This disks will be cleand up and added to SDS-es as) Tj T* 0 Tw .949653 Tw (storage devices. Note, that because of current Fuel framework limitation it is needed to keep some space for) Tj T* 0 Tw (Cinder and Nova roles.) Tj T* ET
 Q
 Q
 q
@@ -2870,7 +2870,7 @@ Q
 endstream
 endobj
 135 0 obj
-<< /Length 3332 >>
+<< /Length 3334 >>
 stream
 1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
 q
@@ -3007,7 +3007,7 @@ q
 1 0 0 1 40.01575 239.8403 cm
 q
 0 0 0 rg
-BT 1 0 0 1 0 14 Tm /F1 10 Tf 12 TL .055705 Tw (Once the OpenStack cluster is setup, we can make use of ScaleIO volumes. This is an example about how to attach) Tj T* 0 Tw (a volume to a running VM.) Tj T* ET
+BT 1 0 0 1 0 14 Tm /F1 10 Tf 12 TL 1.462847 Tw (Once the OpenStack cluster is setup, you can make use of ScaleIO volumes. This is an example about how to) Tj T* 0 Tw (attach a volume to a running VM.) Tj T* ET
 Q
 Q
 q
@@ -3081,7 +3081,7 @@ Q
 endstream
 endobj
 136 0 obj
-<< /Length 3259 >>
+<< /Length 3377 >>
 stream
 1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
 q
@@ -3114,11 +3114,11 @@ q
 1 0 0 1 40.01575 550.3987 cm
 Q
 q
-1 0 0 1 40.01575 526.3987 cm
+1 0 0 1 40.01575 514.3987 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
 q
-1 0 0 1 6 9 cm
+1 0 0 1 6 21 cm
 q
 0 0 0 rg
 BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 5.66 0 Td (3.) Tj T* -5.66 0 Td ET
@@ -3127,17 +3127,17 @@ Q
 q
 1 0 0 1 23 -3 cm
 q
-BT 1 0 0 1 0 14 Tm 1.721417 Tw 12 TL /F1 10 Tf 0 0 0 rg (In the ScaleIO GUI \(see ) Tj 0 0 0 rg (Install ScaleIO GUI section) Tj 0 0 0 rg (\), enter the IP address of the primary controller node,) Tj T* 0 Tw (username ) Tj /F5 10 Tf 0 0 0 rg (admin) Tj /F1 10 Tf 0 0 0 rg (, and the password you entered in the Fuel UI.) Tj T* ET
+BT 1 0 0 1 0 26 Tm 1.819653 Tw 12 TL /F1 10 Tf 0 0 0 rg (Connect to ScaleIO cluster in the ScaleIO GUI \(see ) Tj 0 0 0 rg (Install ScaleIO GUI section) Tj 0 0 0 rg (\). In case of new ScaleIO) Tj T* 0 Tw .514672 Tw (cluster deploying use the IP address of the master ScaleIO MDM \(it is one of the controller nodes\), username) Tj T* 0 Tw /F5 10 Tf 0 0 0 rg (admin) Tj /F1 10 Tf 0 0 0 rg (, and the password you entered in the Fuel UI.) Tj T* ET
 Q
 Q
 q
 Q
 Q
 q
-1 0 0 1 40.01575 520.3987 cm
+1 0 0 1 40.01575 508.3987 cm
 Q
 q
-1 0 0 1 40.01575 284.697 cm
+1 0 0 1 40.01575 272.697 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
 q
@@ -3179,10 +3179,10 @@ q
 Q
 Q
 q
-1 0 0 1 40.01575 278.697 cm
+1 0 0 1 40.01575 266.697 cm
 Q
 q
-1 0 0 1 40.01575 143.2075 cm
+1 0 0 1 40.01575 131.2075 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
 q
@@ -3224,10 +3224,10 @@ q
 Q
 Q
 q
-1 0 0 1 40.01575 137.2075 cm
+1 0 0 1 40.01575 125.2075 cm
 Q
 q
-1 0 0 1 40.01575 125.2075 cm
+1 0 0 1 40.01575 113.2075 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
 q
@@ -3248,10 +3248,10 @@ q
 Q
 Q
 q
-1 0 0 1 40.01575 119.2075 cm
+1 0 0 1 40.01575 107.2075 cm
 Q
 q
-1 0 0 1 40.01575 101.2075 cm
+1 0 0 1 40.01575 89.20747 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
 q
@@ -3658,29 +3658,29 @@ xref
 0001422462 00000 n
 0001425907 00000 n
 0001429024 00000 n
-0001432414 00000 n
-0001435731 00000 n
-0001438432 00000 n
-0001438609 00000 n
-0001438647 00000 n
-0001438685 00000 n
-0001438723 00000 n
-0001438761 00000 n
-0001438799 00000 n
-0001438837 00000 n
-0001438875 00000 n
-0001438913 00000 n
-0001438951 00000 n
-0001438989 00000 n
-0001439027 00000 n
-0001439065 00000 n
+0001432416 00000 n
+0001435851 00000 n
+0001438552 00000 n
+0001438729 00000 n
+0001438767 00000 n
+0001438805 00000 n
+0001438843 00000 n
+0001438881 00000 n
+0001438919 00000 n
+0001438957 00000 n
+0001438995 00000 n
+0001439033 00000 n
+0001439071 00000 n
+0001439109 00000 n
+0001439147 00000 n
+0001439185 00000 n
 trailer
 << /ID 
  % ReportLab generated PDF document -- digest (http://www.reportlab.com)
  [(-\270/\215\023\374\232\255\017j\310\301DYu\363) (-\270/\215\023\374\232\255\017j\310\301DYu\363)]
  /Info 102 0 R /Root 101 0 R /Size 152 >>
 startxref
-1439103
+1439223
 %%EOF
 %PDF-1.4
 %“Œ‹ž ReportLab Generated PDF document http://www.reportlab.com
@@ -4018,7 +4018,7 @@ stream
 Gb"0;JH,ZM!5fq/lJ:A$<<3("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz!!!#g$s60_hu~>endstream
 endobj
 87 0 obj
-<< /Border [ 0 0 0 ] /Contents () /Dest [ 62 0 R /XYZ 40.01575 611.4394 0 ] /Rect [ 180.5628 535.3987 305.2171 547.3987 ] /Subtype /Link /Type /Annot >>
+<< /Border [ 0 0 0 ] /Contents () /Dest [ 62 0 R /XYZ 40.01575 611.4394 0 ] /Rect [ 309.4926 535.3987 434.4416 547.3987 ] /Subtype /Link /Type /Annot >>
 endobj
 88 0 obj
 << /BitsPerComponent 8 /ColorSpace /DeviceRGB /Filter [ /ASCII85Decode /FlateDecode ] /Height 684 /Length 103542 /SMask 89 0 R 
@@ -4089,7 +4089,7 @@ endobj
 << /Outlines 103 0 R /PageLabels 138 0 R /PageMode /UseNone /Pages 124 0 R /Type /Catalog >>
 endobj
 102 0 obj
-<< /Author () /CreationDate <rst2pdf.createpdf.PDFDate instance at 0x113859098> /Creator (\(unspecified\)) /Keywords () /ModDate <rst2pdf.createpdf.PDFDate instance at 0x113859098> /Producer (ReportLab PDF Library - www.reportlab.com) 
+<< /Author () /CreationDate <rst2pdf.createpdf.PDFDate instance at 0x105595908> /Creator (\(unspecified\)) /Keywords () /ModDate <rst2pdf.createpdf.PDFDate instance at 0x105595908> /Producer (ReportLab PDF Library - www.reportlab.com) 
   /Subject (\(unspecified\)) /Title () /Trapped /False >>
 endobj
 103 0 obj
@@ -6342,7 +6342,7 @@ q
 1 0 0 1 20 6 cm
 q
 0 0 0 rg
-BT 1 0 0 1 0 26 Tm /F1 10 Tf 12 TL 1.60745 Tw (d. Make disks for ScaleIO SDS devices unallocated. This disks will be cleand up and added to SDS-es as) Tj T* 0 Tw 1.276711 Tw (storage devices. Note, that because of current Fuel framwork limitation it is needed to keep some space for) Tj T* 0 Tw (Cinder and Nova roles.) Tj T* ET
+BT 1 0 0 1 0 26 Tm /F1 10 Tf 12 TL 1.60745 Tw (d. Make disks for ScaleIO SDS devices unallocated. This disks will be cleand up and added to SDS-es as) Tj T* 0 Tw .949653 Tw (storage devices. Note, that because of current Fuel framework limitation it is needed to keep some space for) Tj T* 0 Tw (Cinder and Nova roles.) Tj T* ET
 Q
 Q
 q
@@ -6554,7 +6554,7 @@ Q
 endstream
 endobj
 135 0 obj
-<< /Length 3332 >>
+<< /Length 3334 >>
 stream
 1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
 q
@@ -6691,7 +6691,7 @@ q
 1 0 0 1 40.01575 239.8403 cm
 q
 0 0 0 rg
-BT 1 0 0 1 0 14 Tm /F1 10 Tf 12 TL .055705 Tw (Once the OpenStack cluster is setup, we can make use of ScaleIO volumes. This is an example about how to attach) Tj T* 0 Tw (a volume to a running VM.) Tj T* ET
+BT 1 0 0 1 0 14 Tm /F1 10 Tf 12 TL 1.462847 Tw (Once the OpenStack cluster is setup, you can make use of ScaleIO volumes. This is an example about how to) Tj T* 0 Tw (attach a volume to a running VM.) Tj T* ET
 Q
 Q
 q
@@ -6765,7 +6765,7 @@ Q
 endstream
 endobj
 136 0 obj
-<< /Length 3259 >>
+<< /Length 3377 >>
 stream
 1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
 q
@@ -6798,11 +6798,11 @@ q
 1 0 0 1 40.01575 550.3987 cm
 Q
 q
-1 0 0 1 40.01575 526.3987 cm
+1 0 0 1 40.01575 514.3987 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
 q
-1 0 0 1 6 9 cm
+1 0 0 1 6 21 cm
 q
 0 0 0 rg
 BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 5.66 0 Td (3.) Tj T* -5.66 0 Td ET
@@ -6811,17 +6811,17 @@ Q
 q
 1 0 0 1 23 -3 cm
 q
-BT 1 0 0 1 0 14 Tm 1.721417 Tw 12 TL /F1 10 Tf 0 0 0 rg (In the ScaleIO GUI \(see ) Tj 0 0 0 rg (Install ScaleIO GUI section) Tj 0 0 0 rg (\), enter the IP address of the primary controller node,) Tj T* 0 Tw (username ) Tj /F5 10 Tf 0 0 0 rg (admin) Tj /F1 10 Tf 0 0 0 rg (, and the password you entered in the Fuel UI.) Tj T* ET
+BT 1 0 0 1 0 26 Tm 1.819653 Tw 12 TL /F1 10 Tf 0 0 0 rg (Connect to ScaleIO cluster in the ScaleIO GUI \(see ) Tj 0 0 0 rg (Install ScaleIO GUI section) Tj 0 0 0 rg (\). In case of new ScaleIO) Tj T* 0 Tw .514672 Tw (cluster deploying use the IP address of the master ScaleIO MDM \(it is one of the controller nodes\), username) Tj T* 0 Tw /F5 10 Tf 0 0 0 rg (admin) Tj /F1 10 Tf 0 0 0 rg (, and the password you entered in the Fuel UI.) Tj T* ET
 Q
 Q
 q
 Q
 Q
 q
-1 0 0 1 40.01575 520.3987 cm
+1 0 0 1 40.01575 508.3987 cm
 Q
 q
-1 0 0 1 40.01575 284.697 cm
+1 0 0 1 40.01575 272.697 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
 q
@@ -6863,10 +6863,10 @@ q
 Q
 Q
 q
-1 0 0 1 40.01575 278.697 cm
+1 0 0 1 40.01575 266.697 cm
 Q
 q
-1 0 0 1 40.01575 143.2075 cm
+1 0 0 1 40.01575 131.2075 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
 q
@@ -6908,10 +6908,10 @@ q
 Q
 Q
 q
-1 0 0 1 40.01575 137.2075 cm
+1 0 0 1 40.01575 125.2075 cm
 Q
 q
-1 0 0 1 40.01575 125.2075 cm
+1 0 0 1 40.01575 113.2075 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
 q
@@ -6932,10 +6932,10 @@ q
 Q
 Q
 q
-1 0 0 1 40.01575 119.2075 cm
+1 0 0 1 40.01575 107.2075 cm
 Q
 q
-1 0 0 1 40.01575 101.2075 cm
+1 0 0 1 40.01575 89.20747 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
 q
@@ -7342,27 +7342,27 @@ xref
 0001422462 00000 n
 0001425907 00000 n
 0001429024 00000 n
-0001432414 00000 n
-0001435731 00000 n
-0001438432 00000 n
-0001438609 00000 n
-0001438647 00000 n
-0001438685 00000 n
-0001438723 00000 n
-0001438761 00000 n
-0001438799 00000 n
-0001438837 00000 n
-0001438875 00000 n
-0001438913 00000 n
-0001438951 00000 n
-0001438989 00000 n
-0001439027 00000 n
-0001439065 00000 n
+0001432416 00000 n
+0001435851 00000 n
+0001438552 00000 n
+0001438729 00000 n
+0001438767 00000 n
+0001438805 00000 n
+0001438843 00000 n
+0001438881 00000 n
+0001438919 00000 n
+0001438957 00000 n
+0001438995 00000 n
+0001439033 00000 n
+0001439071 00000 n
+0001439109 00000 n
+0001439147 00000 n
+0001439185 00000 n
 trailer
 << /ID 
  % ReportLab generated PDF document -- digest (http://www.reportlab.com)
  [(-\270/\215\023\374\232\255\017j\310\301DYu\363) (-\270/\215\023\374\232\255\017j\310\301DYu\363)]
  /Info 102 0 R /Root 101 0 R /Size 152 >>
 startxref
-1439103
+1439223
 %%EOF

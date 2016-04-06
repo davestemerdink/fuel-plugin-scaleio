@@ -71,7 +71,7 @@ Plugin configuration
 
   \c. In case you want to speciafy different storage pools for different devices provide a list of pools corresponding to device paths, e.g. 'pool1,pool2' and '/dev/sdb,/dev/sdc' will assign /dev/sdb for the pool1 and /dev/sdc for the pool2.
 
-  \d. Make disks for ScaleIO SDS devices unallocated. This disks will be cleand up and added to SDS-es as storage devices. Note, that because of current Fuel framwork limitation it is needed to keep some space for Cinder and Nova roles.
+  \d. Make disks for ScaleIO SDS devices unallocated. This disks will be cleand up and added to SDS-es as storage devices. Note, that because of current Fuel framework limitation it is needed to keep some space for Cinder and Nova roles.
 
     .. image:: images/devices_compute.png
        :width: 80%
@@ -115,7 +115,7 @@ Finish environment configuration
 ScaleIO verification
 --------------------
 
-Once the OpenStack cluster is setup, we can make use of ScaleIO volumes. This is an example about how to attach a volume to a running VM.
+Once the OpenStack cluster is setup, you can make use of ScaleIO volumes. This is an example about how to attach a volume to a running VM.
 
 #. Login into the OpenStack cluster:
 
@@ -124,7 +124,7 @@ Once the OpenStack cluster is setup, we can make use of ScaleIO volumes. This is
     .. image:: images/block-storage-services.png
        :width: 90%
 
-#. In the ScaleIO GUI (see :ref:`Install ScaleIO GUI section <scaleiogui>`), enter the IP address of the primary controller node, username `admin`, and the password you entered in the Fuel UI.
+#. Connect to ScaleIO cluster in the ScaleIO GUI (see :ref:`Install ScaleIO GUI section <scaleiogui>`). In case of new ScaleIO cluster deploying use the IP address of the master ScaleIO MDM (it is one of the controller nodes), username `admin`, and the password you entered in the Fuel UI.
 
 #. Once logged in, verify that it successfully reflects the ScaleIO resources:
 
