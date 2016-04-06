@@ -43,14 +43,7 @@ The `ScaleIO` plugin allows to:
 5. It is not possible to use different backends for persistent and ephemeral volumes.
 6. Disks for SDS-es should be unallocated before deployment via FUEL UI or cli.
 7. MDMs and Gateways are deployed together and only onto controller nodes.
-8. There is no ability to split data network traffic from replication traffic.
-9. There is no fault sets support.
-10. Adding and removing node(s) to/from the OpenStack cluster won't re-configure the ScaleIO.
-     This is a limitation of the Fuel Plugin Framework which doesn't trigger task when those actions are performed.
-     One exception here is new SDC compupents are registered in ScaleIO automatically.
-     Registering other components is possible either by running the task 'update_hosts' on controllers (via FUEL cli)
-     or by adding component into ScaleIO cluster via ScaleIO cli (scli) that available on controller nodes.
-     For removal nodes it is needed to remove nodes from ScaleIO via ScaleIO cli (scli).
+8. Adding and removing node(s) to/from the OpenStack cluster won't re-configure the ScaleIO.
 
 # Installation Guide
 
@@ -107,7 +100,33 @@ need further instructions about how to build the Fuel Plugin Builder.*
 
 # User Guide
 
-Please read the [ScaleIO Plugin User Guide](doc/source/builddir/ScaleIO-Plugin_Guide.pdf).
+Please read the [ScaleIO Plugin User Guide](doc/source/builddir/ScaleIO-Plugin_Guide.pdf) for full description.
+
+First of all, ScaleIOv2.0 plugin functionality should be enabled by switching on ScaleIO in the Settings.
+
+ScaleIO section contains the following info to fill in:
+
+1. Existing ScaleIO Cluster.
+Set "Use existing ScaleIO" checkbox.
+The following parameters should be specified:
+* Gateway IP address - IP address of ScaleIO gateway
+* Gateway port - Port of ScaleIO gateway
+* Gateway user - User to access ScaleIO gateway
+* Gateway password - Password to access ScaleIO gateway
+* Protection domain - The protection domain to use
+* Storage pools - Comma-separated list of storage pools
+
+2. New ScaleIO deployment
+The following parameters should be specified:
+* Admin password - Administrator password to set for ScaleIO MDM
+* Gateway password - Administrator password to set for ScaleIO Gateway (for now should be the same as Admin password)
+* Protection domain - The protection domain to create for ScaleIO cluster
+* Storage pools - Comma-separated list of storage pools to create for ScaleIO cluster
+* Storage devices - Path to storage devices, comma separated (/dev/sdb,/dev/sdd)
+* Controller as Storage - Use controller nodes for ScaleIO SDS (by default only compute nodes are used for ScaleIO SDS deployment)
+  
+Configuration of disks for allocated nodes:
+The devices listed in the "Storage devices" above should be left unallocated for ScaleIO SDS to work.
 
 # Contributions
 

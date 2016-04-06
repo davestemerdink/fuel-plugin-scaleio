@@ -60,3 +60,4 @@ Limitations
 6. Disks for SDS-es should be unallocated before deployment via FUEL UI or cli.
 7. MDMs and Gateways are deployed together and only onto controller nodes.
 8. Adding and removing node(s) to/from the OpenStack cluster won't re-configure the ScaleIO.
+
