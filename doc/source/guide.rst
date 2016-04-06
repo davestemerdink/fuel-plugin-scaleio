@@ -1,5 +1,5 @@
-Openstack with new ScaleIO cluster
-==================================
+User Guide
+==========
 
 Once the Fuel ScaleIOv2.0 plugin has been installed (following the
 :ref:`Installation Guide <installation>`), you can create an *OpenStack* environments that
