@@ -22,11 +22,9 @@ Each node shall have at least 2 CPUs, 4GB RAM, 200GB disk, 3 Network interfaces.
 #. Public, Management and Storage networks: All of the OpenStack management traffic will flow over this network (“Management” and “Storage” will be separated by VLANs), and to re-use the network it will also host the public network used by OpenStack service nodes and the floating IP address range.
 #. Private network: This network will be added to Virtual Machines when they boot. It will therefore be the route where traffic flows in and out of the VM.
 
-Controllers 1, 2, and 3 will be used as ScaleIO MDMs, being the primary, secondary, and tie-breaker, respectively. Moreover, they will also host the ScaleIO Gateway in HA mode. Additionally Cotrollers should play Cinder role, because of lack of custom role support in Fuel6.1.
+In case of new ScaleIO cluster deployment Controllers 1, 2, and 3 will be used as ScaleIO MDMs, being the primary, secondary, and tie-breaker, respectively. Moreover, they will also host the ScaleIO Gateway in HA mode. Additionally Cotrollers should play Cinder role, because of lack of custom role support in Fuel6.1. All Compute nodes are used as ScaleIO SDS and, therefore, contribute to the default storage pool. It is possible to enable SDS on Controllers node, that is usefull for evaluation and test puproses but usually it is not recommended in production environment. All nodes that will be used as ScaleIO SDS should have equal disk configuration. All disks that will be used as SDS devices should be unallocated in Fuel.
 
-All Compute nodes are used as ScaleIO SDS and, therefore, contribute to the default storage pool. It is possible to enable SDS on Controllers node, that is usefull for evaluation and test puproses but usually it is not recommended in production environment.
-
-All nodes that will be used as ScaleIO SDS should have equal disk configuration. All disks that will be used as SDS devices should be unallocated in Fuel.
+In case of existing ScaleIO cluster deployment the plugin deploys ScaleIO SDC component onto Compute and Cinder nodes and configures OpenStack Cinder and Nova to use ScaleIO as the block storage backend. 
 
 The ScaleIO cluster will use the storage network for all volume and cluster maintenance operations.
 
@@ -46,7 +44,6 @@ It is recommended to install the ScaleIO GUI to easily access and manage the Sca
        :width: 50%
 
 
-
 Select Environment
 ------------------
 
@@ -61,22 +58,37 @@ Select Environment
 Plugin configuration
 --------------------
 
-#. Go to the Settings tab and scroll down to "ScaleIO plugin" section. You need to fill all fields with your preferred ScaleIO configuration. If you do not know the purpose of a field you can leave it with its default value.
+\1. Go to the Settings tab and scroll down to "ScaleIO plugin" section. You need to fill all fields with your preferred ScaleIO configuration. If you do not know the purpose of a field you can leave it with its default value.
+
+\2. In order to deploy new ScaleIO cluster together with OpenStack
+
+  \a. Disable the checkbox 'Use existing ScaleIO'
+
+  \b. Provide Admin passwords for ScaleIO MDM and Gateway, list of Storage devices to be used as ScaleIO SDS storage devices. Optionally you can provide protection domain name and storage pool names.
 
     .. image:: images/settings.png
-       :width: 70%
+       :width: 80%
 
-#. Make disks for SDS devices unallocated. This disks will be cleand up and added to SDS-es as storage devices. Note, that because of current Fuel framwork limitation it is needed to keep some spcae for Cinder and Nova roles.
+  \c. In case you want to speciafy different storage pools for different devices provide a list of pools corresponding to device paths, e.g. 'pool1,pool2' and '/dev/sdb,/dev/sdc' will assign /dev/sdb for the pool1 and /dev/sdc for the pool2.
+
+  \d. Make disks for ScaleIO SDS devices unallocated. This disks will be cleand up and added to SDS-es as storage devices. Note, that because of current Fuel framwork limitation it is needed to keep some space for Cinder and Nova roles.
 
     .. image:: images/devices_compute.png
-       :width: 70%
+       :width: 80%
 
     .. image:: images/devices_controller.png
-       :width: 70%
+       :width: 80%
 
-#. In case you want to speciafy different storage pools for different devices provide corresponding to device paths list of pools, e.g. 'pool1,pool2' and '/dev/sdb,/dev/sdc' will assign /dev/sdb for the pool1 and /dev/sdc for the pool2
+\3. In order to use existing ScaleIO cluster
 
-#. Take the time to review and configure other environment settings such as the DNS and NTP servers, URLs for the repositories, etc.
+  \a. Enable checkbox 'Use existing ScaleIO'
+
+  \b. Provide IP address and password for ScaleIO Gateway, protection domain name and storage pool names that will be allowed to be used in OpenStack. The first storage pool name will become the default storage pool for volumes.
+
+    .. image:: images/settings_existing_cluster.png
+       :width: 80%
+
+\4. Take the time to review and configure other environment settings such as the DNS and NTP servers, URLs for the repositories, etc.
 
 
 Finish environment configuration
@@ -119,7 +131,7 @@ Once the OpenStack cluster is setup, we can make use of ScaleIO volumes. This is
     .. image:: images/scaleio-cp.png
        :width: 80%
 
-#. Click on the "Backend" tab and verify all SDS nodes:
+#. For the case of new ScaleIO cluster deployment click on the "Backend" tab and verify all SDS nodes:
 
     .. image:: images/scaleio-sds.png
        :width: 90%

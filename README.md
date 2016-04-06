@@ -107,7 +107,7 @@ need further instructions about how to build the Fuel Plugin Builder.*
 
 # User Guide
 
-Please read the [ScaleIO Plugin User Guide](doc/source).
+Please read the [ScaleIO Plugin User Guide](doc/source/builddir/ScaleIO-Plugin_Guide.pdf).
 
 # Contributions
 

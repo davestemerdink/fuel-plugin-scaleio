@@ -3,5 +3,5 @@
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
-sphinx-build -b html .  builddir
-
+sphinx-build -b pdf .  builddir
+#sphinx-build -b html .  builddir

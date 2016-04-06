@@ -4,7 +4,10 @@ Introduction
 Purpose
 -------
 This document will guide you through the steps of install, configure and use of the **ScaleIOv2.0 Plugin** for Fuel.
-The ScaleIO Plugin is used to deploy and configure a ScaleIO cluster as a backend for an OpenStack environment.
+The ScaleIO Plugin is used to:
+ ** deploy and configure a ScaleIO cluster as a volume backend for an OpenStack environment
+ ** configure an Openstack environment to use existing ScaleIO cluster as a volume backend
+
 
 ScaleIO Overview
 ----------------
@@ -17,6 +20,7 @@ Breaking traditional barriers of storage scalability, ScaleIO scales out to hund
 With ScaleIO, any administrator can add, move, or remove servers and capacity on demand during I/O operations. The software responds automatically to any infrastructure change and rebalances data accordingly across the grid nondisruptively. ScaleIO can add capacity on demand, without capacity planning or data migration and grow in small or large increments and pay as you grow, running on any server and with any storage media.
 
 ScaleIO natively supports all leading Linux distributions and hypervisors. It works agnostically with any solid-state drive (SSD) or hard disk drive (HDD) regardless of type, model, or speed.
+
 
 ScaleIO Components
 ------------------
@@ -31,8 +35,7 @@ ScaleIO Components
 
 ScaleIO Cinder and Nova Drivers
 -------------------------------
-
-ScaleIO includes aCinder driver, which interfaces between ScaleIO and OpenStack, and presents volumes to OpenStack as block devices which are available for block storage. It also includes an OpenStack Nova driver, for handling compute and instance volume related operations. The ScaleIO driver executes the volume operations by communicating with the backend ScaleIO MDM through the ScaleIO Gateway.
+ScaleIO includes Cinder driver, which interfaces between ScaleIO and OpenStack, and presents volumes to OpenStack as block devices which are available for block storage. It also includes an OpenStack Nova driver, for handling compute and instance volume related operations. The ScaleIO driver executes the volume operations by communicating with the backend ScaleIO MDM through the ScaleIO Gateway.
 
 
 Requirements
@@ -44,8 +47,6 @@ Requirement               Version/Comment
 Mirantis OpenStack        6.1
 Mirantis OpenStack        7.0
 ========================= ===============
-
-* This plugin will deploy an EMC ScaleIO 2.0 cluster on the available nodes and replace the default OpenStack volume backend and image driver by ScaleIO.
 
 
 Limitations
