@@ -39,12 +39,21 @@ if gw_passw && gw_passw != ''
   end
 end
 
-Facter.add('node_role_config_file') do
+Facter.add('master_mdm_ip') do
   setcode do
-    templ = "/etc/%s.yaml"
-    roles = ['primary-controller', 'controller', 'cinder', 'compute']
-    res   = roles.select { |r| File.exist?(templ % r)  }
-    templ % res[0]
+    mdm_ips = Facter.value(:mdm_ips)
+    if mdm_ips && mdm_ips != ''
+      mdm_opts = "--mdm_ip %s" % mdm_ips
+      first_ip = mdm_ips.split(',')[0]
+    else
+      mdm_opts = ''
+      first_ip = ''
+    end
+    ip = Facter::Util::Resolution.exec("scli %s --query_cluster --approve_certificate | grep  -A 2 'Master MDM' | awk '/IPs:/ {print($2)}' | tr -d ','" % mdm_opts)
+    if ip and ip != ''
+      ip
+    else
+      first_ip
+    end
   end
 end
-

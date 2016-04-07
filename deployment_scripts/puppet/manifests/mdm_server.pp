@@ -13,9 +13,8 @@ if $scaleio['metadata']['enabled'] {
         $master_ip = undef
       } else {
         $is_manager = 1
-        $mdm_ip_array = split($::mdm_ips, ',')
-        $master_ip_ = $mdm_ip_array[0]
-        if has_ip_address($master_ip_) {
+        $master_ip_ = $::master_mdm_ip
+        if $master_ip_ and has_ip_address($master_ip_) {
           $master_mdm_name = $master_ip_
           $master_ip = $master_ip_
         } else {
