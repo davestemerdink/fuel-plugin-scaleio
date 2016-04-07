@@ -17,7 +17,8 @@ define environment() {
     /(6\.1|7\.0)/   => concat(filter_nodes($all_nodes, 'role', 'primary-controller'), filter_nodes($all_nodes, 'role', 'controller')),
     default         => filter_nodes($all_nodes, 'role', "scaleio-${role}"),
   }
-  $hashes         = nodes_to_hash($nodes, 'name', 'storage_address')
+  #use management network for ScaleIO components communications
+  $hashes         = nodes_to_hash($nodes, 'name', 'internal_address')
   $ips_array_      = ipsort(values($hashes))
   if $fuel_version == '6.1' or $fuel_version == '7.0' {
     $count = count(keys($hashes))

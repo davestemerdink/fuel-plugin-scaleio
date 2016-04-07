@@ -38,13 +38,19 @@ define sds_device(
   $storage_pools,
   $device_paths,
 ) {
-  $sds_node     = $title
-  $sds_name     = $sds_node['name']
-  $sds_ips      = $sds_node['storage_address']
-  $sds_ip_roles = undef # TODO: set to 'all' as unless_query appears in scaleio::sds for role updates
-  if count(split($sds_ips, ',')) != 1 {
-    fail("TODO: behaviour changed - storage_address becomes coma-separated list ${sds_ips}, so it is needed to add the generation of ip roles")
+  $sds_node = $title
+  $sds_name = $sds_node['name']
+  #ips for data path traffic
+  $storage_ips      = $sds_node['storage_address']
+  $storage_ip_roles = 'sdc_only'
+  #ips for communication with MDM and SDS<=>SDS
+  $mgmt_ips      = $sds_node['internal_address']
+  $mgmt_ip_roles = 'sds_only'
+  if count(split($storage_ips, ',')) != 1 or count(split($mgmt_ips, ',')) != 1 {
+    fail("TODO: behaviour changed: address becomes coma-separated list ${storage_ips} or ${mgmt_ips}, so it is needed to add the generation of ip roles")
   }
+  $sds_ips      = "${storage_ips},${mgmt_ips}"
+  $sds_ip_roles = "${storage_ip_roles},${mgmt_ip_roles}"
   scaleio::sds {$sds_name:
     ensure             => 'present',
     ensure_properties  => undef,
