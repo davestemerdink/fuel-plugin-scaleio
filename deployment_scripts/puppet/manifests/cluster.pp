@@ -95,7 +95,7 @@ if $scaleio['metadata']['enabled'] {
           $sds_nodes = $compute_nodes		
         }
         $paths = $scaleio['device_paths'] ? {
-          udnef   => undef,
+          undef   => $::sds_storage_devices,
           default => split($scaleio['device_paths'], ',')
         }
         if $paths and $pools {

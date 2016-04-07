@@ -1,0 +1,16 @@
+volumes:
+  - id: "scaleio-storage"
+    type: "partition"
+    min_size:
+      generator: "calc_gb_to_mb"
+      generator_args: [100]
+    label: "ScaleIO storage"
+    name: "ScaleIO"
+    mount: "none"
+    file_system: "none"
+    partition_guid: "f2e81bdc-99b3-4bf6-a68f-dc794da6cd8e"
+
+volumes_roles_mapping:
+  scaleio-storage:
+    - {allocate_size: "min", id: "os"} 
+    - {allocate_size: "full-disk", id: "scaleio-storage"}

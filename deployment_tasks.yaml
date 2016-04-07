@@ -1,89 +1,130 @@
 ##############################################################################
-# ScaleIO prerequisites tasks
+# ScaleIO task groups
+##############################################################################      
+- id: scaleio-cluster
+  type: group
+  role: [primary-controller, controller, compute, cinder, scaleio-storage]
+  required_for: [primary-controller, controller, compute, cinder, scaleio-storage]
+  requires: [deploy_start]
+  parameters:
+    strategy:
+      type: one_by_one
+
+- id: scaleio-storage
+  type: group
+  role: [scaleio-storage]
+  required_for: [deploy_end]
+  requires: [scaleio-cluster]
+  parameters:
+    strategy:
+      type: one_by_one
+
+- id: scaleio-client
+  type: group
+  role: [compute, cinder]
+  required_for: [post_deployment_end]
+  requires: [post_deployment_start, scaleio-cluster]
+  parameters:
+    strategy:
+      type: one_by_one
+
+
 ##############################################################################
-- role: ['primary-controller', 'controller', 'compute', 'cinder']
-  stage: post_deployment/2000
+# ScaleIO prerequisites tasks
+##############################################################################      
+- id: scaleio-environment
+  groups: [scaleio-cluster]
   type: puppet
   parameters:
     puppet_manifest: puppet/manifests/environment.pp
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 600
 
-- role: ['compute', 'cinder']
-  stage: post_deployment/2020
+- id: scaleio-environment-existing-mdm-ips
+  groups: [scaleio-cluster]
+  requires: [scaleio-environment]
   type: puppet
   parameters:
     puppet_manifest: puppet/manifests/environment_existing_mdm_ips.pp
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 600
 
+
 ##############################################################################
 # ScaleIO installation tasks
 ##############################################################################
-- role: ['primary-controller', 'controller']
-  stage: post_deployment/2050
+- id: scaleio-mdm-server
+  groups: [scaleio-cluster]
+  requires: [scaleio-environment]
   type: puppet
   parameters:
     puppet_manifest: puppet/manifests/mdm_server.pp
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 1800
 
-- role: ['primary-controller', 'controller']
-  stage: post_deployment/2100
+- id: scaleio-gateway-server
+  groups: [scaleio-cluster]
+  requires: [scaleio-mdm-server]
   type: puppet
   parameters:
     puppet_manifest: puppet/manifests/gateway_server.pp
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 1800
     
-- role: ['primary-controller', 'controller', 'compute', 'cinder']
-  stage: post_deployment/2110
+- id: scaleio-sds-server
+  groups: [scaleio-storage]
   type: puppet
   parameters:
     puppet_manifest: puppet/manifests/sds_server.pp
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 1800
 
-- role: ['compute', 'cinder']
-  stage: post_deployment/2120
+- id: scaleio-sdc-server
+  groups: [scaleio-storage, scaleio-client]
   type: puppet
   parameters:
     puppet_manifest: puppet/manifests/sdc_server.pp
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 1800
 
+
 ##############################################################################
 # ScaleIO cluster configuration tasks
 ##############################################################################
-- role: ['primary-controller', 'controller']
-  stage: post_deployment/2150
+- id: scaleio-cluster
+  groups: [scaleio-cluster]
+  requires: [scaleio-mdm-server]
   type: puppet
   parameters:
     puppet_manifest: puppet/manifests/cluster.pp
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 1800
 
-- role: ['cinder', 'compute']
-  stage: post_deployment/2200
+- id: scaleio-sdc
+  groups: [scaleio-storage, scaleio-client]
+  requires: [scaleio-sdc-server]
   type: puppet
   parameters:
     puppet_manifest: puppet/manifests/sdc.pp
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 1800
 
+
 ##############################################################################
 # Openstack components (Cinder, Nova) configuration tasks
 ##############################################################################
-- role: ['compute']
-  stage: post_deployment/2250
+- id: scaleio-compute
+  groups: [scaleio-client]
+  requires: [scaleio-sdc-server]
   type: puppet
   parameters:
     puppet_manifest: puppet/manifests/nova.pp
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 600
 
-- role: ['cinder']
-  stage: post_deployment/2250
+- id: scaleio-cinder
+  groups: [scaleio-client]
+  requires: [scaleio-sdc-server]
   type: puppet
   parameters:
     puppet_manifest: puppet/manifests/cinder.pp

@@ -1,0 +1,5 @@
+scaleio-storage:
+  name: "ScaleIO Storage"
+  description: ""
+  limits:
+    min: 3
