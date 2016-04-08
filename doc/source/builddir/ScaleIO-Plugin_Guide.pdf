@@ -405,7 +405,7 @@ endobj
 << /Outlines 103 0 R /PageLabels 138 0 R /PageMode /UseNone /Pages 124 0 R /Type /Catalog >>
 endobj
 102 0 obj
-<< /Author () /CreationDate <rst2pdf.createpdf.PDFDate instance at 0x10c19ac68> /Creator (\(unspecified\)) /Keywords () /ModDate <rst2pdf.createpdf.PDFDate instance at 0x10c19ac68> /Producer (ReportLab PDF Library - www.reportlab.com) 
+<< /Author () /CreationDate <rst2pdf.createpdf.PDFDate instance at 0x10f499200> /Creator (\(unspecified\)) /Keywords () /ModDate <rst2pdf.createpdf.PDFDate instance at 0x10f499200> /Producer (ReportLab PDF Library - www.reportlab.com) 
   /Subject (\(unspecified\)) /Title () /Trapped /False >>
 endobj
 103 0 obj
@@ -525,7 +525,7 @@ q
 1 0 0 1 40.01575 524.1606 cm
 q
 0 0 0 rg
-BT 1 0 0 1 0 2.4 Tm /F1 12 Tf 14.4 TL 220.602 0 Td (April 06, 2016) Tj T* -220.602 0 Td ET
+BT 1 0 0 1 0 2.4 Tm /F1 12 Tf 14.4 TL 220.602 0 Td (April 08, 2016) Tj T* -220.602 0 Td ET
 Q
 Q
 q
@@ -1721,7 +1721,7 @@ Q
 endstream
 endobj
 131 0 obj
-<< /Length 9796 >>
+<< /Length 9802 >>
 stream
 1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
 q
@@ -1743,7 +1743,7 @@ n -4 0 488.4441 18 re B*
 Q
 q
 0 0 0 rg
-BT 1 0 0 1 0 2 Tm /F4 10 Tf 12 TL (fuel plugins --install ./scaleio-2.0-2.0-1.noarch.rpm) Tj T* ET
+BT 1 0 0 1 0 2 Tm /F4 10 Tf 12 TL (fuel plugins --install ./scaleio-2.0-2.0.0-1.noarch.rpm) Tj T* ET
 Q
 Q
 Q
@@ -1787,7 +1787,7 @@ n -4 0 491.4441 54 re B*
 Q
 q
 0 0 0 rg
-BT 1 0 0 1 0 38 Tm /F4 10 Tf 12 TL ([root@fuel-master ~]#fuel plugins) Tj T* (id | name                  | version | package_version) Tj T* (---|-----------------------|---------|----------------) Tj T* ( 1 | scaleio               | 2.0     | 2.0.0) Tj T* ET
+BT 1 0 0 1 0 38 Tm /F4 10 Tf 12 TL ([root@fuel-master ~]#fuel plugins) Tj T* (id | name                  | version | package_version) Tj T* (---|-----------------------|---------|----------------) Tj T* ( 1 | scaleio               | 2.0.0   | 2.0.0) Tj T* ET
 Q
 Q
 Q
@@ -1878,7 +1878,7 @@ n -4 0 491.4441 30 re B*
 Q
 q
 0 0 0 rg
-BT 1 0 0 1 0 14 Tm /F4 10 Tf 12 TL ([root@home ~]# scp scaleio-2.0-2.0-1.noarch.rpm) Tj T* (root@fuel-master:/tmp) Tj T* ET
+BT 1 0 0 1 0 14 Tm /F4 10 Tf 12 TL ([root@home ~]# scp scaleio-2.0-2.0.0-1.noarch.rpm) Tj T* (root@fuel-master:/tmp) Tj T* ET
 Q
 Q
 Q
@@ -1921,7 +1921,7 @@ n -4 0 491.4441 30 re B*
 Q
 q
 0 0 0 rg
-BT 1 0 0 1 0 14 Tm /F4 10 Tf 12 TL ([root@fuel-master ~]# fuel plugins --install) Tj T* (/tmp/scaleio-2.0-2.0-1.noarch.rpm) Tj T* ET
+BT 1 0 0 1 0 14 Tm /F4 10 Tf 12 TL ([root@fuel-master ~]# fuel plugins --install) Tj T* (/tmp/scaleio-2.0-2.0.0-1.noarch.rpm) Tj T* ET
 Q
 Q
 Q
@@ -1965,7 +1965,7 @@ n -4 0 491.4441 54 re B*
 Q
 q
 0 0 0 rg
-BT 1 0 0 1 0 38 Tm /F4 10 Tf 12 TL ([root@fuel-master ~]# fuel plugins) Tj T* (id | name                  | version | package_version) Tj T* (---|-----------------------|---------|----------------) Tj T* ( 1 | scaleio               | 2.0     | 2.0.0) Tj T* ET
+BT 1 0 0 1 0 38 Tm /F4 10 Tf 12 TL ([root@fuel-master ~]# fuel plugins) Tj T* (id | name                  | version | package_version) Tj T* (---|-----------------------|---------|----------------) Tj T* ( 1 | scaleio               | 2.0.0   | 2.0.0) Tj T* ET
 Q
 Q
 Q
@@ -3606,33 +3606,33 @@ xref
 0001388159 00000 n
 0001395645 00000 n
 0001406819 00000 n
-0001416673 00000 n
-0001421206 00000 n
-0001424652 00000 n
-0001427769 00000 n
-0001431162 00000 n
-0001434706 00000 n
-0001437407 00000 n
-0001437584 00000 n
-0001437622 00000 n
-0001437660 00000 n
-0001437698 00000 n
-0001437736 00000 n
-0001437774 00000 n
-0001437812 00000 n
-0001437850 00000 n
-0001437888 00000 n
-0001437926 00000 n
-0001437964 00000 n
-0001438002 00000 n
-0001438040 00000 n
+0001416679 00000 n
+0001421212 00000 n
+0001424658 00000 n
+0001427775 00000 n
+0001431168 00000 n
+0001434712 00000 n
+0001437413 00000 n
+0001437590 00000 n
+0001437628 00000 n
+0001437666 00000 n
+0001437704 00000 n
+0001437742 00000 n
+0001437780 00000 n
+0001437818 00000 n
+0001437856 00000 n
+0001437894 00000 n
+0001437932 00000 n
+0001437970 00000 n
+0001438008 00000 n
+0001438046 00000 n
 trailer
 << /ID 
  % ReportLab generated PDF document -- digest (http://www.reportlab.com)
  [(-\270/\215\023\374\232\255\017j\310\301DYu\363) (-\270/\215\023\374\232\255\017j\310\301DYu\363)]
  /Info 102 0 R /Root 101 0 R /Size 152 >>
 startxref
-1438078
+1438084
 %%EOF
 %PDF-1.4
 %“Œ‹ž ReportLab Generated PDF document http://www.reportlab.com
@@ -4041,7 +4041,7 @@ endobj
 << /Outlines 103 0 R /PageLabels 138 0 R /PageMode /UseNone /Pages 124 0 R /Type /Catalog >>
 endobj
 102 0 obj
-<< /Author () /CreationDate <rst2pdf.createpdf.PDFDate instance at 0x10c0ce128> /Creator (\(unspecified\)) /Keywords () /ModDate <rst2pdf.createpdf.PDFDate instance at 0x10c0ce128> /Producer (ReportLab PDF Library - www.reportlab.com) 
+<< /Author () /CreationDate <rst2pdf.createpdf.PDFDate instance at 0x10f4ae9e0> /Creator (\(unspecified\)) /Keywords () /ModDate <rst2pdf.createpdf.PDFDate instance at 0x10f4ae9e0> /Producer (ReportLab PDF Library - www.reportlab.com) 
   /Subject (\(unspecified\)) /Title () /Trapped /False >>
 endobj
 103 0 obj
@@ -4161,7 +4161,7 @@ q
 1 0 0 1 40.01575 524.1606 cm
 q
 0 0 0 rg
-BT 1 0 0 1 0 2.4 Tm /F1 12 Tf 14.4 TL 220.602 0 Td (April 06, 2016) Tj T* -220.602 0 Td ET
+BT 1 0 0 1 0 2.4 Tm /F1 12 Tf 14.4 TL 220.602 0 Td (April 08, 2016) Tj T* -220.602 0 Td ET
 Q
 Q
 q
@@ -5357,7 +5357,7 @@ Q
 endstream
 endobj
 131 0 obj
-<< /Length 9796 >>
+<< /Length 9802 >>
 stream
 1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
 q
@@ -5379,7 +5379,7 @@ n -4 0 488.4441 18 re B*
 Q
 q
 0 0 0 rg
-BT 1 0 0 1 0 2 Tm /F4 10 Tf 12 TL (fuel plugins --install ./scaleio-2.0-2.0-1.noarch.rpm) Tj T* ET
+BT 1 0 0 1 0 2 Tm /F4 10 Tf 12 TL (fuel plugins --install ./scaleio-2.0-2.0.0-1.noarch.rpm) Tj T* ET
 Q
 Q
 Q
@@ -5423,7 +5423,7 @@ n -4 0 491.4441 54 re B*
 Q
 q
 0 0 0 rg
-BT 1 0 0 1 0 38 Tm /F4 10 Tf 12 TL ([root@fuel-master ~]#fuel plugins) Tj T* (id | name                  | version | package_version) Tj T* (---|-----------------------|---------|----------------) Tj T* ( 1 | scaleio               | 2.0     | 2.0.0) Tj T* ET
+BT 1 0 0 1 0 38 Tm /F4 10 Tf 12 TL ([root@fuel-master ~]#fuel plugins) Tj T* (id | name                  | version | package_version) Tj T* (---|-----------------------|---------|----------------) Tj T* ( 1 | scaleio               | 2.0.0   | 2.0.0) Tj T* ET
 Q
 Q
 Q
@@ -5514,7 +5514,7 @@ n -4 0 491.4441 30 re B*
 Q
 q
 0 0 0 rg
-BT 1 0 0 1 0 14 Tm /F4 10 Tf 12 TL ([root@home ~]# scp scaleio-2.0-2.0-1.noarch.rpm) Tj T* (root@fuel-master:/tmp) Tj T* ET
+BT 1 0 0 1 0 14 Tm /F4 10 Tf 12 TL ([root@home ~]# scp scaleio-2.0-2.0.0-1.noarch.rpm) Tj T* (root@fuel-master:/tmp) Tj T* ET
 Q
 Q
 Q
@@ -5557,7 +5557,7 @@ n -4 0 491.4441 30 re B*
 Q
 q
 0 0 0 rg
-BT 1 0 0 1 0 14 Tm /F4 10 Tf 12 TL ([root@fuel-master ~]# fuel plugins --install) Tj T* (/tmp/scaleio-2.0-2.0-1.noarch.rpm) Tj T* ET
+BT 1 0 0 1 0 14 Tm /F4 10 Tf 12 TL ([root@fuel-master ~]# fuel plugins --install) Tj T* (/tmp/scaleio-2.0-2.0.0-1.noarch.rpm) Tj T* ET
 Q
 Q
 Q
@@ -5601,7 +5601,7 @@ n -4 0 491.4441 54 re B*
 Q
 q
 0 0 0 rg
-BT 1 0 0 1 0 38 Tm /F4 10 Tf 12 TL ([root@fuel-master ~]# fuel plugins) Tj T* (id | name                  | version | package_version) Tj T* (---|-----------------------|---------|----------------) Tj T* ( 1 | scaleio               | 2.0     | 2.0.0) Tj T* ET
+BT 1 0 0 1 0 38 Tm /F4 10 Tf 12 TL ([root@fuel-master ~]# fuel plugins) Tj T* (id | name                  | version | package_version) Tj T* (---|-----------------------|---------|----------------) Tj T* ( 1 | scaleio               | 2.0.0   | 2.0.0) Tj T* ET
 Q
 Q
 Q
@@ -7242,31 +7242,31 @@ xref
 0001388159 00000 n
 0001395645 00000 n
 0001406819 00000 n
-0001416673 00000 n
-0001421206 00000 n
-0001424652 00000 n
-0001427769 00000 n
-0001431162 00000 n
-0001434706 00000 n
-0001437407 00000 n
-0001437584 00000 n
-0001437622 00000 n
-0001437660 00000 n
-0001437698 00000 n
-0001437736 00000 n
-0001437774 00000 n
-0001437812 00000 n
-0001437850 00000 n
-0001437888 00000 n
-0001437926 00000 n
-0001437964 00000 n
-0001438002 00000 n
-0001438040 00000 n
+0001416679 00000 n
+0001421212 00000 n
+0001424658 00000 n
+0001427775 00000 n
+0001431168 00000 n
+0001434712 00000 n
+0001437413 00000 n
+0001437590 00000 n
+0001437628 00000 n
+0001437666 00000 n
+0001437704 00000 n
+0001437742 00000 n
+0001437780 00000 n
+0001437818 00000 n
+0001437856 00000 n
+0001437894 00000 n
+0001437932 00000 n
+0001437970 00000 n
+0001438008 00000 n
+0001438046 00000 n
 trailer
 << /ID 
  % ReportLab generated PDF document -- digest (http://www.reportlab.com)
  [(-\270/\215\023\374\232\255\017j\310\301DYu\363) (-\270/\215\023\374\232\255\017j\310\301DYu\363)]
  /Info 102 0 R /Root 101 0 R /Size 152 >>
 startxref
-1438078
+1438084
 %%EOF
