@@ -12,17 +12,22 @@ define sds_device_cleanup() {
 # Just install packages
 $scaleio = hiera('scaleio')
 if $scaleio['metadata']['enabled'] {
-  if ! $scaleio['existing_cluster'] {
-    $node_ips = split($::ip_address_array, ',')
-    if empty(intersection(split($::mdm_ips, ','), $node_ips)) {
-      #it is supposed that task is run on compute
-      $is_sds_server = true
+  if ! $scaleio['existing_cluster'] {      
+    $fuel_version = hiera('fuel_version')
+    if $fuel_version == '6.1' {
+      $is_sds_server = empty(intersection(split($::mdm_ips, ','), $node_ips)) or $scaleio['sds_on_controller']
     } else {
-      $is_sds_server = $scaleio['sds_on_controller']
+      $all_nodes = hiera('nodes')
+      $nodes = filter_nodes($all_nodes, 'name', $::hostname)
+      $is_sds_server = !empty(filter_nodes($nodes, 'role', 'scaleio-storage'))
     }
     if $is_sds_server {
-      $devices = split($scaleio['device_paths'], ',')
-      sds_device_cleanup {$devices: } ->
+      if $scaleio['device_paths'] {
+        $devices = split($scaleio['device_paths'], ',')
+        sds_device_cleanup {$devices:
+          before => Class['scaleio::sds_server']
+        }
+      }
       class {'scaleio::sds_server':
         ensure  => 'present',
       }
@@ -31,4 +36,3 @@ if $scaleio['metadata']['enabled'] {
     notify{'Skip sds server because of using existing cluster': }
   }
 }
-
