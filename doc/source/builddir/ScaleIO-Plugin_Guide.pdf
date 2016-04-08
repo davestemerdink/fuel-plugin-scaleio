@@ -405,7 +405,7 @@ endobj
 << /Outlines 103 0 R /PageLabels 138 0 R /PageMode /UseNone /Pages 124 0 R /Type /Catalog >>
 endobj
 102 0 obj
-<< /Author () /CreationDate <rst2pdf.createpdf.PDFDate instance at 0x10f499200> /Creator (\(unspecified\)) /Keywords () /ModDate <rst2pdf.createpdf.PDFDate instance at 0x10f499200> /Producer (ReportLab PDF Library - www.reportlab.com) 
+<< /Author () /CreationDate <rst2pdf.createpdf.PDFDate instance at 0x1168519e0> /Creator (\(unspecified\)) /Keywords () /ModDate <rst2pdf.createpdf.PDFDate instance at 0x1168519e0> /Producer (ReportLab PDF Library - www.reportlab.com) 
   /Subject (\(unspecified\)) /Title () /Trapped /False >>
 endobj
 103 0 obj
@@ -2250,7 +2250,7 @@ Q
 endstream
 endobj
 132 0 obj
-<< /Length 4475 >>
+<< /Length 4573 >>
 stream
 1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
 q
@@ -2434,11 +2434,11 @@ q
 1 0 0 1 40.01575 276.4668 cm
 Q
 q
-1 0 0 1 40.01575 246.4668 cm
+1 0 0 1 40.01575 234.4668 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
 q
-1 0 0 1 6 15 cm
+1 0 0 1 6 27 cm
 q
 0 0 0 rg
 BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 5.66 0 Td (1.) Tj T* -5.66 0 Td ET
@@ -2448,7 +2448,7 @@ q
 1 0 0 1 23 3 cm
 q
 0 0 0 rg
-BT 1 0 0 1 0 14 Tm /F1 10 Tf 12 TL 1.107131 Tw (Create a new environment with the Fuel UI wizard. Select "Juno on Ubunu 14.04" from OpenStack Release) Tj T* 0 Tw (dropdown list and continue until you finish with the wizard.) Tj T* ET
+BT 1 0 0 1 0 26 Tm /F1 10 Tf 12 TL 1.135881 Tw (Create a new environment with the Fuel UI wizard. From OpenStack Release dropdown list select \223Juno on) Tj T* 0 Tw .174957 Tw (Ubunu 14.04\224 if you are using MOS 6.1 or \223Kilo on Ubunu 14.04\224 for MOS 7.0 and continue until you finish with) Tj T* 0 Tw (the wizard.) Tj T* ET
 Q
 Q
 q
@@ -3607,32 +3607,32 @@ xref
 0001395645 00000 n
 0001406819 00000 n
 0001416679 00000 n
-0001421212 00000 n
-0001424658 00000 n
-0001427775 00000 n
-0001431168 00000 n
-0001434712 00000 n
-0001437413 00000 n
-0001437590 00000 n
-0001437628 00000 n
-0001437666 00000 n
-0001437704 00000 n
-0001437742 00000 n
-0001437780 00000 n
-0001437818 00000 n
-0001437856 00000 n
-0001437894 00000 n
-0001437932 00000 n
-0001437970 00000 n
-0001438008 00000 n
-0001438046 00000 n
+0001421310 00000 n
+0001424756 00000 n
+0001427873 00000 n
+0001431266 00000 n
+0001434810 00000 n
+0001437511 00000 n
+0001437688 00000 n
+0001437726 00000 n
+0001437764 00000 n
+0001437802 00000 n
+0001437840 00000 n
+0001437878 00000 n
+0001437916 00000 n
+0001437954 00000 n
+0001437992 00000 n
+0001438030 00000 n
+0001438068 00000 n
+0001438106 00000 n
+0001438144 00000 n
 trailer
 << /ID 
  % ReportLab generated PDF document -- digest (http://www.reportlab.com)
  [(-\270/\215\023\374\232\255\017j\310\301DYu\363) (-\270/\215\023\374\232\255\017j\310\301DYu\363)]
  /Info 102 0 R /Root 101 0 R /Size 152 >>
 startxref
-1438084
+1438182
 %%EOF
 %PDF-1.4
 %“Œ‹ž ReportLab Generated PDF document http://www.reportlab.com
@@ -4041,7 +4041,7 @@ endobj
 << /Outlines 103 0 R /PageLabels 138 0 R /PageMode /UseNone /Pages 124 0 R /Type /Catalog >>
 endobj
 102 0 obj
-<< /Author () /CreationDate <rst2pdf.createpdf.PDFDate instance at 0x10f4ae9e0> /Creator (\(unspecified\)) /Keywords () /ModDate <rst2pdf.createpdf.PDFDate instance at 0x10f4ae9e0> /Producer (ReportLab PDF Library - www.reportlab.com) 
+<< /Author () /CreationDate <rst2pdf.createpdf.PDFDate instance at 0x10e9e8170> /Creator (\(unspecified\)) /Keywords () /ModDate <rst2pdf.createpdf.PDFDate instance at 0x10e9e8170> /Producer (ReportLab PDF Library - www.reportlab.com) 
   /Subject (\(unspecified\)) /Title () /Trapped /False >>
 endobj
 103 0 obj
@@ -5886,7 +5886,7 @@ Q
 endstream
 endobj
 132 0 obj
-<< /Length 4475 >>
+<< /Length 4573 >>
 stream
 1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
 q
@@ -6070,11 +6070,11 @@ q
 1 0 0 1 40.01575 276.4668 cm
 Q
 q
-1 0 0 1 40.01575 246.4668 cm
+1 0 0 1 40.01575 234.4668 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
 q
-1 0 0 1 6 15 cm
+1 0 0 1 6 27 cm
 q
 0 0 0 rg
 BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 5.66 0 Td (1.) Tj T* -5.66 0 Td ET
@@ -6084,7 +6084,7 @@ q
 1 0 0 1 23 3 cm
 q
 0 0 0 rg
-BT 1 0 0 1 0 14 Tm /F1 10 Tf 12 TL 1.107131 Tw (Create a new environment with the Fuel UI wizard. Select "Juno on Ubunu 14.04" from OpenStack Release) Tj T* 0 Tw (dropdown list and continue until you finish with the wizard.) Tj T* ET
+BT 1 0 0 1 0 26 Tm /F1 10 Tf 12 TL 1.135881 Tw (Create a new environment with the Fuel UI wizard. From OpenStack Release dropdown list select \223Juno on) Tj T* 0 Tw .174957 Tw (Ubunu 14.04\224 if you are using MOS 6.1 or \223Kilo on Ubunu 14.04\224 for MOS 7.0 and continue until you finish with) Tj T* 0 Tw (the wizard.) Tj T* ET
 Q
 Q
 q
@@ -7243,30 +7243,30 @@ xref
 0001395645 00000 n
 0001406819 00000 n
 0001416679 00000 n
-0001421212 00000 n
-0001424658 00000 n
-0001427775 00000 n
-0001431168 00000 n
-0001434712 00000 n
-0001437413 00000 n
-0001437590 00000 n
-0001437628 00000 n
-0001437666 00000 n
-0001437704 00000 n
-0001437742 00000 n
-0001437780 00000 n
-0001437818 00000 n
-0001437856 00000 n
-0001437894 00000 n
-0001437932 00000 n
-0001437970 00000 n
-0001438008 00000 n
-0001438046 00000 n
+0001421310 00000 n
+0001424756 00000 n
+0001427873 00000 n
+0001431266 00000 n
+0001434810 00000 n
+0001437511 00000 n
+0001437688 00000 n
+0001437726 00000 n
+0001437764 00000 n
+0001437802 00000 n
+0001437840 00000 n
+0001437878 00000 n
+0001437916 00000 n
+0001437954 00000 n
+0001437992 00000 n
+0001438030 00000 n
+0001438068 00000 n
+0001438106 00000 n
+0001438144 00000 n
 trailer
 << /ID 
  % ReportLab generated PDF document -- digest (http://www.reportlab.com)
  [(-\270/\215\023\374\232\255\017j\310\301DYu\363) (-\270/\215\023\374\232\255\017j\310\301DYu\363)]
  /Info 102 0 R /Root 101 0 R /Size 152 >>
 startxref
-1438084
+1438182
 %%EOF
