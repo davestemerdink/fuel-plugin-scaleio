@@ -20,36 +20,64 @@ define environment() {
   #use management network for ScaleIO components communications
   $hashes         = nodes_to_hash($nodes, 'name', 'internal_address')
   $ips_array_      = ipsort(values($hashes))
+  $master_mdm = $::current_master_mdm_ip ? {
+    undef   => $ips_array_[0],
+    default => $::current_master_mdm_ip
+  }
+  $cur_slave_mdms = $::current_slave_ips ? {
+    undef   => [],
+    default => split($::current_slave_ips, ',')
+  }
+  $cur_tb_mdms = $::current_tb_ips ? {
+    undef   => [],
+    default => split($::current_tb_ips, ',')
+  }
   if $fuel_version == '6.1' or $fuel_version == '7.0' {
     $count = count(keys($hashes))
     case $role {
       'tb': {
-        $ips_array = $count ? {
-          0       => undef,
-          1       => [],
-          2       => [],
-          3       => values_at($ips_array_, 2),
-          4       => values_at($ips_array_, 2),
-          default => values_at($ips_array_, ['3-4']),
+        $to_keep_tb = intersection($ips_array_, $cur_tb_mdms)
+        if $count < 3 {
+          $to_add_tb_count = 0
+        } else {
+          if $count < 5 {
+            $to_add_tb_count = 1 - count($to_keep_tb)
+          } else {
+            $to_add_tb_count = 2 - count($to_keep_tb)
+          }
         }
-        if ! $ips_array {
-          fail("Only configuration cluster_3 and cluster_5 are supported, actualy ${count}")
-        }
+        $tb_available = delete(difference($ips_array_, intersection($ips_array_, $cur_slave_mdms)), $master_mdm)
+        if $to_add_tb_count > 0 and count($tb_available) >= $to_add_tb_count {
+          $last_tb_index = count($tb_available) - 1
+          $first_tb_index = $last_tb_index - $to_add_tb_count + 1
+          $ips_array = concat($to_keep_tb, values_at($tb_available, "${first_tb_index}-${last_tb_index}"))
+        } else {
+          $ips_array = $to_keep_tb
+        }                  
       }
       'mdm': {
-        $ips_array = $count ? {
-          0       => undef,
-          1       => $ips_array_,
-          2       => values_at($ips_array_, 0),
-          3       => values_at($ips_array_, ['0-1']),
-          4       => values_at($ips_array_, ['0-1']),
-          default => values_at($ips_array_, ['0-2']),
+        $to_keep_mdm = concat([$master_mdm], intersection($ips_array_, $cur_slave_mdms))
+        if $count < 3 {
+          $to_add_mdm_count = 1 - count($to_keep_mdm)
+        } else {
+          if $count < 5 {
+            $to_add_mdm_count = 2 - count($to_keep_mdm)
+          } else {
+            $to_add_mdm_count = 3 - count($to_keep_mdm)
+          }
         }
-        if ! $ips_array {
-          fail("Only configuration cluster_3 and cluster_5 are supported, actualy ${count}")
-        }
+        $mdm_available = difference($ips_array_, intersection($ips_array_, $to_keep_mdm))
+        if $to_add_mdm_count > 0 and count($mdm_available) >= $to_add_mdm_count {
+          $last_mdm_index = $to_add_mdm_count - 1
+          $ips_array = concat($to_keep_mdm, values_at($mdm_available, "0-${last_mdm_index}"))
+        } else {
+          $ips_array = $to_keep_mdm
+        }                  
       }
       'gateway': {
+        $ips_array = $ips_array_
+      }
+      'controller': {
         $ips_array = $ips_array_
       }
       default: {
@@ -142,7 +170,7 @@ if $scaleio['metadata']['enabled'] {
       #TODO: add check devices sizes
     }
     notify{'Deploy new ScaleIO cluster': }
-    environment{['mdm', 'tb', 'gateway']: } ->
+    environment{['mdm', 'tb', 'gateway', 'controller']: } ->
     env_fact{'Environment fact: role gateway, user: admin':
       role => 'gateway',
       fact => 'user',

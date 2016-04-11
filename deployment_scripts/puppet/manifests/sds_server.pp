@@ -14,7 +14,7 @@ $scaleio = hiera('scaleio')
 if $scaleio['metadata']['enabled'] {
   if ! $scaleio['existing_cluster'] {
     $node_ips = split($::ip_address_array, ',')
-    if empty(intersection(split($::mdm_ips, ','), $node_ips)) {
+    if empty(intersection(split($::controller_ips, ','), $node_ips)) {
       #it is supposed that task is run on compute
       $is_sds_server = true
     } else {

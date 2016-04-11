@@ -175,22 +175,23 @@ if $scaleio['metadata']['enabled'] {
           }
         }
         if $::current_slave_ips or $::current_tb_ips {
+          $controllers = split($::controller_ips, ',')
           if $::current_slave_ips {
             $cur_slaves = split($::current_slave_ips, ',')
-            $slaves_absent = difference($cur_slaves, intersection($cur_slaves, $mdm_ip_array))
+            $slaves_absent = difference($cur_slaves, intersection($cur_slaves, $controllers))
           } else {
             $slaves_absent = []
           }
           if $::current_tb_ips {
             $cur_tbs = split($::current_tb_ips, ',')
-            $tb_absent = difference($cur_tbs, intersection($cur_tbs, $tb_ip_array))
+            $tb_absent = difference($cur_tbs, intersection($cur_tbs, $controllers))
           } else {
             $tb_absent = []
           }
           #set cluster mode 1 to reconfigure cluster
           #new mode will be set below after adding new mdm and tb
           notify {"Resize cluster current mdms '${::current_slave_ips}', tbs '${::current_tb_ips}'": } ->
-          notify {"Resize cluster new mdms '${::mdm_ips}', tbs '${::tb_ips}'": } ->
+          notify {"Resize cluster new mdms '${::mdm_ips}', tbs '${::tb_ips}', controllers ${::controller_ips}": } ->
           notify {"Resize cluster remove mdms '${slaves_absent}', tbs '${tb_absent}'": }
           if count($slaves_absent) > 0 or count($tb_absent) > 0 {
             $to_remove_mdms = concat($slaves_absent, $tb_absent)

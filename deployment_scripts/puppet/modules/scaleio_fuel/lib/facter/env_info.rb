@@ -3,7 +3,7 @@ require 'facter'
 require 'json'
 
 base_cmd = "bash -c 'source /etc/environment; echo $FACTER_%s'"
-facters = ['tb_ips', 'mdm_ips', 'gateway_user', 'gateway_port', 'gateway_ips', 'gateway_password', 'mdm_password', 'storage_pools']
+facters = ['controller_ips', 'tb_ips', 'mdm_ips', 'gateway_user', 'gateway_port', 'gateway_ips', 'gateway_password', 'mdm_password', 'storage_pools']
 facters.each { |f|
   if ! Facter.value(f)
     Facter.add(f) do
@@ -48,7 +48,7 @@ cluster_components = {
 cluster_components.each do |name, selector|
   Facter.add(name) do
     setcode do
-      mdm_ips = Facter.value(:mdm_ips)
+      mdm_ips = Facter.value(:controller_ips)
       if mdm_ips && mdm_ips != ''
         mdm_opts = []
         mdm_ips.split(',').each do |ip|
