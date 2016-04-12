@@ -15,7 +15,7 @@
   type: group
   role: [primary-controller, controller]
   tasks: [hiera, globals, tools, logging, netconfig, hosts, deploy_start]
-  required_for: [deploy_end, cluster]
+  required_for: [deploy_end]
   requires: [deploy_start, scaleio-storage]
   parameters:
     strategy:
@@ -24,7 +24,7 @@
 - id: scaleio-client-compute
   type: group
   role: [compute]
-  tasks: []
+  tasks: [configure_default_route, dns-client, ntp-client]
   required_for: [post_deployment_end]
   requires: [post_deployment_start]
   parameters:
@@ -34,7 +34,7 @@
 - id: scaleio-client-cinder
   type: group
   role: [cinder]
-  tasks: []
+  tasks: [configure_default_route, dns-client, ntp-client]
   required_for: [post_deployment_end]
   requires: [post_deployment_start]
   parameters:
@@ -47,6 +47,8 @@
 ##############################################################################      
 - id: scaleio-environment
   groups: [scaleio-cluster, scaleio-storage, scaleio-client-compute, scaleio-client-cinder]
+  required_for: [deploy_end]
+  requires: [deploy_start, hosts]  
   type: puppet
   parameters:
     puppet_manifest: puppet/manifests/environment.pp
@@ -55,6 +57,7 @@
 
 - id: scaleio-environment-existing-mdm-ips
   groups: [scaleio-cluster, scaleio-storage, scaleio-client-compute, scaleio-client-cinder]
+  required_for: [deploy_end]
   requires: [scaleio-environment]
   type: puppet
   parameters:
@@ -68,6 +71,7 @@
 ##############################################################################
 - id: scaleio-sds-server
   groups: [scaleio-storage]
+  required_for: [deploy_end]
   requires: [scaleio-environment-existing-mdm-ips]
   type: puppet
   parameters:
@@ -81,6 +85,7 @@
 ##############################################################################
 - id: scaleio-mdm-server
   groups: [scaleio-cluster]
+  required_for: [deploy_end]
   requires: [scaleio-environment-existing-mdm-ips]
   type: puppet
   parameters:
@@ -90,6 +95,7 @@
 
 - id: scaleio-gateway-server
   groups: [scaleio-cluster]
+  required_for: [deploy_end]
   requires: [scaleio-mdm-server]
   type: puppet
   parameters:
@@ -99,6 +105,7 @@
 
 - id: scaleio-configure-cluster
   groups: [scaleio-cluster]
+  required_for: [deploy_end]
   requires: [scaleio-gateway-server]
   type: puppet
   parameters:
@@ -112,7 +119,8 @@
 ##############################################################################
 - id: scaleio-sdc-server
   groups: [scaleio-client-compute, scaleio-client-cinder]
-  requires: [scaleio-environment-existing-mdm-ips]
+  required_for: [post_deployment_end]
+  requires: [post_deployment_start]
   type: puppet
   parameters:
     puppet_manifest: puppet/manifests/sdc_server.pp
@@ -121,6 +129,7 @@
 
 - id: scaleio-sdc
   groups: [scaleio-client-compute, scaleio-client-cinder]
+  required_for: [post_deployment_end]
   requires: [scaleio-sdc-server]
   type: puppet
   parameters:
@@ -130,6 +139,7 @@
 
 - id: scaleio-compute
   groups: [scaleio-client-compute]
+  required_for: [post_deployment_end]
   requires: [scaleio-sdc]
   type: puppet
   parameters:
@@ -139,6 +149,7 @@
 
 - id: scaleio-cinder
   groups: [scaleio-client-cinder]
+  required_for: [post_deployment_end]
   requires: [scaleio-sdc]
   type: puppet
   parameters:

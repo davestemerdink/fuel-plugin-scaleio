@@ -157,7 +157,7 @@ if $scaleio['metadata']['enabled'] {
     if $total_sds_count < 3 {
       fail('There should be at least 3 nodes with SDSs, either add Compute node or use Controllers as SDS.')
     }
-    if empty(filter_nodes($nodes, 'role', 'cinder')) {
+    if empty(filter_nodes($all_nodes, 'role', 'cinder')) {
       fail("There should be at least 1 node with Cinder role")
     }
 #    #TODO: add check devices sizes for storage roles
