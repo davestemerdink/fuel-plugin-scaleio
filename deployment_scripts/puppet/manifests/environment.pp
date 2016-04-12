@@ -13,50 +13,72 @@ define environment() {
   $fuel_version = hiera('fuel_version')
   $all_nodes = hiera('nodes')
   $role = $name
-  $nodes = $fuel_version ? {
-    /(6\.1|7\.0)/   => concat(filter_nodes($all_nodes, 'role', 'primary-controller'), filter_nodes($all_nodes, 'role', 'controller')),
-    default         => filter_nodes($all_nodes, 'role', "scaleio-${role}"),
+  $nodes = concat(filter_nodes($all_nodes, 'role', 'primary-controller'), filter_nodes($all_nodes, 'role', 'controller'))
+  #use management network for ScaleIO components communications
+  $hashes = nodes_to_hash($nodes, 'name', 'internal_address')
+  $ips_array_ = ipsort(values($hashes))
+  $master_mdm = $::current_master_mdm_ip ? {
+    undef   => $ips_array_[0],
+    default => $::current_master_mdm_ip
   }
-  $hashes         = nodes_to_hash($nodes, 'name', 'storage_address')
-  $ips_array_      = ipsort(values($hashes))
-  if $fuel_version == '6.1' or $fuel_version == '7.0' {
-    $count = count(keys($hashes))
-    case $role {
-      'tb': {
-        $ips_array = $count ? {
-          0       => undef,
-          1       => [],
-          2       => [],
-          3       => values_at($ips_array_, 2),
-          4       => values_at($ips_array_, 2),
-          default => values_at($ips_array_, ['3-4']),
-        }
-        if ! $ips_array {
-          fail("Only configuration cluster_3 and cluster_5 are supported, actualy ${count}")
-        }
-      }
-      'mdm': {
-        $ips_array = $count ? {
-          0       => undef,
-          1       => $ips_array_,
-          2       => values_at($ips_array_, 0),
-          3       => values_at($ips_array_, ['0-1']),
-          4       => values_at($ips_array_, ['0-1']),
-          default => values_at($ips_array_, ['0-2']),
-        }
-        if ! $ips_array {
-          fail("Only configuration cluster_3 and cluster_5 are supported, actualy ${count}")
+  $cur_slave_mdms = $::current_slave_ips ? {
+    undef   => [],
+    default => split($::current_slave_ips, ',')
+  }
+  $cur_tb_mdms = $::current_tb_ips ? {
+    undef   => [],
+    default => split($::current_tb_ips, ',')
+  }
+  $count = count(keys($hashes))
+  case $role {
+    'tb': {
+      $to_keep_tb = intersection($ips_array_, $cur_tb_mdms)
+      if $count < 3 {
+        $to_add_tb_count = 0
+      } else {
+        if $count < 5 {
+          $to_add_tb_count = 1 - count($to_keep_tb)
+        } else {
+          $to_add_tb_count = 2 - count($to_keep_tb)
         }
       }
-      'gateway': {
-        $ips_array = $ips_array_
-      }
-      default: {
-        fail("Unsupported role ${role}")
-      }
+      $tb_available = delete(difference($ips_array_, intersection($ips_array_, $cur_slave_mdms)), $master_mdm)
+      if $to_add_tb_count > 0 and count($tb_available) >= $to_add_tb_count {
+        $last_tb_index = count($tb_available) - 1
+        $first_tb_index = $last_tb_index - $to_add_tb_count + 1
+        $ips_array = concat($to_keep_tb, values_at($tb_available, "${first_tb_index}-${last_tb_index}"))
+      } else {
+        $ips_array = $to_keep_tb
+      }                  
     }
-  } else {
-    $ips_array = $ips_array_
+    'mdm': {
+      $to_keep_mdm = concat([$master_mdm], intersection($ips_array_, $cur_slave_mdms))
+      if $count < 3 {
+        $to_add_mdm_count = 1 - count($to_keep_mdm)
+      } else {
+        if $count < 5 {
+          $to_add_mdm_count = 2 - count($to_keep_mdm)
+        } else {
+          $to_add_mdm_count = 3 - count($to_keep_mdm)
+        }
+      }
+      $mdm_available = difference($ips_array_, intersection($ips_array_, $to_keep_mdm))
+      if $to_add_mdm_count > 0 and count($mdm_available) >= $to_add_mdm_count {
+        $last_mdm_index = $to_add_mdm_count - 1
+        $ips_array = concat($to_keep_mdm, values_at($mdm_available, "0-${last_mdm_index}"))
+      } else {
+        $ips_array = $to_keep_mdm
+      }                  
+    }
+    'gateway': {
+      $ips_array = $ips_array_
+    }
+    'controller': {
+      $ips_array = $ips_array_
+    }
+    default: {
+      fail("Unsupported role ${role}")
+    }
   }
   $ips = join($ips_array, ',')
   env_fact {"Environment fact: ${role}, nodes: ${nodes}, ips: ${ips}":
@@ -131,17 +153,18 @@ if $scaleio['metadata']['enabled'] {
       true    => count(concat(filter_nodes($all_nodes, 'role', 'primary-controller'), filter_nodes($all_nodes, 'role', 'controller'))),
       default => 0  
     }
-    $total_sds_count = count(filter_nodes($all_nodes, 'role', 'compute')) + $controller_sds_count
+    $total_sds_count = count(filter_nodes($all_nodes, 'role', 'compute')) + count(filter_nodes($all_nodes, 'role', 'scaleio-storage')) + $controller_sds_count
     if $total_sds_count < 3 {
       fail('There should be at least 3 nodes with SDSs, either add Compute node or use Controllers as SDS.')
     }
-    $nodes = filter_nodes($all_nodes, 'name', $::hostname)
-    if ! empty(filter_nodes($nodes, 'role', 'cinder')) {
-      notify {"Ensure devices size are greater than 100GB for Cinder Node ${::hostname}": }
-      #TODO: add check devices sizes
+    if empty(filter_nodes($nodes, 'role', 'cinder')) {
+      fail("There should be at least 1 node with Cinder role")
     }
+#    #TODO: add check devices sizes for storage roles
+#    $nodes = filter_nodes($all_nodes, 'name', $::hostname)
+#    notify {"Ensure devices size are greater than 100GB for Cinder Node ${::hostname}": }
     notify{'Deploy new ScaleIO cluster': }
-    environment{['mdm', 'tb', 'gateway']: } ->
+    environment{['mdm', 'tb', 'gateway', 'controller']: } ->
     env_fact{'Environment fact: role gateway, user: admin':
       role => 'gateway',
       fact => 'user',

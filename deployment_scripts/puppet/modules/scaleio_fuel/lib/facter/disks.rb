@@ -9,6 +9,10 @@ Facter.add('sds_storage_devices') do
       part_number = Facter::Util::Resolution.exec("partx -s %s -oTYPE,NR | awk '/%s/ {print($2)}'" % [disk_path, scaleio_sds_disk_guid])
       parts.push("%s%s" % [disk_path, part_number]) unless !part_number
     end
-    parts.join(',')
+    if parts.count() > 0
+      parts.join(',')
+    else
+      nil
+    end
   end
 end

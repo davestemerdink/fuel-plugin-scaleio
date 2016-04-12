@@ -81,7 +81,7 @@ attributes:
     type: "text"
     value: "default"
     label: "Storage pools"
-    description: "Coma separated list for splitting devices between them, it could be just one element if all devices are belong to the one pool."
+    description: "Comma separated list for splitting devices between them, it could be just one element if all devices are belong to the one pool."
     weight: 80
     regex:
         source: '^\w+$'
@@ -105,11 +105,11 @@ attributes:
     type: "text"
     value: ""
     label: "Storage devices"
-    description: "Coma separated list of devices, e.g. /dev/sdb,/dev/sdc."
+    description: "Comma separated list of devices, e.g. /dev/sdb,/dev/sdc."
     weight: 100
     regex:
       source: '^(/dev/[a-zA-Z0-9:-_/]+){1}((,){1}(?=/dev/[a-zA-Z0-9:-_/]+))*'
-      error: 'List of path is incorrect. It is coma separated list aka /dev/sdb,/dev/sdc'
+      error: 'List of path is incorrect. It is comma separated list aka /dev/sdb,/dev/sdc'
     restrictions:
       - condition: "settings:scaleio.existing_cluster.value == true or cluster:fuel_version != '6.1'"
         action: hide

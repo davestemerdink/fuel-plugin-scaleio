@@ -4,8 +4,9 @@ $scaleio = hiera('scaleio')
 if $scaleio['metadata']['enabled'] {
   if ! $scaleio['existing_cluster'] {
     $node_ips = split($::ip_address_array, ',')
+    $new_mdm_ips = split($::mdm_ips, ',')
     $is_tb = ! empty(intersection(split($::tb_ips, ','), $node_ips))
-    $is_mdm = ! empty(intersection(split($::mdm_ips, ','), $node_ips))
+    $is_mdm = ! empty(intersection($new_mdm_ips, $node_ips))
     if $is_tb or $is_mdm {
       if $is_tb {
         $is_manager = 0
@@ -13,22 +14,20 @@ if $scaleio['metadata']['enabled'] {
         $master_ip = undef
       } else {
         $is_manager = 1
-        $mdm_ip_array = split($::mdm_ips, ',')
-        $master_ip_ = $mdm_ip_array[0]
-        if has_ip_address($master_ip_) {
-          $master_mdm_name = $master_ip_
-          $master_ip = $master_ip_
+        $is_new_cluster = ! $::current_master_mdm_ip or $::current_master_mdm_ip == ''
+        if $is_new_cluster and has_ip_address($new_mdm_ips[0]) {
+          $master_ip = $new_mdm_ips[0]
+          $master_mdm_name = $new_mdm_ips[0]
         } else {
-          $master_mdm_name = undef
           $master_ip = undef
+          $master_mdm_name = undef
         }
-        $env_password = $::mdm_password
-        $old_password = $env_password ? {
-          undef   => 'admin',
-          default => $env_password
-        }
-        $password = $scaleio['password']
       }
+      $old_password = $::mdm_password ? {
+        undef   => 'admin',
+        default => $::mdm_password
+      }
+      $password = $scaleio['password']
       notify {"Controller server is_manager=${is_manager} master_mdm_name=${master_mdm_name} master_ip=${master_ip}": } ->
       class {'scaleio::mdm_server':
         ensure                   => 'present',
@@ -36,16 +35,19 @@ if $scaleio['metadata']['enabled'] {
         master_mdm_name          => $master_mdm_name,
         mdm_ips                  => $master_ip,
       }
-      if $master_mdm_name and $old_password != $password {
-        scaleio::login {'First':
-          password => $old_password,
-          require  => Class['scaleio::mdm_server']
-        } ->
-        scaleio::cluster {'Set password':
-          password      => $old_password,
-          new_password  => $password,
-        } ->
-        file_line { "Append a FACTER_mdm_password line to /etc/environment":
+      if $old_password != $password {
+        if $master_mdm_name {
+          scaleio::login {'First':
+            password => $old_password,
+            require  => Class['scaleio::mdm_server']
+          } ->
+          scaleio::cluster {'Set password':
+            password      => $old_password,
+            new_password  => $password,
+            before        => File_line['Append a FACTER_mdm_password line to /etc/environment']
+          }
+        }
+        file_line {'Append a FACTER_mdm_password line to /etc/environment':
           ensure  => present,
           path    => '/etc/environment',
           match   => "^FACTER_mdm_password=",

@@ -15,11 +15,13 @@ if $scaleio['metadata']['enabled'] {
   if ! $scaleio['existing_cluster'] {      
     $fuel_version = hiera('fuel_version')
     if $fuel_version == '6.1' {
-      $is_sds_server = empty(intersection(split($::mdm_ips, ','), $node_ips)) or $scaleio['sds_on_controller']
+      #it is supposed that task is run on compute or controller
+      $node_ips = split($::ip_address_array, ',')
+      $is_sds_server = empty(intersection(split($::controller_ips, ','), $node_ips)) or $scaleio['sds_on_controller']
     } else {
       $all_nodes = hiera('nodes')
       $nodes = filter_nodes($all_nodes, 'name', $::hostname)
-      $is_sds_server = !empty(filter_nodes($nodes, 'role', 'scaleio-storage'))
+      $is_sds_server = ! empty(filter_nodes($nodes, 'role', 'scaleio-storage'))
     }
     if $is_sds_server {
       if $scaleio['device_paths'] {

@@ -50,7 +50,7 @@ It is recommended to install the ScaleIO GUI to easily access and manage the Sca
 Select Environment
 ------------------
 
-#. Create a new environment with the Fuel UI wizard. Select "Juno on Ubunu 14.04" from OpenStack Release dropdown list and continue until you finish with the wizard.
+#. Create a new environment with the Fuel UI wizard. From OpenStack Release dropdown list select “Juno on Ubunu 14.04” if you are using MOS 6.1 or “Kilo on Ubunu 14.04” for MOS 7.0 and continue until you finish with the wizard.
 
     .. image:: images/wizard.png
        :width: 80%
