@@ -4,7 +4,8 @@
 - id: scaleio-cluster
   type: group
   role: [primary-controller, controller]
-  required_for: [cluster]
+  tasks: [hiera, globals, tools, logging, netconfig, hosts, deploy_start]
+  required_for: [deploy_end, cluster]
   requires: [deploy_start]
   parameters:
     strategy:
@@ -13,6 +14,7 @@
 - id: scaleio-storage
   type: group
   role: [scaleio-storage]
+  tasks: [hiera, globals, tools, logging, netconfig, hosts, deploy_start]
   required_for: [deploy_end]
   requires: [deploy_start]
   parameters:
@@ -22,8 +24,9 @@
 - id: scaleio-client
   type: group
   role: [compute, cinder]
+  tasks: []
   required_for: [post_deployment_end]
-  requires: [post_deployment_start, scaleio-cluster]
+  requires: [post_deployment_start]
   parameters:
     strategy:
       type: one_by_one
@@ -73,7 +76,7 @@
     
 - id: scaleio-sds-server
   groups: [scaleio-storage]
-  requires: [scaleio-mdm-server]
+  requires: [scaleio-environment-existing-mdm-ips]
   type: puppet
   parameters:
     puppet_manifest: puppet/manifests/sds_server.pp
@@ -82,7 +85,7 @@
 
 - id: scaleio-sdc-server
   groups: [scaleio-client]
-  requires: [scaleio-mdm-server]
+  requires: [scaleio-environment-existing-mdm-ips]
   type: puppet
   parameters:
     puppet_manifest: puppet/manifests/sdc_server.pp
