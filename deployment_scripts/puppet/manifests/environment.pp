@@ -160,9 +160,15 @@ if $scaleio['metadata']['enabled'] {
     if empty(filter_nodes($all_nodes, 'role', 'cinder')) {
       fail("There should be at least 1 node with Cinder role")
     }
-#    #TODO: add check devices sizes for storage roles
-#    $nodes = filter_nodes($all_nodes, 'name', $::hostname)
-#    notify {"Ensure devices size are greater than 100GB for Cinder Node ${::hostname}": }
+    $nodes = filter_nodes($all_nodes, 'name', $::hostname)
+    if ! empty(concat(filter_nodes($nodes, 'role', 'controller'), filter_nodes($nodes, 'role', 'primary-controller'))) {
+      if $::memorysize_mb < 3000 {
+        fail("Controller node requires at least 3000MB but there is ${::memorysize_mb}")
+      }
+    }
+    if $::sds_storage_small_devices {
+      fail("Storage devices minimal size is 100GB. The following devices do not meet this requirement ${::sds_storage_small_devices}")      
+    }
     notify{'Deploy new ScaleIO cluster': }
     environment{['mdm', 'tb', 'gateway', 'controller']: } ->
     env_fact{'Environment fact: role gateway, user: admin':

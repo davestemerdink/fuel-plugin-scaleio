@@ -3,7 +3,7 @@ volumes:
     type: "partition"
     min_size:
       generator: "calc_gb_to_mb"
-      generator_args: [100]
+      generator_args: [96]
     label: "ScaleIO storage"
     name: "ScaleIO"
     mount: "none"

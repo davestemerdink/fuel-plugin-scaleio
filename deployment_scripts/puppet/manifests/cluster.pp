@@ -131,7 +131,7 @@ if $scaleio['metadata']['enabled'] {
         $cinder_nodes = filter_nodes($all_nodes, 'role', 'cinder')   
         $sdc_nodes =concat($compute_nodes, $cinder_nodes)
         $paths = $scaleio['device_paths'] ? {
-          undef   => $::sds_storage_devices,
+          undef   => split($::sds_storage_devices, ','),
           default => split($scaleio['device_paths'], ',')
         }
         if $paths and $pools {
