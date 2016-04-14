@@ -52,24 +52,26 @@
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 1800
 
+
 ##############################################################################
 # ScaleIO cluster configuration tasks
 ##############################################################################
-- role: ['primary-controller', 'controller']
+- role: ['cinder', 'compute']
   stage: post_deployment/2150
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/sdc.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
+    timeout: 1800
+
+- role: ['primary-controller', 'controller']
+  stage: post_deployment/2200
   type: puppet
   parameters:
     puppet_manifest: puppet/manifests/cluster.pp
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 1800
 
-- role: ['cinder', 'compute']
-  stage: post_deployment/2200
-  type: puppet
-  parameters:
-    puppet_manifest: puppet/manifests/sdc.pp
-    puppet_modules: puppet/modules:/etc/puppet/modules
-    timeout: 1800
 
 ##############################################################################
 # Openstack components (Cinder, Nova) configuration tasks
