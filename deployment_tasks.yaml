@@ -1,9 +1,19 @@
 ##############################################################################
 # ScaleIO task groups
 ##############################################################################      
-- id: scaleio-storage
+- id: scaleio-storage-tier1
   type: group
-  role: [scaleio-storage]
+  role: [scaleio-storage-tier1]
+  tasks: [hiera, globals, tools, logging, netconfig, hosts, firewall, deploy_start]
+  required_for: [deploy_end, primary-controller, controller]
+  requires: [deploy_start]
+  parameters:
+    strategy:
+      type: one_by_one
+
+- id: scaleio-storage-tier2
+  type: group
+  role: [scaleio-storage-tier2]
   tasks: [hiera, globals, tools, logging, netconfig, hosts, firewall, deploy_start]
   required_for: [deploy_end, primary-controller, controller]
   requires: [deploy_start]
@@ -16,7 +26,7 @@
 # ScaleIO prerequisites tasks
 ##############################################################################      
 - id: scaleio-environment
-  groups: [scaleio-storage, primary-controller, controller, compute, cinder]
+  groups: [scaleio-storage-tier1, scaleio-storage-tier2, primary-controller, controller, compute, cinder]
   required_for: [deploy_end, hosts]
   requires: [deploy_start, netconfig]
   type: puppet
@@ -28,7 +38,7 @@
     - deploy_changes
     
 - id: scaleio-environment-existing-mdm-ips
-  groups: [scaleio-storage, primary-controller, controller, compute, cinder]
+  groups: [scaleio-storage-tier1, scaleio-storage-tier2, primary-controller, controller, compute, cinder]
   required_for: [deploy_end]
   requires: [scaleio-environment]
   type: puppet
@@ -44,7 +54,7 @@
 # ScaleIO storage installation tasks
 ##############################################################################
 - id: scaleio-sds-server
-  groups: [scaleio-storage]
+  groups: [scaleio-storage-tier1, scaleio-storage-tier2]
   required_for: [deploy_end]
   requires: [scaleio-environment-existing-mdm-ips, firewall]
   type: puppet

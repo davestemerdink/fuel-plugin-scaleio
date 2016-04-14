@@ -102,6 +102,17 @@ if $scaleio['metadata']['enabled'] {
         default => $::current_master_mdm_ip
       }
       if has_ip_address($master_mdm) {
+        $all_nodes = hiera('nodes')
+        $compute_nodes  = filter_nodes($all_nodes, 'role', 'compute')   
+        if $scaleio['sds_on_controller'] {    
+          $controller_nodes  = filter_nodes($all_nodes, 'role', 'controller')   
+          $pr_controller_nodes = filter_nodes($all_nodes, 'role', 'primary-controller')   
+          $sds_nodes = concat(concat($pr_controller_nodes, $controller_nodes), $compute_nodes)
+        } else {    
+          $sds_nodes = $compute_nodes   
+        }
+        $cinder_nodes = filter_nodes($all_nodes, 'role', 'cinder')   
+        $sdc_nodes =concat($compute_nodes, $cinder_nodes)
         $standby_mdm_count = count($mdm_ip_array) - 1
         if $standby_mdm_count == 0 {
           $standby_ips = []
@@ -114,25 +125,48 @@ if $scaleio['metadata']['enabled'] {
         }
         $cluster_mode = count($mdm_ip_array) + count($tb_ip_array)
         $password = $scaleio['password']
-        $protection_domain = $scaleio['protection_domain']
-        $pools = $scaleio['storage_pools'] ? {
-          undef   => undef,
-          default => split($scaleio['storage_pools'], ',')
+        $protection_domain = $scaleio['protection_domain']        
+        $tier1_devices = split($::sds_storage_devices_tier1, ',')
+        $tier2_devices = split($::sds_storage_devices_tier2, ',')
+        if $scaleio['device_paths'] {
+          # for fuel6.1 devices come from settings
+          $paths_ = split($scaleio['device_paths'], ',')
+          $paths = count($paths_) > 0 ? {
+            true    => $paths_,
+            default => undef
+          }
+        } else {
+          # for fuel 7.0 devices come from facter (search partition by guid)
+          $tier12_paths = concat($tier1_devices, $tier2_devices)
+          $paths = count(tier12_paths) > 0 ? {
+            true    => tier12_paths,
+            default => undef
+          }
         }
-        $all_nodes = hiera('nodes')
-        $compute_nodes  = filter_nodes($all_nodes, 'role', 'compute')		
-        if $scaleio['sds_on_controller'] {		
-          $controller_nodes  = filter_nodes($all_nodes, 'role', 'controller')		
-          $pr_controller_nodes = filter_nodes($all_nodes, 'role', 'primary-controller')		
-          $sds_nodes = concat(concat($pr_controller_nodes, $controller_nodes), $compute_nodes)
-        } else {		
-          $sds_nodes = $compute_nodes		
-        }
-        $cinder_nodes = filter_nodes($all_nodes, 'role', 'cinder')   
-        $sdc_nodes =concat($compute_nodes, $cinder_nodes)
-        $paths = $scaleio['device_paths'] ? {
-          undef   => split($::sds_storage_devices, ','),
-          default => split($scaleio['device_paths'], ',')
+        if $scaleio['storage_pools'] {
+          # for fuel6.1 storage pools come from settings
+          $pools_ = split($scaleio['storage_pools'], ',')
+          $pools = count($pools_) > 0 ? {
+            true    => $pools_,
+            default => undef
+          }
+        } else {  
+          # for fuel 7.0 storage pools are generated for two storage tier2
+          $tier1_devices_str = joint($tier1_devices, ',')
+          $storage_pools_tier1 = count($tier1_devices) > 0 ? {
+            false   => [],
+            default => join(values(hash(split(regsubst("${tier1_devices_str},", ',', ",sp_tier1,", 'G'), ','))), ',')
+          }  
+          $tier2_devices_str = joint($tier2_devices, ',')
+          $storage_pools_tier2 = count($tier2_devices) > 0 ? {
+            false   => [],
+            default => join(values(hash(split(regsubst("${tier2_devices_str},", ',', ",sp_tier2,", 'G'), ','))), ',')
+          }
+          $tier12_pools = concat($storage_pools_tier1, $storage_pools_tier2)
+          $pools = count($tier12_pools) > 0 ? {
+            false   => undef,
+            default => $tier12_pools
+          }
         }
         if $paths and $pools {
           $device_paths = join($paths, ',')

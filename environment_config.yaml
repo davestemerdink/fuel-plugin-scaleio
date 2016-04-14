@@ -88,8 +88,6 @@ attributes:
       source: '^(\w+){1}((,){1}(?=\w+))*'
       error: "Can contain characters, numbers and underlines"
     restrictions:
-      - condition: "settings:scaleio.existing_cluster.value == true"
-        action: hide
       - condition: "settings:scaleio.existing_cluster.value == true or cluster:fuel_version != '6.1'"
         action: hide
 
