@@ -75,7 +75,8 @@ attributes:
     description: "Name of protection domain."
     weight: 70
     regex:
-        source: '^\w+$'
+      source: '^(\w+){1}((,){1}(?=\w+))*'
+      error: "Can contain characters, numbers and underlines"
 
   storage_pools:
     type: "text"
@@ -84,9 +85,12 @@ attributes:
     description: "Comma separated list for splitting devices between them, it could be just one element if all devices are belong to the one pool."
     weight: 80
     regex:
-        source: '^\w+$'
+      source: '^(\w+){1}((,){1}(?=\w+))*'
+      error: "Can contain characters, numbers and underlines"
     restrictions:
       - condition: "settings:scaleio.existing_cluster.value == true"
+        action: hide
+      - condition: "settings:scaleio.existing_cluster.value == true or cluster:fuel_version != '6.1'"
         action: hide
 
   existing_storage_pools:
@@ -96,7 +100,8 @@ attributes:
     description: "Storage pools which are allowed to be used in new Cloud."
     weight: 90
     regex:
-        source: '^\w+$'
+      source: '^(\w+){1}((,){1}(?=\w+))*'
+      error: "Can contain characters, numbers and underlines"
     restrictions:
       - condition: "settings:scaleio.existing_cluster.value == false"
         action: hide
