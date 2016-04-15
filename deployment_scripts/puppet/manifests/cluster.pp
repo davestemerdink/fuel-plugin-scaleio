@@ -1,4 +1,4 @@
-# The puppet configures ScaleIO cluster - adds MDMs, SDSs, sets up
+$standby_ips# The puppet configures ScaleIO cluster - adds MDMs, SDSs, sets up
 # Protection domains and Storage Pools.
 
 #Helpers for array processing
@@ -34,12 +34,13 @@ define storage_pool_ensure($protection_domain) {
 }
 
 define sds_device(
+  $sds_nodes,
   $protection_domain,
   $storage_pools,
   $device_paths,
 ) {
-  $sds_node = $title
-  $sds_name = $sds_node['name']
+  $sds_name = $title
+  $sds_node = filter_nodes($sds_nodes, 'name', $sds_name)[0]
   #ips for data path traffic
   $storage_ips      = $sds_node['storage_address']
   $storage_ip_roles = 'sdc_only'
@@ -103,14 +104,17 @@ if $scaleio['metadata']['enabled'] {
       }
       if has_ip_address($master_mdm) {
         $all_nodes = hiera('nodes')
-        $compute_nodes  = filter_nodes($all_nodes, 'role', 'compute')   
+        $compute_nodes = filter_nodes($all_nodes, 'role', 'compute')
+        $storage_nodes = concat(filter_nodes($all_nodes, 'role', 'scaleio-storage'), $compute_nodes)
         if $scaleio['sds_on_controller'] {    
           $controller_nodes  = filter_nodes($all_nodes, 'role', 'controller')   
-          $pr_controller_nodes = filter_nodes($all_nodes, 'role', 'primary-controller')   
-          $sds_nodes = concat(concat($pr_controller_nodes, $controller_nodes), $compute_nodes)
+          $pr_controller_nodes = filter_nodes($all_nodes, 'role', 'primary-controller')
+          $sds_nodes = concat(concat($pr_controller_nodes, $controller_nodes), $storage_nodes)
         } else {    
-          $sds_nodes = $compute_nodes   
+          $sds_nodes = $storage_nodes
         }
+        $sds_nodes_names = keys(nodes_to_hash($sds_nodes, 'name', 'internal_address'))
+        $sds_nodes_count = count($sds_nodes_names)
         $cinder_nodes = filter_nodes($all_nodes, 'role', 'cinder')   
         $sdc_nodes =concat($compute_nodes, $cinder_nodes)
         $standby_mdm_count = count($mdm_ip_array) - 1
@@ -125,7 +129,11 @@ if $scaleio['metadata']['enabled'] {
         }
         $cluster_mode = count($mdm_ip_array) + count($tb_ip_array)
         $password = $scaleio['password']
-        $protection_domain = $scaleio['protection_domain']        
+        $protection_domain_number = 1 + $sds_nodes_count / $scaleio['protection_domain_nodes']
+        $protection_domain =  $protection_domain_number ? {
+          1       => $scaleio['protection_domain'],
+          default => "${scaleio['protection_domain']}_${protection_domain_number}"
+        }
         $tier1_devices = split($::sds_storage_devices_tier1, ',')
         $tier2_devices = split($::sds_storage_devices_tier2, ',')
         if $scaleio['device_paths'] {
@@ -198,27 +206,32 @@ if $scaleio['metadata']['enabled'] {
         }
         if $::scaleio_current_sds_list {
           $current_sds_names = split($::scaleio_current_sds_list, ',')
-          $new_sds_names = keys(nodes_to_hash($sds_nodes, 'name', 'internal_address'))
-          $to_remove_sds = difference($current_sds_names, intersection($current_sds_names, $new_sds_names))
+          $to_keep_sds = intersection($current_sds_names, $sds_nodes_names)
+          $to_remove_sds = difference($current_sds_names, $to_keep_sds)
+          $to_add_sds_names = difference($new_sds_names, $to_keep_sds)
           notify {"Resize cluster current sds-es '${::scaleio_current_sds_list}'": } ->
-          notify {"Resize cluster new sds-es '${new_sds_names}'": } ->
+          notify {"Resize cluster new sds-es '${sds_nodes_names}'": } ->
           notify {"Resize cluster remove sds-es '${to_remove_sds}'": } ->
           cleanup_sds {$to_remove_sds:
             require             => Scaleio::Login['Normal'],
             before              => Mdm_standby[$standby_ips],           
           }
+        } else {
+          $to_add_sds_names = $sds_nodes_names
         }
         if $::current_slave_ips or $::current_tb_ips {
           $controllers = split($::controller_ips, ',')
           if $::current_slave_ips {
             $cur_slaves = split($::current_slave_ips, ',')
-            $slaves_absent = difference($cur_slaves, intersection($cur_slaves, $controllers))
+            $to_keep_slaves = intersection($cur_slaves, $controllers)
+            $slaves_absent = difference($cur_slaves, $to_keep_slaves)
           } else {
             $slaves_absent = []
           }
           if $::current_tb_ips {
             $cur_tbs = split($::current_tb_ips, ',')
-            $tb_absent = difference($cur_tbs, intersection($cur_tbs, $controllers))
+            $to_keep_tb = intersection($cur_tbs, $controllers)
+            $tb_absent = difference($cur_tbs, $to_keep_tb)
           } else {
             $tb_absent = []
           }
@@ -253,7 +266,8 @@ if $scaleio['metadata']['enabled'] {
         } ->
         scaleio::protection_domain {"Ensure protection domain ${protection_domain}": name => $protection_domain } ->
         storage_pool_ensure {$pools: protection_domain => $protection_domain } ->
-        sds_device {$sds_nodes:		
+        sds_device {$to_add_sds_names:
+            sds_nodes         => $sds_nodes,		
             protection_domain => $protection_domain,		
             storage_pools     => $device_storage_pools,		
             device_paths      => $device_paths,		
