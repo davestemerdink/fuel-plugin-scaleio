@@ -1,4 +1,4 @@
-$standby_ips# The puppet configures ScaleIO cluster - adds MDMs, SDSs, sets up
+# The puppet configures ScaleIO cluster - adds MDMs, SDSs, sets up
 # Protection domains and Storage Pools.
 
 #Helpers for array processing
@@ -117,6 +117,7 @@ if $scaleio['metadata']['enabled'] {
         $sds_nodes_count = count($sds_nodes_names)
         $cinder_nodes = filter_nodes($all_nodes, 'role', 'cinder')   
         $sdc_nodes =concat($compute_nodes, $cinder_nodes)
+        $sdc_nodes_ips = values(nodes_to_hash($sdc_nodes, 'name', 'internal_address'))
         $standby_mdm_count = count($mdm_ip_array) - 1
         if $standby_mdm_count == 0 {
           $standby_ips = []
@@ -194,15 +195,22 @@ if $scaleio['metadata']['enabled'] {
         scaleio::login {'Normal': password => $password }
         if $::scaleio_current_sdc_list {
           $current_sdc_ips = split($::scaleio_current_sdc_list, ',')
-          $new_sdc_ips = values(nodes_to_hash($sdc_nodes, 'name', 'internal_address'))
-          $to_remove_sdc = difference($current_sdc_ips, intersection($current_sdc_ips, $new_sdc_ips))
+          $to_keep_sdc = intersection($current_sdc_ips, $sdc_nodes_ips)
+          $to_remove_sdc = difference($current_sdc_ips, $to_keep_sdc)
+          $to_add_sdc_ips = difference($sdc_nodes_ips, $to_keep_sdc)
+          # todo: not clear is it safe: actually task sdc is run before cluster task,
+          # so there to_add_sdc_ips is always empty, because all SDCs
+          # are already registered in cluster and are returned from facter scaleio_current_sdc_list
           notify {"Resize cluster current sdc-es '${::current_sdc_ips}'": } ->
-          notify {"Resize cluster new sdc-es '${new_sdc_ips}'": } ->
+          notify {"Resize cluster new sdc-es '${to_add_sdc_ips}'": } ->
           notify {"Resize cluster remove sdc-es '${to_remove_sdc}'": } ->
           cleanup_sdc {$to_remove_sdc:
             require             => Scaleio::Login['Normal'],
             before              => Mdm_standby[$standby_ips],           
           }
+        } else {
+          $to_add_sdc_ips = $sdc_nodes_ips
+          notify {"No resize cluster, new sdc-es '${to_add_sdc_ips}'": }
         }
         if $::scaleio_current_sds_list {
           $current_sds_names = split($::scaleio_current_sds_list, ',')
@@ -271,6 +279,14 @@ if $scaleio['metadata']['enabled'] {
             protection_domain => $protection_domain,		
             storage_pools     => $device_storage_pools,		
             device_paths      => $device_paths,		
+        }
+        # Apply high performance profile to SDC-es
+        # Use first sdc ip because underlined puppet uses all_sdc parameters
+        if count($sdc_nodes_ips) > 0 {
+          scaleio::sdc {'Set performance settings for all available SDCs':
+            ip                => $sdc_nodes_ips[0],
+            require           => Sds_device[$sds_nodes],
+          }  
         }
       } else {
         notify {"Not Master MDM IP ${master_mdm}": }
