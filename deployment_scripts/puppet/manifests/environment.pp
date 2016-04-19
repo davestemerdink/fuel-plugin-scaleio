@@ -10,82 +10,72 @@ define env_fact($role, $fact, $value) {
 }
 
 define environment() {
-  $fuel_version = hiera('fuel_version')
   $all_nodes = hiera('nodes')
   $role = $name
-  $nodes = $fuel_version ? {
-    /(6\.1|7\.0)/   => concat(filter_nodes($all_nodes, 'role', 'primary-controller'), filter_nodes($all_nodes, 'role', 'controller')),
-    default         => filter_nodes($all_nodes, 'role', "scaleio-${role}"),
-  }
+  $nodes = concat(filter_nodes($all_nodes, 'role', 'primary-controller'), filter_nodes($all_nodes, 'role', 'controller'))
   #use management network for ScaleIO components communications
-  $hashes         = nodes_to_hash($nodes, 'name', 'internal_address')
-  $ips_array_      = ipsort(values($hashes))
-  $master_mdm = $::current_master_mdm_ip ? {
-    undef   => $ips_array_[0],
-    default => $::current_master_mdm_ip
-  }
-  $cur_slave_mdms = $::current_slave_ips ? {
+  $hashes = nodes_to_hash($nodes, 'name', 'internal_address')
+  $ips_array_ = ipsort(values($hashes))
+  $count = count($ips_array_)
+  $cur_mdms = $::scaleio_mdm_ips ? {
     undef   => [],
-    default => split($::current_slave_ips, ',')
+    default => split($::scaleio_mdm_ips, ',')
   }
-  $cur_tb_mdms = $::current_tb_ips ? {
+  $cur_tb_mdms = $::scaleio_tb_ips ? {
     undef   => [],
-    default => split($::current_tb_ips, ',')
+    default => split($::scaleio_tb_ips, ',')
   }
-  if $fuel_version == '6.1' or $fuel_version == '7.0' {
-    $count = count(keys($hashes))
-    case $role {
-      'tb': {
-        $to_keep_tb = intersection($ips_array_, $cur_tb_mdms)
-        if $count < 3 {
-          $to_add_tb_count = 0
+  $to_keep_mdm = intersection($cur_mdms, $ips_array_)
+  $to_keep_tb = intersection($cur_tb_mdms, $ips_array_)
+  $to_keep_nodes = concat(intersection($cur_mdms, $ips_array_), $to_keep_tb) # don't use $to_keep_mdm here because
+                                                                             # concat changes first array
+  $available_nodes = difference($ips_array_, intersection($ips_array_, $to_keep_nodes))
+  $available_nodes_count = count($available_nodes)
+  case $role {
+    'tb': {
+      if $count < 3 {
+        $to_add_tb_count = 0
+      } else {
+        if $count < 5 {
+          $to_add_tb_count = 1 - count($to_keep_tb)
         } else {
-          if $count < 5 {
-            $to_add_tb_count = 1 - count($to_keep_tb)
-          } else {
-            $to_add_tb_count = 2 - count($to_keep_tb)
-          }
+          $to_add_tb_count = 2 - count($to_keep_tb)
         }
-        $tb_available = delete(difference($ips_array_, intersection($ips_array_, $cur_slave_mdms)), $master_mdm)
-        if $to_add_tb_count > 0 and count($tb_available) >= $to_add_tb_count {
-          $last_tb_index = count($tb_available) - 1
-          $first_tb_index = $last_tb_index - $to_add_tb_count + 1
-          $ips_array = concat($to_keep_tb, values_at($tb_available, "${first_tb_index}-${last_tb_index}"))
-        } else {
-          $ips_array = $to_keep_tb
-        }                  
       }
-      'mdm': {
-        $to_keep_mdm = concat([$master_mdm], intersection($ips_array_, $cur_slave_mdms))
-        if $count < 3 {
-          $to_add_mdm_count = 1 - count($to_keep_mdm)
-        } else {
-          if $count < 5 {
-            $to_add_mdm_count = 2 - count($to_keep_mdm)
-          } else {
-            $to_add_mdm_count = 3 - count($to_keep_mdm)
-          }
-        }
-        $mdm_available = difference($ips_array_, intersection($ips_array_, $to_keep_mdm))
-        if $to_add_mdm_count > 0 and count($mdm_available) >= $to_add_mdm_count {
-          $last_mdm_index = $to_add_mdm_count - 1
-          $ips_array = concat($to_keep_mdm, values_at($mdm_available, "0-${last_mdm_index}"))
-        } else {
-          $ips_array = $to_keep_mdm
-        }                  
-      }
-      'gateway': {
-        $ips_array = $ips_array_
-      }
-      'controller': {
-        $ips_array = $ips_array_
-      }
-      default: {
-        fail("Unsupported role ${role}")
-      }
+      if $to_add_tb_count > 0 and $available_nodes_count >= $to_add_tb_count {
+        $last_tb_index = $available_nodes_count - 1
+        $first_tb_index = $last_tb_index - $to_add_tb_count + 1
+        $ips_array = concat($to_keep_tb, values_at($available_nodes, "${first_tb_index}-${last_tb_index}"))
+      } else {
+        $ips_array = $to_keep_tb
+      }                  
     }
-  } else {
-    $ips_array = $ips_array_
+    'mdm': {
+      if $count < 3 {
+        $to_add_mdm_count = 1 - count($to_keep_mdm)
+      } else {
+        if $count < 5 {
+          $to_add_mdm_count = 2 - count($to_keep_mdm)
+        } else {
+          $to_add_mdm_count = 3 - count($to_keep_mdm)
+        }
+      }
+      if $to_add_mdm_count > 0 and $available_nodes_count >= $to_add_mdm_count {
+        $last_mdm_index = $to_add_mdm_count - 1
+        $ips_array = concat($to_keep_mdm, values_at($available_nodes, "0-${last_mdm_index}"))
+      } else {
+        $ips_array = $to_keep_mdm
+      }                  
+    }
+    'gateway': {
+      $ips_array = $ips_array_
+    }
+    'controller': {
+      $ips_array = $ips_array_
+    }
+    default: {
+      fail("Unsupported role ${role}")
+    }
   }
   $ips = join($ips_array, ',')
   env_fact {"Environment fact: ${role}, nodes: ${nodes}, ips: ${ips}":

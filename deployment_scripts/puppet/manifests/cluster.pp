@@ -3,9 +3,9 @@
 
 #Helpers for array processing
 define mdm_standby() {
-  $ip = $name
+  $ip = $title
   notify {"Configure Standby MDM ${ip}": } ->
-  scaleio::mdm {"Standby MDM ${name}":
+  scaleio::mdm {"Standby MDM ${ip}":
       ensure              => 'present',
       ensure_properties   => 'present',
       name                => $ip,
@@ -16,9 +16,9 @@ define mdm_standby() {
 }
 
 define mdm_tb() {
-  $ip = $name
+  $ip = $title
   notify {"Configure Tie-Breaker MDM ${ip}": } ->
-  scaleio::mdm {"Tie-Breaker MDM ${name}":
+  scaleio::mdm {"Tie-Breaker MDM ${ip}":
       ensure              => 'present',
       ensure_properties   => 'present',
       name                => $ip,
@@ -97,10 +97,7 @@ if $scaleio['metadata']['enabled'] {
     if $::mdm_ips {
       $mdm_ip_array = split($::mdm_ips, ',')
       $tb_ip_array = split($::tb_ips, ',')
-      $master_mdm = $::current_master_mdm_ip ? {
-        undef   => $mdm_ip_array[0],
-        default => $::current_master_mdm_ip
-      }
+      $master_mdm = $mdm_ip_array[0]
       if has_ip_address($master_mdm) {
         $standby_mdm_count = count($mdm_ip_array) - 1
         if $standby_mdm_count == 0 {
@@ -129,7 +126,7 @@ if $scaleio['metadata']['enabled'] {
           $sds_nodes = $compute_nodes		
         }
         $cinder_nodes = filter_nodes($all_nodes, 'role', 'cinder')   
-        $sdc_nodes =concat($compute_nodes, $cinder_nodes)
+        $sdc_nodes =concat(filter_nodes($all_nodes, 'role', 'compute'), $cinder_nodes)
         $sdc_nodes_ips = values(nodes_to_hash($sdc_nodes, 'name', 'internal_address'))
         $paths = $scaleio['device_paths'] ? {
           udnef   => undef,
@@ -151,15 +148,15 @@ if $scaleio['metadata']['enabled'] {
         }  
         notify {"Configure cluster MDM: ${master_mdm}": } ->
         scaleio::login {'Normal': password => $password }
-        if $::scaleio_current_sdc_list {
-          $current_sdc_ips = split($::scaleio_current_sdc_list, ',')
+        if $::scaleio_sdc_ips {
+          $current_sdc_ips = split($::scaleio_sdc_ips, ',')
           $to_keep_sdc = intersection($current_sdc_ips, $sdc_nodes_ips)
           $to_remove_sdc = difference($current_sdc_ips, $to_keep_sdc)
           $to_add_sdc_ips = difference($sdc_nodes_ips, $to_keep_sdc)
           # todo: not clear is it safe: actually task sdc is run before cluster task,
           # so there to_add_sdc_ips is always empty, because all SDCs
           # are already registered in cluster and are returned from facter scaleio_current_sdc_list
-          notify {"Resize cluster current sdc-es '${::current_sdc_ips}'": } ->
+          notify {"Resize cluster current sdc-es '${::scaleio_sdc_ips}'": } ->
           notify {"Resize cluster new sdc-es '${to_add_sdc_ips}'": } ->
           notify {"Resize cluster remove sdc-es '${to_remove_sdc}'": } ->
           cleanup_sdc {$to_remove_sdc:
@@ -170,11 +167,11 @@ if $scaleio['metadata']['enabled'] {
           $to_add_sdc_ips = $sdc_nodes_ips
           notify {"No resize cluster, new sdc-es '${to_add_sdc_ips}'": }
         }
-        if $::scaleio_current_sds_list {
-          $current_sds_names = split($::scaleio_current_sds_list, ',')
+        if $::scaleio_sds_names {
+          $current_sds_names = split($::scaleio_sds_names, ',')
           $new_sds_names = keys(nodes_to_hash($sds_nodes, 'name', 'internal_address'))
           $to_remove_sds = difference($current_sds_names, intersection($current_sds_names, $new_sds_names))
-          notify {"Resize cluster current sds-es '${::scaleio_current_sds_list}'": } ->
+          notify {"Resize cluster current sds-es '${::scaleio_sds_names}'": } ->
           notify {"Resize cluster new sds-es '${new_sds_names}'": } ->
           notify {"Resize cluster remove sds-es '${to_remove_sds}'": } ->
           cleanup_sds {$to_remove_sds:
@@ -182,32 +179,35 @@ if $scaleio['metadata']['enabled'] {
             before              => Mdm_standby[$standby_ips],           
           }
         }
-        if $::current_slave_ips or $::current_tb_ips {
+        if $::scaleio_mdm_ips or $::scaleio_tb_ips {
           $controllers = split($::controller_ips, ',')
-          if $::current_slave_ips {
-            $cur_slaves = split($::current_slave_ips, ',')
-            $slaves_absent = difference($cur_slaves, intersection($cur_slaves, $controllers))
+          if $::scaleio_mdm_ips {
+            $cur_mdms = split($::scaleio_mdm_ips, ',')
+            $mdm_absent = difference($cur_mdms, intersection($cur_mdms, $controllers))
           } else {
-            $slaves_absent = []
+            $cur_mdms = []
+            $mdm_absent = []
           }
-          if $::current_tb_ips {
-            $cur_tbs = split($::current_tb_ips, ',')
+          if $::scaleio_tb_ips {
+            $cur_tbs = split($::scaleio_tb_ips, ',')
             $tb_absent = difference($cur_tbs, intersection($cur_tbs, $controllers))
           } else {
+            $cur_tbs = []
             $tb_absent = []
           }
           #set cluster mode 1 to reconfigure cluster
           #new mode will be set below after adding new mdm and tb
-          notify {"Resize cluster current mdms '${::current_slave_ips}', tbs '${::current_tb_ips}'": } ->
+          notify {"Resize cluster current mdms '${::scaleio_mdm_ips}', tbs '${::scaleio_tb_ips}'": } ->
           notify {"Resize cluster new mdms '${::mdm_ips}', tbs '${::tb_ips}', controllers ${::controller_ips}": } ->
-          notify {"Resize cluster remove mdms '${slaves_absent}', tbs '${tb_absent}'": }
-          if count($slaves_absent) > 0 or count($tb_absent) > 0 {
-            $to_remove_mdms = concat($slaves_absent, $tb_absent)
+          notify {"Resize cluster remove mdms '${mdm_absent}', tbs '${tb_absent}'": }
+          if count($mdm_absent) > 0 or count($tb_absent) > 0 {
+            $to_remove_mdms = concat($mdm_absent, $tb_absent)
+            $cur_slaves = join(delete($cur_mdms, $cur_mdms[0]), ',')
             scaleio::cluster {'Resize cluster mode to 1_node and remove other MDMs':
               ensure              => 'absent',
               cluster_mode        => 1,
-              slave_names         => $::current_slave_ips,
-              tb_names            => $::current_tb_ips,
+              slave_names         => $cur_slaves,
+              tb_names            => $::scaleio_tb_ips,
               require             => Scaleio::Login['Normal'],
             } ->
             cleanup_mdm {$to_remove_mdms:
