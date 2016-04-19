@@ -20,23 +20,23 @@ define environment() {
   #use management network for ScaleIO components communications
   $hashes         = nodes_to_hash($nodes, 'name', 'internal_address')
   $ips_array_      = ipsort(values($hashes))
-  $master_mdm = $::current_master_mdm_ip ? {
-    undef   => $ips_array_[0],
-    default => $::current_master_mdm_ip
-  }
-  $cur_slave_mdms = $::current_slave_ips ? {
+  $cur_mdms = $::scaleio_mdm_ips ? {
     undef   => [],
-    default => split($::current_slave_ips, ',')
+    default => split($::scaleio_mdm_ips, ',')
   }
-  $cur_tb_mdms = $::current_tb_ips ? {
+  $cur_tb_mdms = $::scaleio_tb_ips ? {
     undef   => [],
-    default => split($::current_tb_ips, ',')
+    default => split($::scaleio_tb_ips, ',')
   }
   if $fuel_version == '6.1' or $fuel_version == '7.0' {
     $count = count(keys($hashes))
+    $to_keep_mdm = intersection($cur_mdms, $ips_array_)
+    $to_keep_tb = intersection($cur_tb_mdms, $ips_array_)
+    $to_keep_nodes = concat($to_keep_mdm, $to_keep_tb)
+    $available_nodes = difference($ips_array_, intersection($ips_array_, $to_keep_nodes))
+    $available_nodes_count = count($available_nodes)
     case $role {
       'tb': {
-        $to_keep_tb = intersection($ips_array_, $cur_tb_mdms)
         if $count < 3 {
           $to_add_tb_count = 0
         } else {
@@ -46,17 +46,15 @@ define environment() {
             $to_add_tb_count = 2 - count($to_keep_tb)
           }
         }
-        $tb_available = delete(difference($ips_array_, intersection($ips_array_, $cur_slave_mdms)), $master_mdm)
-        if $to_add_tb_count > 0 and count($tb_available) >= $to_add_tb_count {
-          $last_tb_index = count($tb_available) - 1
+        if $to_add_tb_count > 0 and $available_nodes_count >= $to_add_tb_count {
+          $last_tb_index = $available_nodes_count - 1
           $first_tb_index = $last_tb_index - $to_add_tb_count + 1
-          $ips_array = concat($to_keep_tb, values_at($tb_available, "${first_tb_index}-${last_tb_index}"))
+          $ips_array = concat($to_keep_tb, values_at($available_nodes, "${first_tb_index}-${last_tb_index}"))
         } else {
           $ips_array = $to_keep_tb
         }                  
       }
       'mdm': {
-        $to_keep_mdm = concat([$master_mdm], intersection($ips_array_, $cur_slave_mdms))
         if $count < 3 {
           $to_add_mdm_count = 1 - count($to_keep_mdm)
         } else {
@@ -66,10 +64,9 @@ define environment() {
             $to_add_mdm_count = 3 - count($to_keep_mdm)
           }
         }
-        $mdm_available = difference($ips_array_, intersection($ips_array_, $to_keep_mdm))
-        if $to_add_mdm_count > 0 and count($mdm_available) >= $to_add_mdm_count {
+        if $to_add_mdm_count > 0 and $available_nodes_count >= $to_add_mdm_count {
           $last_mdm_index = $to_add_mdm_count - 1
-          $ips_array = concat($to_keep_mdm, values_at($mdm_available, "0-${last_mdm_index}"))
+          $ips_array = concat($to_keep_mdm, values_at($available_nodes, "0-${last_mdm_index}"))
         } else {
           $ips_array = $to_keep_mdm
         }                  
