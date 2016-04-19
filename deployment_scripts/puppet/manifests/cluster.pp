@@ -112,7 +112,16 @@ if $scaleio['metadata']['enabled'] {
           $slave_names = join($standby_ips, ',')
           $tb_names    = join($tb_ip_array, ',')
         }
-        $cluster_mode = count($mdm_ip_array) + count($tb_ip_array)
+        $total_mdm_count = count($mdm_ip_array) + count($tb_ip_array)
+        if $total_mdm_count < 3 {
+          $cluster_mode = 1
+        } else {
+          if $total_mdm_count < 5 {
+            $cluster_mode = 3
+          } else {
+            $cluster_mode = 5
+          }
+        }
         $password = $scaleio['password']
         $protection_domain = $scaleio['protection_domain']
         $pools = $scaleio['storage_pools'] ? {
@@ -218,14 +227,20 @@ if $scaleio['metadata']['enabled'] {
         mdm_standby {$standby_ips:
           require             => Scaleio::Login['Normal'],          
         } ->
-        mdm_tb{$tb_ip_array:} ->
-        scaleio::cluster {'Configure cluster mode':
-          ensure              => 'present',
-          cluster_mode        => $cluster_mode,
-          slave_names         => $slave_names,
-          tb_names            => $tb_names,
+        mdm_tb{$tb_ip_array:}
+        if $cluster_mode != 1 {
+          scaleio::cluster {'Configure cluster mode':
+            ensure              => 'present',
+            cluster_mode        => $cluster_mode,
+            slave_names         => $slave_names,
+            tb_names            => $tb_names,
+            require             => Mdm_tb[$tb_ip_array],              
+          }
+        }
+        scaleio::protection_domain {"Ensure protection domain ${protection_domain}":
+          name                => $protection_domain,
+          require             => Scaleio::Login['Normal'],          
         } ->
-        scaleio::protection_domain {"Ensure protection domain ${protection_domain}": name => $protection_domain } ->
         storage_pool_ensure {$pools: protection_domain => $protection_domain } ->
         sds_device {$sds_nodes:		
             protection_domain => $protection_domain,		
