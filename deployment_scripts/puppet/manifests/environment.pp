@@ -10,13 +10,13 @@ define env_fact($role, $fact, $value) {
 }
 
 define environment() {
-  $fuel_version = hiera('fuel_version')
   $all_nodes = hiera('nodes')
   $role = $name
   $nodes = concat(filter_nodes($all_nodes, 'role', 'primary-controller'), filter_nodes($all_nodes, 'role', 'controller'))
   #use management network for ScaleIO components communications
-  $hashes         = nodes_to_hash($nodes, 'name', 'internal_address')
-  $ips_array_      = ipsort(values($hashes))
+  $hashes = nodes_to_hash($nodes, 'name', 'internal_address')
+  $ips_array_ = ipsort(values($hashes))
+  $count = count($ips_array_)
   $cur_mdms = $::scaleio_mdm_ips ? {
     undef   => [],
     default => split($::scaleio_mdm_ips, ',')
@@ -25,10 +25,10 @@ define environment() {
     undef   => [],
     default => split($::scaleio_tb_ips, ',')
   }
-  $count = count(keys($hashes))
   $to_keep_mdm = intersection($cur_mdms, $ips_array_)
   $to_keep_tb = intersection($cur_tb_mdms, $ips_array_)
-  $to_keep_nodes = concat($to_keep_mdm, $to_keep_tb)
+  $to_keep_nodes = concat(intersection($cur_mdms, $ips_array_), $to_keep_tb) # don't use $to_keep_mdm here because
+                                                                             # concat changes first array
   $available_nodes = difference($ips_array_, intersection($ips_array_, $to_keep_nodes))
   $available_nodes_count = count($available_nodes)
   case $role {

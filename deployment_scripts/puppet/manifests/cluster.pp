@@ -3,9 +3,9 @@
 
 #Helpers for array processing
 define mdm_standby() {
-  $ip = $name
+  $ip = $title
   notify {"Configure Standby MDM ${ip}": } ->
-  scaleio::mdm {"Standby MDM ${name}":
+  scaleio::mdm {"Standby MDM ${ip}":
       ensure              => 'present',
       ensure_properties   => 'present',
       name                => $ip,
@@ -16,9 +16,9 @@ define mdm_standby() {
 }
 
 define mdm_tb() {
-  $ip = $name
+  $ip = $title
   notify {"Configure Tie-Breaker MDM ${ip}": } ->
-  scaleio::mdm {"Tie-Breaker MDM ${name}":
+  scaleio::mdm {"Tie-Breaker MDM ${ip}":
       ensure              => 'present',
       ensure_properties   => 'present',
       name                => $ip,
@@ -113,7 +113,7 @@ if $scaleio['metadata']['enabled'] {
         $sds_nodes_names = keys(nodes_to_hash($sds_nodes, 'name', 'internal_address'))
         $sds_nodes_count = count($sds_nodes_names)
         $cinder_nodes = filter_nodes($all_nodes, 'role', 'cinder')   
-        $sdc_nodes =concat($compute_nodes, $cinder_nodes)
+        $sdc_nodes =concat(filter_nodes($all_nodes, 'role', 'compute'), $cinder_nodes)
         $sdc_nodes_ips = values(nodes_to_hash($sdc_nodes, 'name', 'internal_address'))
         $standby_mdm_count = count($mdm_ip_array) - 1
         if $standby_mdm_count == 0 {
@@ -125,7 +125,16 @@ if $scaleio['metadata']['enabled'] {
           $slave_names = join($standby_ips, ',')
           $tb_names    = join($tb_ip_array, ',')
         }
-        $cluster_mode = count($mdm_ip_array) + count($tb_ip_array)
+        $total_mdm_count = count($mdm_ip_array) + count($tb_ip_array)
+        if $total_mdm_count < 3 {
+          $cluster_mode = 1
+        } else {
+          if $total_mdm_count < 5 {
+            $cluster_mode = 3
+          } else {
+            $cluster_mode = 5
+          }
+        }
         $password = $scaleio['password']
         $protection_domain_number = 1 + $sds_nodes_count / $scaleio['protection_domain_nodes']
         $protection_domain =  $protection_domain_number ? {
@@ -143,7 +152,7 @@ if $scaleio['metadata']['enabled'] {
           }
         } else {
           # for fuel 7.0 devices come from facter (search partition by guid)
-          $tier12_paths = concat($tier1_devices, $tier2_devices)
+          $tier12_paths = concat(split($::sds_storage_devices_tier1, ','), $tier2_devices) # concat changes first array!!
           $paths = count(tier12_paths) > 0 ? {
             true    => tier12_paths,
             default => undef
@@ -158,12 +167,12 @@ if $scaleio['metadata']['enabled'] {
           }
         } else {  
           # for fuel 7.0 storage pools are generated for two storage tier2
-          $tier1_devices_str = joint($tier1_devices, ',')
+          $tier1_devices_str = join($tier1_devices, ',')
           $storage_pools_tier1 = count($tier1_devices) > 0 ? {
             false   => [],
             default => join(values(hash(split(regsubst("${tier1_devices_str},", ',', ",sp_tier1,", 'G'), ','))), ',')
           }  
-          $tier2_devices_str = joint($tier2_devices, ',')
+          $tier2_devices_str = join($tier2_devices, ',')
           $storage_pools_tier2 = count($tier2_devices) > 0 ? {
             false   => [],
             default => join(values(hash(split(regsubst("${tier2_devices_str},", ',', ",sp_tier2,", 'G'), ','))), ',')
@@ -265,14 +274,20 @@ if $scaleio['metadata']['enabled'] {
         mdm_standby {$standby_ips:
           require             => Scaleio::Login['Normal'],          
         } ->
-        mdm_tb{$tb_ip_array:} ->
-        scaleio::cluster {'Configure cluster mode':
-          ensure              => 'present',
-          cluster_mode        => $cluster_mode,
-          slave_names         => $slave_names,
-          tb_names            => $tb_names,
+        mdm_tb{$tb_ip_array:}
+        if $cluster_mode != 1 {
+          scaleio::cluster {'Configure cluster mode':
+            ensure              => 'present',
+            cluster_mode        => $cluster_mode,
+            slave_names         => $slave_names,
+            tb_names            => $tb_names,
+            require             => Mdm_tb[$tb_ip_array],              
+          }
+        }
+        scaleio::protection_domain {"Ensure protection domain ${protection_domain}":
+          name                => $protection_domain,
+          require             => Scaleio::Login['Normal'],          
         } ->
-        scaleio::protection_domain {"Ensure protection domain ${protection_domain}": name => $protection_domain } ->
         storage_pool_ensure {$pools: protection_domain => $protection_domain } ->
         sds_device {$to_add_sds_names:
             sds_nodes         => $sds_nodes,		

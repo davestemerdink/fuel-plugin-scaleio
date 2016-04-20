@@ -120,6 +120,8 @@ ScaleIO verification
 
 Once the OpenStack cluster is set up, you can make use of ScaleIO volumes. This is an example about how to attach a volume to a running VM.
 
+#. Perform OpenStack Health Check via FUEL UI. Note, that it is needed to keep un-selected tests that are related to running of instances because they use a default instance flavour but ScaleIO requires a flavour with volume sizes that are multiple of 8GB. FUEL does not allow to configure these tests from the plugin.
+
 #. Login into the OpenStack cluster:
 
 #. Review the block storage services by navigating to the "Admin -> System -> System Information" section. You should see the "@ScaleIO" appended to all cinder-volume hosts.
@@ -150,3 +152,23 @@ Once the OpenStack cluster is set up, you can make use of ScaleIO volumes. This 
 
     .. image:: images/sio-volume-mapped.png
        :width: 20%
+
+
+Troubleshooting
+---------------
+
+#. There are errors in deploying cluster or adding/removing nodes.
+	* Verify network settings.
+	* Ensure that the nodes have internet access.
+	* Ensure that there are at least 3 nodes with SDS in the cluster. All Compute nodes play SDS role, Controller nodes play SDS role in case if the option 'Controller as Storage' is enabled in the Plugin's settings.
+	* For the nodes that play SDS role ensure that disks which are listed in the Plugin's setting 'Storage devices' are unallocated and their sizes are greater than 100GB.
+	* Ensure that controller nodes have at least 3GB RAM.
+	
+#. ScaleIO cluster does not see new SDS after deploying new Compute node.
+	It is needed to run update hosts task on controller nodes manually on the FUEL master node, e.g. 'fuel --env 5 node --node-id 1,2,3 --task update_hosts'. This is because FUEL does not trigger plugin's tasks after Compute node deploymet.
+
+#. ScaleIO cluster has SDS/SDC components in disconnected state after nodes deletion.
+	See previous point.
+
+#. Other issues.
+	Ensure that ScaleIO cluster is operational and there are storage pool and protection domain available. For more details see ScaleIO user guide.
