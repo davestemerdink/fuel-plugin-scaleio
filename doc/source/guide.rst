@@ -157,18 +157,35 @@ Once the OpenStack cluster is set up, you can make use of ScaleIO volumes. This 
 Troubleshooting
 ---------------
 
-#. There are errors in deploying cluster or adding/removing nodes.
-	* Verify network settings.
-	* Ensure that the nodes have internet access.
-	* Ensure that there are at least 3 nodes with SDS in the cluster. All Compute nodes play SDS role, Controller nodes play SDS role in case if the option 'Controller as Storage' is enabled in the Plugin's settings.
-	* For the nodes that play SDS role ensure that disks which are listed in the Plugin's setting 'Storage devices' are unallocated and their sizes are greater than 100GB.
-	* Ensure that controller nodes have at least 3GB RAM.
-	
-#. ScaleIO cluster does not see new SDS after deploying new Compute node.
+1. Deployment cluster fails.
+  * Verify network settings.
+  * Ensure that the nodes have internet access.
+  * Ensure that there are at least 3 nodes with SDS in the cluster. All Compute nodes play SDS role, Controller nodes play SDS role in case if the option 'Controller as Storage' is enabled in the Plugin's settings.
+  * For the nodes that play SDS role ensure that disks which are listed in the Plugin's setting 'Storage devices' are unallocated and their sizes are greater than 100GB.
+  * Ensure that controller nodes have at least 3GB RAM.
+
+2. Deploying changes fails with timeout errors if remove a controller node (only if there were 3 controllers in cluster).
+  * Connect via ssh to the one of controller nodes
+  * Get MDM IPs:
+    ::
+      cat /etc/environment | grep FACTER_mdm_ips
+      
+  * Request ScaleIO cluster state
+    ::
+      scli --mdm_ip <ip_of_alive_mdm> --query_cluster
+      
+  * If cluster is in Degraded mode and there is one of Slave MDMs is disconnected then switch the cluster into the mode '1_node':
+    ::
+      scli --switch_cluster_mode --cluster_mode 1_node --remove_slave_mdm_ip <ips_of_slave_mdms>
+           --remove_tb_ip <ips_of_tie_breakers>
+      Where ips_of_slave_mdms and ips_of_tie_breakers are comma separated lists of slave MDMs and
+           Tie Breakers respectively (IPs should be taken from query_cluster command above).
+      
+3. ScaleIO cluster does not see new SDS after deploying new Compute node.
 	It is needed to run update hosts task on controller nodes manually on the FUEL master node, e.g. 'fuel --env 5 node --node-id 1,2,3 --task update_hosts'. This is because FUEL does not trigger plugin's tasks after Compute node deploymet.
 
-#. ScaleIO cluster has SDS/SDC components in disconnected state after nodes deletion.
+4. ScaleIO cluster has SDS/SDC components in disconnected state after nodes deletion.
 	See previous point.
 
-#. Other issues.
+5. Other issues.
 	Ensure that ScaleIO cluster is operational and there are storage pool and protection domain available. For more details see ScaleIO user guide.
