@@ -9,6 +9,14 @@
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 600
 
+- role: ['primary-controller', 'controller']
+  stage: post_deployment/2010
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/discover_and_resize_cluster.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
+    timeout: 600
+
 - role: ['compute', 'cinder']
   stage: post_deployment/2020
   type: puppet
