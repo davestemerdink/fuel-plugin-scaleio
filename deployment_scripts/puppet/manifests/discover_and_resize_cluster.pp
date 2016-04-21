@@ -19,12 +19,12 @@ if $scaleio['metadata']['enabled'] {
     #use management network for ScaleIO components communications
     $controllers_ips = ipsort(values(nodes_to_hash($controllers_nodes, 'name', 'internal_address')))
     # names of mdm and tb are IPs in fuel
-    $current_mdms = concat(split($::scaleio_mdm_names, ','), split($::scaleio_standby_mdm_names, ','))
-    $current_tbs = concat(split($::scaleio_tb_names, ','), split($::scaleio_standby_tb_names, ','))
+    $current_mdms = concat(split($::scaleio_mdm_ips, ','), split($::scaleio_standby_mdm_ips, ','))
+    $current_tbs = concat(split($::scaleio_tb_ips, ','), split($::scaleio_standby_tb_ips, ','))
     $mdms_present = intersection($controllers_ips, $current_mdms)
-    $mdms_absent = difference($mdms_present, $current_mdms)
+    $mdms_absent = difference($controllers_ips, $current_mdms)
     $tbs_present = intersection($controllers_ips, $current_tbs)
-    $tbs_absent = difference($current_tbs, $tbs_present)
+    $tbs_absent = difference($controllers_ips, $current_tbs)
     $controllers_count = count($controllers_ips)
     if $controllers_count < 3 {
       # 1 node mode
