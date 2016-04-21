@@ -14,7 +14,7 @@ if $scaleio['metadata']['enabled'] {
         $master_ip = undef
       } else {
         $is_manager = 1
-        $is_new_cluster = ! $::current_master_mdm_ip or $::current_master_mdm_ip == ''
+        $is_new_cluster = ! $::scaleio_mdm_ips or $::scaleio_mdm_ips == ''
         if $is_new_cluster and has_ip_address($new_mdm_ips[0]) {
           $master_ip = $new_mdm_ips[0]
           $master_mdm_name = $new_mdm_ips[0]
