@@ -135,10 +135,10 @@ endobj
 << /Border [ 0 0 0 ] /Contents () /Dest [ 96 0 R /XYZ 40.01575 206.9149 0 ] /Rect [ 549.6998 430.7894 555.2598 442.7894 ] /Subtype /Link /Type /Annot >>
 endobj
 45 0 obj
-<< /Border [ 0 0 0 ] /Contents () /Dest [ 100 0 R /XYZ 40.01575 507.0394 0 ] /Rect [ 80.01575 412.0394 121.7057 424.0394 ] /Subtype /Link /Type /Annot >>
+<< /Border [ 0 0 0 ] /Contents () /Dest [ 100 0 R /XYZ 40.01575 297.6394 0 ] /Rect [ 80.01575 412.0394 121.7057 424.0394 ] /Subtype /Link /Type /Annot >>
 endobj
 46 0 obj
-<< /Border [ 0 0 0 ] /Contents () /Dest [ 100 0 R /XYZ 40.01575 507.0394 0 ] /Rect [ 549.6998 412.7894 555.2598 424.7894 ] /Subtype /Link /Type /Annot >>
+<< /Border [ 0 0 0 ] /Contents () /Dest [ 100 0 R /XYZ 40.01575 297.6394 0 ] /Rect [ 549.6998 412.7894 555.2598 424.7894 ] /Subtype /Link /Type /Annot >>
 endobj
 47 0 obj
 << /Annots [ 6 0 R 7 0 R 8 0 R 9 0 R 10 0 R 11 0 R 12 0 R 13 0 R 14 0 R 15 0 R 
@@ -389,13 +389,13 @@ endobj
   /Type /Page >>
 endobj
 97 0 obj
-<< /A << /S /URI /Type /Action /URI (https://community.emc.com/docs/DOC-44337) >> /Border [ 0 0 0 ] /Rect [ 63.01575 463.2394 203.0757 475.2394 ] /Subtype /Link /Type /Annot >>
+<< /A << /S /URI /Type /Action /URI (https://community.emc.com/docs/DOC-44337) >> /Border [ 0 0 0 ] /Rect [ 63.01575 253.8394 203.0757 265.8394 ] /Subtype /Link /Type /Annot >>
 endobj
 98 0 obj
-<< /A << /S /URI /Type /Action /URI (https://community.emc.com/docs/DOC-44819) >> /Border [ 0 0 0 ] /Rect [ 63.01575 445.2394 387.5757 457.2394 ] /Subtype /Link /Type /Annot >>
+<< /A << /S /URI /Type /Action /URI (https://community.emc.com/docs/DOC-44819) >> /Border [ 0 0 0 ] /Rect [ 63.01575 235.8394 387.5757 247.8394 ] /Subtype /Link /Type /Annot >>
 endobj
 99 0 obj
-<< /A << /S /URI /Type /Action /URI (https://community.emc.com/docs/DOC-46246) >> /Border [ 0 0 0 ] /Rect [ 63.01575 427.2394 206.0057 439.2394 ] /Subtype /Link /Type /Annot >>
+<< /A << /S /URI /Type /Action /URI (https://community.emc.com/docs/DOC-46246) >> /Border [ 0 0 0 ] /Rect [ 63.01575 217.8394 206.0057 229.8394 ] /Subtype /Link /Type /Annot >>
 endobj
 100 0 obj
 << /Annots [ 97 0 R 98 0 R 99 0 R ] /Contents 137 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 124 0 R /Resources << /Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ] >> /Rotate 0 
@@ -405,7 +405,7 @@ endobj
 << /Outlines 103 0 R /PageLabels 138 0 R /PageMode /UseNone /Pages 124 0 R /Type /Catalog >>
 endobj
 102 0 obj
-<< /Author () /CreationDate <rst2pdf.createpdf.PDFDate instance at 0x10ec14b90> /Creator (\(unspecified\)) /Keywords () /ModDate <rst2pdf.createpdf.PDFDate instance at 0x10ec14b90> /Producer (ReportLab PDF Library - www.reportlab.com) 
+<< /Author () /CreationDate <rst2pdf.createpdf.PDFDate instance at 0x105673950> /Creator (\(unspecified\)) /Keywords () /ModDate <rst2pdf.createpdf.PDFDate instance at 0x105673950> /Producer (ReportLab PDF Library - www.reportlab.com) 
   /Subject (\(unspecified\)) /Title () /Trapped /False >>
 endobj
 103 0 obj
@@ -472,7 +472,7 @@ endobj
 << /Dest [ 96 0 R /XYZ 40.01575 206.9149 0 ] /Parent 115 0 R /Prev 121 0 R /Title (Troubleshooting) >>
 endobj
 123 0 obj
-<< /Dest [ 100 0 R /XYZ 40.01575 507.0394 0 ] /Parent 105 0 R /Prev 115 0 R /Title (Appendix) >>
+<< /Dest [ 100 0 R /XYZ 40.01575 297.6394 0 ] /Parent 105 0 R /Prev 115 0 R /Title (Appendix) >>
 endobj
 124 0 obj
 << /Count 13 /Kids [ 4 0 R 5 0 R 47 0 R 48 0 R 50 0 R 57 0 R 59 0 R 65 0 R 72 0 R 81 0 R 
@@ -525,7 +525,7 @@ q
 1 0 0 1 40.01575 524.1606 cm
 q
 0 0 0 rg
-BT 1 0 0 1 0 2.4 Tm /F1 12 Tf 14.4 TL 220.602 0 Td (April 20, 2016) Tj T* -220.602 0 Td ET
+BT 1 0 0 1 0 2.4 Tm /F1 12 Tf 14.4 TL 220.602 0 Td (April 21, 2016) Tj T* -220.602 0 Td ET
 Q
 Q
 q
@@ -2737,7 +2737,7 @@ Q
 endstream
 endobj
 136 0 obj
-<< /Length 3558 >>
+<< /Length 3592 >>
 stream
 1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
 q
@@ -2961,11 +2961,17 @@ q
 1 0 0 1 23 -3 cm
 q
 0 0 0 rg
-BT 1 0 0 1 0 2 Tm /F2 10 Tf 12 TL (There are errors in deploying cluster or adding/removing nodes.) Tj T* ET
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Deployment cluster fails.) Tj T* ET
 Q
 Q
 q
 Q
+Q
+q
+1 0 0 1 40.01575 168.5149 cm
+Q
+q
+1 0 0 1 40.01575 162.5149 cm
 Q
 q
 1 0 0 1 34.01575 807.2126 cm
@@ -2985,19 +2991,14 @@ Q
 endstream
 endobj
 137 0 obj
-<< /Length 6031 >>
+<< /Length 9238 >>
 stream
 1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
 q
-1 0 0 1 40.01575 658.0394 cm
+1 0 0 1 40.01575 661.0394 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
-BT 1 0 0 1 6 116 Tm  T* ET
-q
-1 0 0 1 23 -3 cm
-0 0 0 rg
-BT /F1 10 Tf 12 TL ET
-BT 1 0 0 1 0 116 Tm  T* ET
+BT 1 0 0 1 0 2 Tm  T* ET
 q
 1 0 0 1 20 120 cm
 Q
@@ -3067,7 +3068,7 @@ q
 1 0 0 1 23 -3 cm
 q
 0 0 0 rg
-BT 1 0 0 1 0 26 Tm /F1 10 Tf 12 TL 1.21245 Tw (Ensure that there are at least 3 nodes with SDS in the cluster. All Compute nodes play SDS role,) Tj T* 0 Tw .522006 Tw (Controller nodes play SDS role in case if the option 'Controller as Storage' is enabled in the Plugin's) Tj T* 0 Tw (settings.) Tj T* ET
+BT 1 0 0 1 0 26 Tm /F1 10 Tf 12 TL 2.490227 Tw (Ensure that there are at least 3 nodes with SDS in the cluster. All Compute nodes play SDS role,) Tj T* 0 Tw 1.874947 Tw (Controller nodes play SDS role in case if the option 'Controller as Storage' is enabled in the Plugin's) Tj T* 0 Tw (settings.) Tj T* ET
 Q
 Q
 q
@@ -3091,7 +3092,7 @@ q
 1 0 0 1 23 -3 cm
 q
 0 0 0 rg
-BT 1 0 0 1 0 14 Tm /F1 10 Tf 12 TL 1.026123 Tw (For the nodes that play SDS role ensure that disks which are listed in the Plugin's setting 'Storage) Tj T* 0 Tw (devices' are unallocated and their sizes are greater than 100GB.) Tj T* ET
+BT 1 0 0 1 0 14 Tm /F1 10 Tf 12 TL .103005 Tw (For the nodes that play SDS role ensure that disks which are listed in the Plugin's setting 'Storage devices') Tj T* 0 Tw (are unallocated and their sizes are greater than 100GB.) Tj T* ET
 Q
 Q
 q
@@ -3128,20 +3129,227 @@ q
 Q
 Q
 q
+1 0 0 1 40.01575 661.0394 cm
+Q
+q
+1 0 0 1 40.01575 655.0394 cm
+Q
+q
+1 0 0 1 40.01575 655.0394 cm
+Q
+q
+1 0 0 1 40.01575 631.0394 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 9 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 5.66 0 Td (2.) Tj T* -5.66 0 Td ET
 Q
 Q
 q
-1 0 0 1 40.01575 652.0394 cm
+1 0 0 1 23 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 14 Tm /F1 10 Tf 12 TL 1.789064 Tw (Deploying changes fails with timeout errors if remove a controller node \(only if there were 3 controllers in) Tj T* 0 Tw (cluster\).) Tj T* ET
+Q
 Q
 q
-1 0 0 1 40.01575 601.0394 cm
+Q
+Q
+q
+1 0 0 1 40.01575 631.0394 cm
+Q
+q
+1 0 0 1 40.01575 625.0394 cm
+Q
+q
+1 0 0 1 40.01575 448.6394 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 0 2 Tm  T* ET
+q
+1 0 0 1 20 170.4 cm
+Q
+q
+1 0 0 1 20 170.4 cm
+Q
+q
+1 0 0 1 20 158.4 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Connect via ssh to the one of controller nodes) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 20 152.4 cm
+Q
+q
+1 0 0 1 20 121.6 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 15.8 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 15.8 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Get MDM IPs:) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+q
+q
+1 0 0 1 4.4 .4 cm
+q
+.666667 .8 .6 RG
+.3 w
+.933333 1 .8 rg
+n -4 0 471.4441 18 re B*
+Q
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F5 10 Tf 12 TL (cat /etc/environment | grep FACTER_mdm_ips) Tj T* ET
+Q
+Q
+Q
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 20 115.6 cm
+Q
+q
+1 0 0 1 20 84.8 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 15.8 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 15.8 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Request ScaleIO cluster state) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+q
+q
+1 0 0 1 4.4 .4 cm
+q
+.666667 .8 .6 RG
+.3 w
+.933333 1 .8 rg
+n -4 0 471.4441 18 re B*
+Q
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F5 10 Tf 0 0 0 rg (scli --mdm_ip ) Tj (<) Tj (ip_of_alive_mdm) Tj (>) Tj ( --query_cluster) Tj T* ET
+Q
+Q
+Q
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 20 78.8 cm
+Q
+q
+1 0 0 1 20 0 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 63.8 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 51.8 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 14 Tm /F1 10 Tf 12 TL .107584 Tw (If cluster is in Degraded mode and there is one of Slave MDMs is disconnected then switch the cluster into) Tj T* 0 Tw (the mode '1_node':) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+q
+q
+1 0 0 1 4.4 .4 cm
+q
+.666667 .8 .6 RG
+.3 w
+.933333 1 .8 rg
+n -4 0 550 54 re B*
+Q
+q
+BT 1 0 0 1 0 38 Tm 12 TL /F5 10 Tf 0 0 0 rg (scli --switch_cluster_mode --cluster_mode 1_node --remove_slave_mdm_ip ) Tj (<) Tj (ips_of_slave_mdms) Tj (>) Tj  T* (     --remove_tb_ip ) Tj (<) Tj (ips_of_tie_breakers) Tj (>) Tj  T* (Where ips_of_slave_mdms and ips_of_tie_breakers are comma separated lists of slave MDMs and) Tj T* (     Tie Breakers respectively \(IPs should be taken from query_cluster command above\).) Tj T* ET
+Q
+Q
+Q
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 20 0 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 40.01575 448.6394 cm
+Q
+q
+1 0 0 1 40.01575 442.6394 cm
+Q
+q
+1 0 0 1 40.01575 442.6394 cm
+Q
+q
+1 0 0 1 40.01575 391.6394 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
 q
 1 0 0 1 6 36 cm
 q
 0 0 0 rg
-BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 5.66 0 Td (2.) Tj T* -5.66 0 Td ET
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 5.66 0 Td (3.) Tj T* -5.66 0 Td ET
 Q
 Q
 q
@@ -3170,17 +3378,17 @@ q
 Q
 Q
 q
-1 0 0 1 40.01575 595.0394 cm
+1 0 0 1 40.01575 385.6394 cm
 Q
 q
-1 0 0 1 40.01575 568.0394 cm
+1 0 0 1 40.01575 358.6394 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
 q
 1 0 0 1 6 12 cm
 q
 0 0 0 rg
-BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 5.66 0 Td (3.) Tj T* -5.66 0 Td ET
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 5.66 0 Td (4.) Tj T* -5.66 0 Td ET
 Q
 Q
 q
@@ -3209,17 +3417,17 @@ q
 Q
 Q
 q
-1 0 0 1 40.01575 562.0394 cm
+1 0 0 1 40.01575 352.6394 cm
 Q
 q
-1 0 0 1 40.01575 523.0394 cm
+1 0 0 1 40.01575 313.6394 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
 q
 1 0 0 1 6 24 cm
 q
 0 0 0 rg
-BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 5.66 0 Td (4.) Tj T* -5.66 0 Td ET
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 5.66 0 Td (5.) Tj T* -5.66 0 Td ET
 Q
 Q
 q
@@ -3248,10 +3456,10 @@ q
 Q
 Q
 q
-1 0 0 1 40.01575 523.0394 cm
+1 0 0 1 40.01575 313.6394 cm
 Q
 q
-1 0 0 1 40.01575 490.2394 cm
+1 0 0 1 40.01575 280.8394 cm
 q
 .8 .8 .8 RG
 .3 w
@@ -3263,13 +3471,13 @@ BT 1 0 0 1 0 2.8 Tm 16.8 TL /F3 14 Tf .12549 .262745 .360784 rg (Appendix) Tj T*
 Q
 Q
 q
-1 0 0 1 40.01575 478.2394 cm
+1 0 0 1 40.01575 268.8394 cm
 Q
 q
-1 0 0 1 40.01575 478.2394 cm
+1 0 0 1 40.01575 268.8394 cm
 Q
 q
-1 0 0 1 40.01575 466.2394 cm
+1 0 0 1 40.01575 256.8394 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
 q
@@ -3289,10 +3497,10 @@ q
 Q
 Q
 q
-1 0 0 1 40.01575 460.2394 cm
+1 0 0 1 40.01575 250.8394 cm
 Q
 q
-1 0 0 1 40.01575 448.2394 cm
+1 0 0 1 40.01575 238.8394 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
 q
@@ -3312,10 +3520,10 @@ q
 Q
 Q
 q
-1 0 0 1 40.01575 442.2394 cm
+1 0 0 1 40.01575 232.8394 cm
 Q
 q
-1 0 0 1 40.01575 430.2394 cm
+1 0 0 1 40.01575 220.8394 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
 q
@@ -3335,10 +3543,10 @@ q
 Q
 Q
 q
-1 0 0 1 40.01575 430.2394 cm
+1 0 0 1 40.01575 220.8394 cm
 Q
 q
-1 0 0 1 40.01575 430.2394 cm
+1 0 0 1 40.01575 220.8394 cm
 Q
 q
 1 0 0 1 34.01575 807.2126 cm
@@ -3540,28 +3748,28 @@ xref
 0001419792 00000 n
 0001423071 00000 n
 0001427264 00000 n
-0001430880 00000 n
-0001436969 00000 n
-0001437146 00000 n
-0001437184 00000 n
-0001437222 00000 n
-0001437260 00000 n
-0001437298 00000 n
-0001437336 00000 n
-0001437374 00000 n
-0001437412 00000 n
-0001437450 00000 n
-0001437488 00000 n
-0001437526 00000 n
-0001437564 00000 n
-0001437602 00000 n
+0001430914 00000 n
+0001440210 00000 n
+0001440387 00000 n
+0001440425 00000 n
+0001440463 00000 n
+0001440501 00000 n
+0001440539 00000 n
+0001440577 00000 n
+0001440615 00000 n
+0001440653 00000 n
+0001440691 00000 n
+0001440729 00000 n
+0001440767 00000 n
+0001440805 00000 n
+0001440843 00000 n
 trailer
 << /ID 
  % ReportLab generated PDF document -- digest (http://www.reportlab.com)
  [(-\270/\215\023\374\232\255\017j\310\301DYu\363) (-\270/\215\023\374\232\255\017j\310\301DYu\363)]
  /Info 102 0 R /Root 101 0 R /Size 152 >>
 startxref
-1437640
+1440881
 %%EOF
 %PDF-1.4
 %“Œ‹ž ReportLab Generated PDF document http://www.reportlab.com
@@ -3700,10 +3908,10 @@ endobj
 << /Border [ 0 0 0 ] /Contents () /Dest [ 96 0 R /XYZ 40.01575 206.9149 0 ] /Rect [ 549.6998 430.7894 555.2598 442.7894 ] /Subtype /Link /Type /Annot >>
 endobj
 45 0 obj
-<< /Border [ 0 0 0 ] /Contents () /Dest [ 100 0 R /XYZ 40.01575 507.0394 0 ] /Rect [ 80.01575 412.0394 121.7057 424.0394 ] /Subtype /Link /Type /Annot >>
+<< /Border [ 0 0 0 ] /Contents () /Dest [ 100 0 R /XYZ 40.01575 297.6394 0 ] /Rect [ 80.01575 412.0394 121.7057 424.0394 ] /Subtype /Link /Type /Annot >>
 endobj
 46 0 obj
-<< /Border [ 0 0 0 ] /Contents () /Dest [ 100 0 R /XYZ 40.01575 507.0394 0 ] /Rect [ 549.6998 412.7894 555.2598 424.7894 ] /Subtype /Link /Type /Annot >>
+<< /Border [ 0 0 0 ] /Contents () /Dest [ 100 0 R /XYZ 40.01575 297.6394 0 ] /Rect [ 549.6998 412.7894 555.2598 424.7894 ] /Subtype /Link /Type /Annot >>
 endobj
 47 0 obj
 << /Annots [ 6 0 R 7 0 R 8 0 R 9 0 R 10 0 R 11 0 R 12 0 R 13 0 R 14 0 R 15 0 R 
@@ -3954,13 +4162,13 @@ endobj
   /Type /Page >>
 endobj
 97 0 obj
-<< /A << /S /URI /Type /Action /URI (https://community.emc.com/docs/DOC-44337) >> /Border [ 0 0 0 ] /Rect [ 63.01575 463.2394 203.0757 475.2394 ] /Subtype /Link /Type /Annot >>
+<< /A << /S /URI /Type /Action /URI (https://community.emc.com/docs/DOC-44337) >> /Border [ 0 0 0 ] /Rect [ 63.01575 253.8394 203.0757 265.8394 ] /Subtype /Link /Type /Annot >>
 endobj
 98 0 obj
-<< /A << /S /URI /Type /Action /URI (https://community.emc.com/docs/DOC-44819) >> /Border [ 0 0 0 ] /Rect [ 63.01575 445.2394 387.5757 457.2394 ] /Subtype /Link /Type /Annot >>
+<< /A << /S /URI /Type /Action /URI (https://community.emc.com/docs/DOC-44819) >> /Border [ 0 0 0 ] /Rect [ 63.01575 235.8394 387.5757 247.8394 ] /Subtype /Link /Type /Annot >>
 endobj
 99 0 obj
-<< /A << /S /URI /Type /Action /URI (https://community.emc.com/docs/DOC-46246) >> /Border [ 0 0 0 ] /Rect [ 63.01575 427.2394 206.0057 439.2394 ] /Subtype /Link /Type /Annot >>
+<< /A << /S /URI /Type /Action /URI (https://community.emc.com/docs/DOC-46246) >> /Border [ 0 0 0 ] /Rect [ 63.01575 217.8394 206.0057 229.8394 ] /Subtype /Link /Type /Annot >>
 endobj
 100 0 obj
 << /Annots [ 97 0 R 98 0 R 99 0 R ] /Contents 137 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 124 0 R /Resources << /Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ] >> /Rotate 0 
@@ -3970,7 +4178,7 @@ endobj
 << /Outlines 103 0 R /PageLabels 138 0 R /PageMode /UseNone /Pages 124 0 R /Type /Catalog >>
 endobj
 102 0 obj
-<< /Author () /CreationDate <rst2pdf.createpdf.PDFDate instance at 0x10ebe2d40> /Creator (\(unspecified\)) /Keywords () /ModDate <rst2pdf.createpdf.PDFDate instance at 0x10ebe2d40> /Producer (ReportLab PDF Library - www.reportlab.com) 
+<< /Author () /CreationDate <rst2pdf.createpdf.PDFDate instance at 0x1060a4ab8> /Creator (\(unspecified\)) /Keywords () /ModDate <rst2pdf.createpdf.PDFDate instance at 0x1060a4ab8> /Producer (ReportLab PDF Library - www.reportlab.com) 
   /Subject (\(unspecified\)) /Title () /Trapped /False >>
 endobj
 103 0 obj
@@ -4037,7 +4245,7 @@ endobj
 << /Dest [ 96 0 R /XYZ 40.01575 206.9149 0 ] /Parent 115 0 R /Prev 121 0 R /Title (Troubleshooting) >>
 endobj
 123 0 obj
-<< /Dest [ 100 0 R /XYZ 40.01575 507.0394 0 ] /Parent 105 0 R /Prev 115 0 R /Title (Appendix) >>
+<< /Dest [ 100 0 R /XYZ 40.01575 297.6394 0 ] /Parent 105 0 R /Prev 115 0 R /Title (Appendix) >>
 endobj
 124 0 obj
 << /Count 13 /Kids [ 4 0 R 5 0 R 47 0 R 48 0 R 50 0 R 57 0 R 59 0 R 65 0 R 72 0 R 81 0 R 
@@ -4090,7 +4298,7 @@ q
 1 0 0 1 40.01575 524.1606 cm
 q
 0 0 0 rg
-BT 1 0 0 1 0 2.4 Tm /F1 12 Tf 14.4 TL 220.602 0 Td (April 20, 2016) Tj T* -220.602 0 Td ET
+BT 1 0 0 1 0 2.4 Tm /F1 12 Tf 14.4 TL 220.602 0 Td (April 21, 2016) Tj T* -220.602 0 Td ET
 Q
 Q
 q
@@ -6302,7 +6510,7 @@ Q
 endstream
 endobj
 136 0 obj
-<< /Length 3558 >>
+<< /Length 3592 >>
 stream
 1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
 q
@@ -6526,11 +6734,17 @@ q
 1 0 0 1 23 -3 cm
 q
 0 0 0 rg
-BT 1 0 0 1 0 2 Tm /F2 10 Tf 12 TL (There are errors in deploying cluster or adding/removing nodes.) Tj T* ET
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Deployment cluster fails.) Tj T* ET
 Q
 Q
 q
 Q
+Q
+q
+1 0 0 1 40.01575 168.5149 cm
+Q
+q
+1 0 0 1 40.01575 162.5149 cm
 Q
 q
 1 0 0 1 34.01575 807.2126 cm
@@ -6550,19 +6764,14 @@ Q
 endstream
 endobj
 137 0 obj
-<< /Length 6031 >>
+<< /Length 9238 >>
 stream
 1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
 q
-1 0 0 1 40.01575 658.0394 cm
+1 0 0 1 40.01575 661.0394 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
-BT 1 0 0 1 6 116 Tm  T* ET
-q
-1 0 0 1 23 -3 cm
-0 0 0 rg
-BT /F1 10 Tf 12 TL ET
-BT 1 0 0 1 0 116 Tm  T* ET
+BT 1 0 0 1 0 2 Tm  T* ET
 q
 1 0 0 1 20 120 cm
 Q
@@ -6632,7 +6841,7 @@ q
 1 0 0 1 23 -3 cm
 q
 0 0 0 rg
-BT 1 0 0 1 0 26 Tm /F1 10 Tf 12 TL 1.21245 Tw (Ensure that there are at least 3 nodes with SDS in the cluster. All Compute nodes play SDS role,) Tj T* 0 Tw .522006 Tw (Controller nodes play SDS role in case if the option 'Controller as Storage' is enabled in the Plugin's) Tj T* 0 Tw (settings.) Tj T* ET
+BT 1 0 0 1 0 26 Tm /F1 10 Tf 12 TL 2.490227 Tw (Ensure that there are at least 3 nodes with SDS in the cluster. All Compute nodes play SDS role,) Tj T* 0 Tw 1.874947 Tw (Controller nodes play SDS role in case if the option 'Controller as Storage' is enabled in the Plugin's) Tj T* 0 Tw (settings.) Tj T* ET
 Q
 Q
 q
@@ -6656,7 +6865,7 @@ q
 1 0 0 1 23 -3 cm
 q
 0 0 0 rg
-BT 1 0 0 1 0 14 Tm /F1 10 Tf 12 TL 1.026123 Tw (For the nodes that play SDS role ensure that disks which are listed in the Plugin's setting 'Storage) Tj T* 0 Tw (devices' are unallocated and their sizes are greater than 100GB.) Tj T* ET
+BT 1 0 0 1 0 14 Tm /F1 10 Tf 12 TL .103005 Tw (For the nodes that play SDS role ensure that disks which are listed in the Plugin's setting 'Storage devices') Tj T* 0 Tw (are unallocated and their sizes are greater than 100GB.) Tj T* ET
 Q
 Q
 q
@@ -6693,20 +6902,227 @@ q
 Q
 Q
 q
+1 0 0 1 40.01575 661.0394 cm
+Q
+q
+1 0 0 1 40.01575 655.0394 cm
+Q
+q
+1 0 0 1 40.01575 655.0394 cm
+Q
+q
+1 0 0 1 40.01575 631.0394 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 9 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 5.66 0 Td (2.) Tj T* -5.66 0 Td ET
 Q
 Q
 q
-1 0 0 1 40.01575 652.0394 cm
+1 0 0 1 23 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 14 Tm /F1 10 Tf 12 TL 1.789064 Tw (Deploying changes fails with timeout errors if remove a controller node \(only if there were 3 controllers in) Tj T* 0 Tw (cluster\).) Tj T* ET
+Q
 Q
 q
-1 0 0 1 40.01575 601.0394 cm
+Q
+Q
+q
+1 0 0 1 40.01575 631.0394 cm
+Q
+q
+1 0 0 1 40.01575 625.0394 cm
+Q
+q
+1 0 0 1 40.01575 448.6394 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 0 2 Tm  T* ET
+q
+1 0 0 1 20 170.4 cm
+Q
+q
+1 0 0 1 20 170.4 cm
+Q
+q
+1 0 0 1 20 158.4 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Connect via ssh to the one of controller nodes) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 20 152.4 cm
+Q
+q
+1 0 0 1 20 121.6 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 15.8 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 15.8 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Get MDM IPs:) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+q
+q
+1 0 0 1 4.4 .4 cm
+q
+.666667 .8 .6 RG
+.3 w
+.933333 1 .8 rg
+n -4 0 471.4441 18 re B*
+Q
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F5 10 Tf 12 TL (cat /etc/environment | grep FACTER_mdm_ips) Tj T* ET
+Q
+Q
+Q
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 20 115.6 cm
+Q
+q
+1 0 0 1 20 84.8 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 15.8 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 15.8 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Request ScaleIO cluster state) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+q
+q
+1 0 0 1 4.4 .4 cm
+q
+.666667 .8 .6 RG
+.3 w
+.933333 1 .8 rg
+n -4 0 471.4441 18 re B*
+Q
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F5 10 Tf 0 0 0 rg (scli --mdm_ip ) Tj (<) Tj (ip_of_alive_mdm) Tj (>) Tj ( --query_cluster) Tj T* ET
+Q
+Q
+Q
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 20 78.8 cm
+Q
+q
+1 0 0 1 20 0 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 63.8 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 51.8 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 14 Tm /F1 10 Tf 12 TL .107584 Tw (If cluster is in Degraded mode and there is one of Slave MDMs is disconnected then switch the cluster into) Tj T* 0 Tw (the mode '1_node':) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+q
+q
+1 0 0 1 4.4 .4 cm
+q
+.666667 .8 .6 RG
+.3 w
+.933333 1 .8 rg
+n -4 0 550 54 re B*
+Q
+q
+BT 1 0 0 1 0 38 Tm 12 TL /F5 10 Tf 0 0 0 rg (scli --switch_cluster_mode --cluster_mode 1_node --remove_slave_mdm_ip ) Tj (<) Tj (ips_of_slave_mdms) Tj (>) Tj  T* (     --remove_tb_ip ) Tj (<) Tj (ips_of_tie_breakers) Tj (>) Tj  T* (Where ips_of_slave_mdms and ips_of_tie_breakers are comma separated lists of slave MDMs and) Tj T* (     Tie Breakers respectively \(IPs should be taken from query_cluster command above\).) Tj T* ET
+Q
+Q
+Q
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 20 0 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 40.01575 448.6394 cm
+Q
+q
+1 0 0 1 40.01575 442.6394 cm
+Q
+q
+1 0 0 1 40.01575 442.6394 cm
+Q
+q
+1 0 0 1 40.01575 391.6394 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
 q
 1 0 0 1 6 36 cm
 q
 0 0 0 rg
-BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 5.66 0 Td (2.) Tj T* -5.66 0 Td ET
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 5.66 0 Td (3.) Tj T* -5.66 0 Td ET
 Q
 Q
 q
@@ -6735,17 +7151,17 @@ q
 Q
 Q
 q
-1 0 0 1 40.01575 595.0394 cm
+1 0 0 1 40.01575 385.6394 cm
 Q
 q
-1 0 0 1 40.01575 568.0394 cm
+1 0 0 1 40.01575 358.6394 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
 q
 1 0 0 1 6 12 cm
 q
 0 0 0 rg
-BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 5.66 0 Td (3.) Tj T* -5.66 0 Td ET
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 5.66 0 Td (4.) Tj T* -5.66 0 Td ET
 Q
 Q
 q
@@ -6774,17 +7190,17 @@ q
 Q
 Q
 q
-1 0 0 1 40.01575 562.0394 cm
+1 0 0 1 40.01575 352.6394 cm
 Q
 q
-1 0 0 1 40.01575 523.0394 cm
+1 0 0 1 40.01575 313.6394 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
 q
 1 0 0 1 6 24 cm
 q
 0 0 0 rg
-BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 5.66 0 Td (4.) Tj T* -5.66 0 Td ET
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 5.66 0 Td (5.) Tj T* -5.66 0 Td ET
 Q
 Q
 q
@@ -6813,10 +7229,10 @@ q
 Q
 Q
 q
-1 0 0 1 40.01575 523.0394 cm
+1 0 0 1 40.01575 313.6394 cm
 Q
 q
-1 0 0 1 40.01575 490.2394 cm
+1 0 0 1 40.01575 280.8394 cm
 q
 .8 .8 .8 RG
 .3 w
@@ -6828,13 +7244,13 @@ BT 1 0 0 1 0 2.8 Tm 16.8 TL /F3 14 Tf .12549 .262745 .360784 rg (Appendix) Tj T*
 Q
 Q
 q
-1 0 0 1 40.01575 478.2394 cm
+1 0 0 1 40.01575 268.8394 cm
 Q
 q
-1 0 0 1 40.01575 478.2394 cm
+1 0 0 1 40.01575 268.8394 cm
 Q
 q
-1 0 0 1 40.01575 466.2394 cm
+1 0 0 1 40.01575 256.8394 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
 q
@@ -6854,10 +7270,10 @@ q
 Q
 Q
 q
-1 0 0 1 40.01575 460.2394 cm
+1 0 0 1 40.01575 250.8394 cm
 Q
 q
-1 0 0 1 40.01575 448.2394 cm
+1 0 0 1 40.01575 238.8394 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
 q
@@ -6877,10 +7293,10 @@ q
 Q
 Q
 q
-1 0 0 1 40.01575 442.2394 cm
+1 0 0 1 40.01575 232.8394 cm
 Q
 q
-1 0 0 1 40.01575 430.2394 cm
+1 0 0 1 40.01575 220.8394 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
 q
@@ -6900,10 +7316,10 @@ q
 Q
 Q
 q
-1 0 0 1 40.01575 430.2394 cm
+1 0 0 1 40.01575 220.8394 cm
 Q
 q
-1 0 0 1 40.01575 430.2394 cm
+1 0 0 1 40.01575 220.8394 cm
 Q
 q
 1 0 0 1 34.01575 807.2126 cm
@@ -7105,26 +7521,26 @@ xref
 0001419792 00000 n
 0001423071 00000 n
 0001427264 00000 n
-0001430880 00000 n
-0001436969 00000 n
-0001437146 00000 n
-0001437184 00000 n
-0001437222 00000 n
-0001437260 00000 n
-0001437298 00000 n
-0001437336 00000 n
-0001437374 00000 n
-0001437412 00000 n
-0001437450 00000 n
-0001437488 00000 n
-0001437526 00000 n
-0001437564 00000 n
-0001437602 00000 n
+0001430914 00000 n
+0001440210 00000 n
+0001440387 00000 n
+0001440425 00000 n
+0001440463 00000 n
+0001440501 00000 n
+0001440539 00000 n
+0001440577 00000 n
+0001440615 00000 n
+0001440653 00000 n
+0001440691 00000 n
+0001440729 00000 n
+0001440767 00000 n
+0001440805 00000 n
+0001440843 00000 n
 trailer
 << /ID 
  % ReportLab generated PDF document -- digest (http://www.reportlab.com)
  [(-\270/\215\023\374\232\255\017j\310\301DYu\363) (-\270/\215\023\374\232\255\017j\310\301DYu\363)]
  /Info 102 0 R /Root 101 0 R /Size 152 >>
 startxref
-1437640
+1440881
 %%EOF

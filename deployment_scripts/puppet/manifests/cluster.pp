@@ -80,14 +80,6 @@ define cleanup_sds () {
     name               => $sds_name,
   }
 }
-
-define cleanup_mdm () {
-  $mdm_name = $title
-  scaleio::mdm {"Remove MDM ${mdm_name}":
-    ensure             => 'absent',
-    name               => $mdm_name,
-  }
-}
  
 
 # The only first mdm which is proposed to be the first master does cluster configuration
@@ -97,15 +89,14 @@ if $scaleio['metadata']['enabled'] {
     if $::mdm_ips {
       $mdm_ip_array = split($::mdm_ips, ',')
       $tb_ip_array = split($::tb_ips, ',')
-      $master_mdm = $mdm_ip_array[0]
-      if has_ip_address($master_mdm) {
+      if has_ip_address($mdm_ip_array[0]) {
         $standby_mdm_count = count($mdm_ip_array) - 1
         if $standby_mdm_count == 0 {
           $standby_ips = []
           $slave_names = undef
           $tb_names    = undef
         } else {
-          $standby_ips = delete($mdm_ip_array, $master_mdm)
+          $standby_ips = delete($mdm_ip_array, $mdm_ip_array[0]) # first is proposed to be muster or is current mdm
           $slave_names = join($standby_ips, ',')
           $tb_names    = join($tb_ip_array, ',')
         }
@@ -165,12 +156,9 @@ if $scaleio['metadata']['enabled'] {
           # todo: not clear is it safe: actually task sdc is run before cluster task,
           # so there to_add_sdc_ips is always empty, because all SDCs
           # are already registered in cluster and are returned from facter scaleio_current_sdc_list
-          notify {"Resize cluster current sdc-es '${::scaleio_sdc_ips}'": } ->
-          notify {"Resize cluster new sdc-es '${to_add_sdc_ips}'": } ->
-          notify {"Resize cluster remove sdc-es '${to_remove_sdc}'": } ->
+          notify {"SDC change current='${::scaleio_current_sdc_list}', to_add='${to_add_sdc_ips}', to_remove='${to_remove_sdc}'": } ->
           cleanup_sdc {$to_remove_sdc:
             require             => Scaleio::Login['Normal'],
-            before              => Mdm_standby[$standby_ips],           
           }
         } else {
           $to_add_sdc_ips = $sdc_nodes_ips
@@ -180,61 +168,21 @@ if $scaleio['metadata']['enabled'] {
           $current_sds_names = split($::scaleio_sds_names, ',')
           $new_sds_names = keys(nodes_to_hash($sds_nodes, 'name', 'internal_address'))
           $to_remove_sds = difference($current_sds_names, intersection($current_sds_names, $new_sds_names))
-          notify {"Resize cluster current sds-es '${::scaleio_sds_names}'": } ->
-          notify {"Resize cluster new sds-es '${new_sds_names}'": } ->
-          notify {"Resize cluster remove sds-es '${to_remove_sds}'": } ->
+          notify {"SDS change current='${::scaleio_current_sds_list}' new='${new_sds_names}' to_remove='${to_remove_sds}'": } ->
           cleanup_sds {$to_remove_sds:
             require             => Scaleio::Login['Normal'],
-            before              => Mdm_standby[$standby_ips],           
           }
         }
-        if $::scaleio_mdm_ips or $::scaleio_tb_ips {
-          $controllers = split($::controller_ips, ',')
-          if $::scaleio_mdm_ips {
-            $cur_mdms = split($::scaleio_mdm_ips, ',')
-            $mdm_absent = difference($cur_mdms, intersection($cur_mdms, $controllers))
-          } else {
-            $cur_mdms = []
-            $mdm_absent = []
-          }
-          if $::scaleio_tb_ips {
-            $cur_tbs = split($::scaleio_tb_ips, ',')
-            $tb_absent = difference($cur_tbs, intersection($cur_tbs, $controllers))
-          } else {
-            $cur_tbs = []
-            $tb_absent = []
-          }
-          #set cluster mode 1 to reconfigure cluster
-          #new mode will be set below after adding new mdm and tb
-          notify {"Resize cluster current mdms '${::scaleio_mdm_ips}', tbs '${::scaleio_tb_ips}'": } ->
-          notify {"Resize cluster new mdms '${::mdm_ips}', tbs '${::tb_ips}', controllers ${::controller_ips}": } ->
-          notify {"Resize cluster remove mdms '${mdm_absent}', tbs '${tb_absent}'": }
-          if count($mdm_absent) > 0 or count($tb_absent) > 0 {
-            $to_remove_mdms = concat($mdm_absent, $tb_absent)
-            $cur_slaves = join(delete($cur_mdms, $cur_mdms[0]), ',')
-            scaleio::cluster {'Resize cluster mode to 1_node and remove other MDMs':
-              ensure              => 'absent',
-              cluster_mode        => 1,
-              slave_names         => $cur_slaves,
-              tb_names            => $::scaleio_tb_ips,
-              require             => Scaleio::Login['Normal'],
-            } ->
-            cleanup_mdm {$to_remove_mdms:
-              before              => Mdm_standby[$standby_ips],              
-            }
-          }
-        }
-        mdm_standby {$standby_ips:
-          require             => Scaleio::Login['Normal'],          
-        } ->
-        mdm_tb{$tb_ip_array:}
         if $cluster_mode != 1 {
+          mdm_standby {$standby_ips:
+            require             => Scaleio::Login['Normal'],          
+          } ->
+          mdm_tb{$tb_ip_array:} ->
           scaleio::cluster {'Configure cluster mode':
             ensure              => 'present',
             cluster_mode        => $cluster_mode,
             slave_names         => $slave_names,
             tb_names            => $tb_names,
-            require             => Mdm_tb[$tb_ip_array],              
           }
         }
         scaleio::protection_domain {"Ensure protection domain ${protection_domain}":
