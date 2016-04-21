@@ -22,9 +22,9 @@ if $scaleio['metadata']['enabled'] {
     $current_mdms = concat(split($::scaleio_mdm_ips, ','), split($::scaleio_standby_mdm_ips, ','))
     $current_tbs = concat(split($::scaleio_tb_ips, ','), split($::scaleio_standby_tb_ips, ','))
     $mdms_present = intersection($controllers_ips, $current_mdms)
-    $mdms_absent = difference($controllers_ips, $current_mdms)
+    $mdms_absent = difference($current_mdms, $mdms_present)
     $tbs_present = intersection($controllers_ips, $current_tbs)
-    $tbs_absent = difference($controllers_ips, $current_tbs)
+    $tbs_absent = difference($current_tbs, $tbs_present)
     $controllers_count = count($controllers_ips)
     if $controllers_count < 3 {
       # 1 node mode
