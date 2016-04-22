@@ -89,14 +89,20 @@ if $scaleio['metadata']['enabled'] {
     if $::mdm_ips {
       $mdm_ip_array = split($::mdm_ips, ',')
       $tb_ip_array = split($::tb_ips, ',')
-      if has_ip_address($mdm_ip_array[0]) {
+      $all_nodes = hiera('nodes')
+      $pr_controller_node = filter_nodes($all_nodes, 'role', 'primary-controller')
+      # primary controller configures cluster
+      if has_ip_address($pr_controller_node[0]['internal_address']) {
         $standby_mdm_count = count($mdm_ip_array) - 1
         if $standby_mdm_count == 0 {
           $standby_ips = []
           $slave_names = undef
           $tb_names    = undef
         } else {
-          $standby_ips = delete($mdm_ip_array, $mdm_ip_array[0]) # first is proposed to be muster or is current mdm
+          # primary controller IP is first in the list in case of first deploy and it creates cluster.
+          # it's guaranied by the tasks environment.pp and resize_cluster.pp
+          # in case of re-deploy the first ip is current master ip
+          $standby_ips = delete($mdm_ip_array, $mdm_ip_array[0])
           $slave_names = join($standby_ips, ',')
           $tb_names    = join($tb_ip_array, ',')
         }
@@ -116,7 +122,6 @@ if $scaleio['metadata']['enabled'] {
           undef   => undef,
           default => split($scaleio['storage_pools'], ',')
         }
-        $all_nodes = hiera('nodes')
         $compute_nodes  = filter_nodes($all_nodes, 'role', 'compute')		
         if $scaleio['sds_on_controller'] {		
           $controller_nodes  = filter_nodes($all_nodes, 'role', 'controller')		

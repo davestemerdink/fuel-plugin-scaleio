@@ -88,11 +88,12 @@ if $scaleio['metadata']['enabled'] {
       notify {"Ensure devices size are greater than 100GB for Cinder Node ${::hostname}": }
       #TODO: add check devices sizes
     }
-    # set all controllers as mdm ips  and empty tb ips for cluster discovering
+    # mdm ips  and tb ips must be emtpy to avoid queries from ScaleIO about SDC/SDS,
+    # the next task (cluster discovering) will set them into correct values.
     env_fact{'Environment fact: mdm ips':
       role => 'mdm',
       fact => 'ips',
-      value => $ctrl_ips
+      value => ''
     } ->
     env_fact{'Environment fact: tb ips':
       role => 'tb',

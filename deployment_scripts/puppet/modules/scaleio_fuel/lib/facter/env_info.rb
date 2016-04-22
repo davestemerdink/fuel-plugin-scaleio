@@ -20,18 +20,18 @@ facters.each { |f|
 }
 
 #skip fact for existing cluster if no gateway password that means deploying new cluster
-gw_passw = Facter.value('gateway_password')
-if gw_passw && gw_passw != ''
+$gw_ips = Facter.value('gateway_ips')
+$gw_passw = Facter.value('gateway_password')
+if $gw_passw && $gw_passw != '' and $gw_ips and $gw_ips != ''
   Facter.add('existing_cluster_mdm_ips') do
     setcode do
       user        = Facter.value('gateway_user')
-      password    = gw_passw
-      host        = Facter.value('gateway_ips').split(',')[0]
+      host        = $gw_ips.split(',')[0]
       port        = Facter.value('gateway_port')
       base_url    = "https://%s:%s/api/%s"
       login_url   = base_url % [host, port, 'login']
       config_url  = base_url % [host, port, 'Configuration']
-      login_req   = "curl -k --basic --connect-timeout 5 --user #{user}:#{password} #{login_url} 2>>%s | sed 's/\"//g'" % $scaleio_log_file
+      login_req   = "curl -k --basic --connect-timeout 5 --user #{user}:#{$gw_passw} #{login_url} 2>>%s | sed 's/\"//g'" % $scaleio_log_file
       debug_log(login_req)
       token       = Facter::Util::Resolution.exec(login_req)
       if token && token != ''
@@ -51,9 +51,9 @@ end
 
         
 # Facter to scan existign cluster
-# MDM IPs to scan
-mdm_ips = Facter.value(:mdm_ips)
-if mdm_ips and mdm_ips != ''
+# Controller IPs to scan
+$controller_ips = Facter.value(:controller_ips)
+if $controller_ips and $controller_ips != ''
   # Register all facts for MDMs
   # Example of output that facters below parse:
   #   Cluster:
@@ -89,7 +89,7 @@ if mdm_ips and mdm_ips != ''
         # Define mdm opts for SCLI tool to connect to ScaleIO cluster.
         # If there is no mdm_ips available it is expected to be run on a node with MDM Master. 
         mdm_opts = []
-        mdm_ips.split(',').each do |ip|
+        $controller_ips.split(',').each do |ip|
           mdm_opts.push("--mdm_ip %s" % ip)
         end
         ip = nil
@@ -107,8 +107,13 @@ if mdm_ips and mdm_ips != ''
       end
     end
   end
+end
 
-
+# Facter to scan existign cluster
+# MDM IPs to scan
+$mdm_ips = Facter.value(:mdm_ips)
+$mdm_password = Facter.value(:mdm_password)
+if $mdm_ips and $mdm_ips != '' and $mdm_password and $mdm_password != ''
   sds_sdc_components = {
     'scaleio_current_sdc_list' => ['sdc', 'IP: [^ ]*', nil],
     'scaleio_current_sds_list' => ['sds', 'Name: [^ ]*', 'Protection Domain'],
@@ -116,9 +121,8 @@ if mdm_ips and mdm_ips != ''
   sds_sdc_components.each do |name, selector|
     Facter.add(name) do
       setcode do
-        mdm_password = Facter.value(:mdm_password)
-        mdm_opts = "--mdm_ip %s" % mdm_ips
-        login_cmd = "scli %s --approve_certificate --login --username admin --password %s 2>>%s" % [mdm_opts, mdm_password, $scaleio_log_file]
+        mdm_opts = "--mdm_ip %s" % $mdm_ips
+        login_cmd = "scli %s --approve_certificate --login --username admin --password %s 2>>%s" % [mdm_opts, $mdm_password, $scaleio_log_file]
         query_cmd = "scli %s --approve_certificate --query_all_%s 2>>%s" % [mdm_opts, selector[0], $scaleio_log_file]
         cmd = "%s && %s" % [login_cmd, query_cmd]
         debug_log(cmd)
@@ -144,5 +148,4 @@ if mdm_ips and mdm_ips != ''
       end
     end
   end
-  
 end # if mdm_ips and mdm_ips != ''
