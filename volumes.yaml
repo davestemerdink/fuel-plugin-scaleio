@@ -26,7 +26,9 @@ volumes_roles_mapping:
   scaleio-storage-tier1:
     - {allocate_size: "min", id: "os"} 
     - {allocate_size: "full-disk", id: "scaleio-storage-tier1"}
+    - {allocate_size: "full-disk", id: "scaleio-storage-tier2"}
   scaleio-storage-tier2:
     - {allocate_size: "min", id: "os"} 
+    - {allocate_size: "full-disk", id: "scaleio-storage-tier1"}
     - {allocate_size: "full-disk", id: "scaleio-storage-tier2"}
     
