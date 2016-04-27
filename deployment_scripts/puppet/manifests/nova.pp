@@ -2,9 +2,6 @@
 
 $scaleio = hiera('scaleio')
 if $scaleio['metadata']['enabled'] {
-  if ! $::gateway_ips {
-    fail('Empty Gateway IPs configuration')    
-  }
   $all_nodes = hiera('nodes')
   $nodes = filter_nodes($all_nodes, 'name', $::hostname)
   if empty(filter_nodes($nodes, 'role', 'compute')) {
