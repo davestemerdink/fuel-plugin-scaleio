@@ -2,11 +2,11 @@
 # On client nodes just all controllers are used as mdm ips because no way to detect cluster there.
 
 define env_fact($role, $fact, $value) {
-  file_line { "Append a FACTER_${role}_${fact} line to /etc/environment":
+  file_line { "Append a SCALEIO_${role}_${fact} line to /etc/environment":
     ensure  => present,
     path    => '/etc/environment',
-    match   => "^FACTER_${role}_${fact}=",
-    line    => "FACTER_${role}_${fact}=${value}",
+    match   => "^SCALEIO_${role}_${fact}=",
+    line    => "SCALEIO_${role}_${fact}=${value}",
   }  
 }
 

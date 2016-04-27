@@ -46,14 +46,14 @@ if $scaleio['metadata']['enabled'] {
           scaleio::cluster {'Set password':
             password      => $old_password,
             new_password  => $password,
-            before        => File_line['Append a FACTER_mdm_password line to /etc/environment']
+            before        => File_line['Append a SCALEIO_mdm_password line to /etc/environment']
           }
         }
-        file_line {'Append a FACTER_mdm_password line to /etc/environment':
+        file_line {'Append a SCALEIO_mdm_password line to /etc/environment':
           ensure  => present,
           path    => '/etc/environment',
-          match   => "^FACTER_mdm_password=",
-          line    => "FACTER_mdm_password=${password}",
+          match   => "^SCALEIO_mdm_password=",
+          line    => "SCALEIO_mdm_password=${password}",
         }
       }
     } else {

@@ -9,7 +9,7 @@ def debug_log(msg)
   File.open($scaleio_log_file, 'a') {|f| f.write("%s: %s\n" % [Time.now.strftime("%Y-%m-%d %H:%M:%S"), msg]) }
 end
 
-base_cmd = "bash -c 'source /etc/environment; echo $FACTER_%s'"
+base_cmd = "bash -c 'source /etc/environment; echo $SCALEIO_%s'"
 facters = ['controller_ips', 'tb_ips', 'mdm_ips', 'gateway_user', 'gateway_port', 'gateway_ips', 'gateway_password', 'mdm_password', 'storage_pools']
 facters.each { |f|
   if ! Facter.value(f)

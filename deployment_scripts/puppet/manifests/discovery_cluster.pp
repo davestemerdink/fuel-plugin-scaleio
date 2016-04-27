@@ -13,17 +13,17 @@ if $scaleio['metadata']['enabled'] {
     } else {
       notify {'Cluster is not discovered': }
     }
-    file_line {'FACTER_mdm_ips':
+    file_line {'SCALEIO_mdm_ips':
       ensure  => present,
       path    => '/etc/environment',
-      match   => "^FACTER_mdm_ips=",
-      line    => "FACTER_mdm_ips=${discovered_mdms_ips}",
+      match   => "^SCALEIO_mdm_ips=",
+      line    => "SCALEIO_mdm_ips=${discovered_mdms_ips}",
     } ->
-    file_line {'FACTER_tb_ips':
+    file_line {'SCALEIO_tb_ips':
       ensure  => present,
       path    => '/etc/environment',
-      match   => "^FACTER_tb_ips=",
-      line    => "FACTER_tb_ips=${discovered_tbs_ips}",
+      match   => "^SCALEIO_tb_ips=",
+      line    => "SCALEIO_tb_ips=${discovered_tbs_ips}",
     }    
   } else {
     notify{'Skip configuring cluster because of using existing cluster': }
