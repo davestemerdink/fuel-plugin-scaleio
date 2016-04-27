@@ -66,22 +66,22 @@ if $scaleio['metadata']['enabled'] {
       if ! empty(filter_nodes(filter_nodes($all_nodes, 'name', $::hostname), 'role', 'primary-controller')) {
         $password = $scaleio['password']
         notify {"Resize cluster: controllers_ips='${controllers_ips}', current_mdms='${current_mdms}', current_tbs='${current_tbs}'": } ->
-        scaleio::login {'Normal':
-          password => $password
-        }
         if count($mdms_absent) > 0 or count($tbs_absent) > 0 {
           $slaves_names = join(delete($current_mdms, $current_mdms[0]), ',') # first is current master
           $to_remove_mdms = concat(split(join($mdms_absent, ','), ','), $tbs_absent)  # join/split because concat affects first argument
+          scaleio::login {'Normal':
+            password => $password
+          } ->
           scaleio::cluster {'Resize cluster mode to 1_node and remove other MDMs':
             ensure              => 'absent',
             cluster_mode        => 1,
             slave_names         => $slaves_names,
             tb_names            => $::tb_ips,
             require             => Scaleio::Login['Normal'],
-            before              => File_line['FACTER_mdm_ips']
+            before              => File_line['SCALEIO_mdm_ips']
           } ->
           cleanup_mdm {$to_remove_mdms:
-            before              => File_line['FACTER_mdm_ips']
+            before              => File_line['SCALEIO_mdm_ips']
           }
         }
       } else {
@@ -90,17 +90,17 @@ if $scaleio['metadata']['enabled'] {
     } else {
       notify {'Cluster is not discovered': }
     }
-    file_line {'FACTER_mdm_ips':
+    file_line {'SCALEIO_mdm_ips':
       ensure  => present,
       path    => '/etc/environment',
-      match   => "^FACTER_mdm_ips=",
-      line    => "FACTER_mdm_ips=${new_mdms_ips}",
+      match   => "^SCALEIO_mdm_ips=",
+      line    => "SCALEIO_mdm_ips=${new_mdms_ips}",
     } ->
-    file_line {'FACTER_tb_ips':
+    file_line {'SCALEIO_tb_ips':
       ensure  => present,
       path    => '/etc/environment',
-      match   => "^FACTER_tb_ips=",
-      line    => "FACTER_tb_ips=${new_tb_ips}",
+      match   => "^SCALEIO_tb_ips=",
+      line    => "SCALEIO_tb_ips=${new_tb_ips}",
     }    
   } else {
     notify{'Skip configuring cluster because of using existing cluster': }
