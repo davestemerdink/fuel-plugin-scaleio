@@ -120,8 +120,11 @@ if $scaleio['metadata']['enabled'] {
             $tb_names    = join(values_at($tb_ip_array, "0-0"), ',')
           } else {
             $cluster_mode = 5
-            $slave_names = join(values_at($standby_ips, "0-1"), ',')
-            $tb_names    = join(values_at($tb_ip_array, "0-1"), ',')
+            # incase of switch 3 to 5 nodes add only standby mdm/tb
+            $to_add_slaves = difference(values_at($standby_ips, "0-1"), intersection(values_at($standby_ips, "0-1"), split($::scaleio_mdm_ips, ',')))
+            $to_add_tb = difference(values_at($tb_ip_array, "0-1"), intersection(values_at($tb_ip_array, "0-1"), split($::scaleio_tb_ips, ',')))
+            $slave_names = join($to_add_slaves, ',')
+            $tb_names    = join($to_add_tb, ',')
           }
         }
         $password = $scaleio['password']
