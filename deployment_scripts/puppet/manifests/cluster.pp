@@ -103,8 +103,9 @@ if $scaleio['metadata']['enabled'] {
       $pr_controller_node = filter_nodes($all_nodes, 'role', 'primary-controller')
       # primary controller configures cluster
       if has_ip_address($pr_controller_node[0]['internal_address']) {
-        $standby_mdm_count = count($mdm_ip_array) - 1
-        if $standby_mdm_count == 0 {
+        $total_mdm_count = count($mdm_ip_array) + count($tb_ip_array)
+        if $total_mdm_count < 3 {
+          $cluster_mode = 1
           $standby_ips = []
           $slave_names = undef
           $tb_names    = undef
@@ -112,18 +113,15 @@ if $scaleio['metadata']['enabled'] {
           # primary controller IP is first in the list in case of first deploy and it creates cluster.
           # it's guaranied by the tasks environment.pp and resize_cluster.pp
           # in case of re-deploy the first ip is current master ip
-          $standby_ips = delete($mdm_ip_array, $mdm_ip_array[0])
-          $slave_names = join($standby_ips, ',')
-          $tb_names    = join($tb_ip_array, ',')
-        }
-        $total_mdm_count = count($mdm_ip_array) + count($tb_ip_array)
-        if $total_mdm_count < 3 {
-          $cluster_mode = 1
-        } else {
+          $standby_ips = delete($mdm_ip_array, $mdm_ip_array[0])        
           if $total_mdm_count < 5 {
             $cluster_mode = 3
+            $slave_names = join(values_at($standby_ips, "0-0"), ',')
+            $tb_names    = join(values_at($tb_ip_array, "0-0"), ',')
           } else {
             $cluster_mode = 5
+            $slave_names = join(values_at($standby_ips, "0-1"), ',')
+            $tb_names    = join(values_at($tb_ip_array, "0-1"), ',')
           }
         }
         $password = $scaleio['password']

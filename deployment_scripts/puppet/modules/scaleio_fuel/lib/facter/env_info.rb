@@ -83,7 +83,7 @@ if $controller_ips and $controller_ips != ''
     'scaleio_mdm_names'         => ['/Master MDM/,/\(Tie-Breakers\)\|\(Standby MDMs\)/p', '/./,//p', 'Name:'],
     'scaleio_tb_names'          => ['/Tie-Breakers/,/Standby MDMs/p', '/./,//p', 'Name:'],
     'scaleio_standby_mdm_ips'   => ['/Standby MDMs/,//p', '/Manager/,/Tie Breaker/p', 'IPs:'],
-    'scaleio_standby_tb_ips'    => ['/Standby MDMs/,//p', '/Tie Breaker/,//p', 'IPs:'],
+    'scaleio_standby_tb_ips'    => ['/Standby MDMs/,//p', '/Tie Breaker/,/./p', 'IPs:'],
   }
   # Define mdm opts for SCLI tool to connect to ScaleIO cluster.
   # If there is no mdm_ips available it is expected to be run on a node with MDM Master. 
