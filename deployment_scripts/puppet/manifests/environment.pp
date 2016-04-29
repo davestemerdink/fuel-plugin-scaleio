@@ -2,11 +2,11 @@
 # On client nodes just all controllers are used as mdm ips because no way to detect cluster there.
 
 define env_fact($role, $fact, $value) {
-  file_line { "Append a FACTER_${role}_${fact} line to /etc/environment":
+  file_line { "Append a SCALEIO_${role}_${fact} line to /etc/environment":
     ensure  => present,
     path    => '/etc/environment',
-    match   => "^FACTER_${role}_${fact}=",
-    line    => "FACTER_${role}_${fact}=${value}",
+    match   => "^SCALEIO_${role}_${fact}=",
+    line    => "SCALEIO_${role}_${fact}=${value}",
   }  
 }
 
@@ -88,11 +88,12 @@ if $scaleio['metadata']['enabled'] {
       notify {"Ensure devices size are greater than 100GB for Cinder Node ${::hostname}": }
       #TODO: add check devices sizes
     }
-    # set all controllers as mdm ips  and empty tb ips for cluster discovering
+    # mdm ips  and tb ips must be emtpy to avoid queries from ScaleIO about SDC/SDS,
+    # the next task (cluster discovering) will set them into correct values.
     env_fact{'Environment fact: mdm ips':
       role => 'mdm',
       fact => 'ips',
-      value => $ctrl_ips
+      value => ''
     } ->
     env_fact{'Environment fact: tb ips':
       role => 'tb',

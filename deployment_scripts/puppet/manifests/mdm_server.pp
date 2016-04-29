@@ -3,6 +3,7 @@
 $scaleio = hiera('scaleio')
 if $scaleio['metadata']['enabled'] {
   if ! $scaleio['existing_cluster'] {
+    $all_nodes = hiera('nodes')
     $node_ips = split($::ip_address_array, ',')
     $new_mdm_ips = split($::mdm_ips, ',')
     $is_tb = ! empty(intersection(split($::tb_ips, ','), $node_ips))
@@ -15,7 +16,8 @@ if $scaleio['metadata']['enabled'] {
       } else {
         $is_manager = 1
         $is_new_cluster = ! $::scaleio_mdm_ips or $::scaleio_mdm_ips == ''
-        if $is_new_cluster and has_ip_address($new_mdm_ips[0]) {
+        $is_primary_controller = ! empty(filter_nodes(filter_nodes($all_nodes, 'name', $::hostname), 'role', 'primary-controller'))
+        if $is_new_cluster and $is_primary_controller {
           $master_ip = $new_mdm_ips[0]
           $master_mdm_name = $new_mdm_ips[0]
         } else {
@@ -44,14 +46,14 @@ if $scaleio['metadata']['enabled'] {
           scaleio::cluster {'Set password':
             password      => $old_password,
             new_password  => $password,
-            before        => File_line['Append a FACTER_mdm_password line to /etc/environment']
+            before        => File_line['Append a SCALEIO_mdm_password line to /etc/environment']
           }
         }
-        file_line {'Append a FACTER_mdm_password line to /etc/environment':
+        file_line {'Append a SCALEIO_mdm_password line to /etc/environment':
           ensure  => present,
           path    => '/etc/environment',
-          match   => "^FACTER_mdm_password=",
-          line    => "FACTER_mdm_password=${password}",
+          match   => "^SCALEIO_mdm_password=",
+          line    => "SCALEIO_mdm_password=${password}",
         }
       }
     } else {

@@ -1,6 +1,6 @@
-# The puppet:
-# - sets 1_node mode and removes absent nodes if there are any ones.
-# - updates mdm_ips and tb_ips values for next cluster task.
+# The puppet sets 1_node mode and removes absent nodes if there are any ones.
+# It expects that facters mdm_ips and tb_ips are correctly set to current cluster state
+
 
 define cleanup_mdm () {
   $mdm_name = $title
@@ -19,8 +19,8 @@ if $scaleio['metadata']['enabled'] {
     #use management network for ScaleIO components communications
     $controllers_ips = ipsort(values(nodes_to_hash($controllers_nodes, 'name', 'internal_address')))
     # names of mdm and tb are IPs in fuel
-    $current_mdms = concat(split($::scaleio_mdm_ips, ','), split($::scaleio_standby_mdm_ips, ','))
-    $current_tbs = concat(split($::scaleio_tb_ips, ','), split($::scaleio_standby_tb_ips, ','))
+    $current_mdms = split($::mdm_ips, ',')
+    $current_tbs = split($::tb_ips, ',')
     $mdms_present = intersection($controllers_ips, $current_mdms)
     $mdms_absent = difference($current_mdms, $mdms_present)
     $tbs_present = intersection($controllers_ips, $current_tbs)
@@ -47,40 +47,41 @@ if $scaleio['metadata']['enabled'] {
       $last_tb_index = count($available_nodes) - 1
       $first_tb_index = $last_tb_index - $to_add_tb_count + 1
       $tbs_present_tmp = intersection($controllers_ips, $current_tbs) # use tmp because concat modifys first param
-      $tb_ips = join(concat($tbs_present_tmp, values_at($available_nodes, "${first_tb_index}-${last_tb_index}")), ',')
+      $new_tb_ips = join(concat($tbs_present_tmp, values_at($available_nodes, "${first_tb_index}-${last_tb_index}")), ',')
     } else {
-      $tb_ips = join($tbs_present, ',')
+      $new_tb_ips = join($tbs_present, ',')
     }                  
     if $to_add_mdm_count > 0 and count($available_nodes) >= $to_add_mdm_count {
       $last_mdm_index = $to_add_mdm_count - 1
       $mdms_present_tmp = intersection($controllers_ips, $current_mdms) # use tmp because concat modifys first param
-      $mdms_ips = join(concat($mdms_present_tmp, values_at($available_nodes, "0-${last_mdm_index}")), ',')
+      $new_mdms_ips = join(concat($mdms_present_tmp, values_at($available_nodes, "0-${last_mdm_index}")), ',')
     } else {
-      $mdms_ips = join($mdms_present, ',')
+      $new_mdms_ips = join($mdms_present, ',')
     }                  
     notify {"Cluster: controllers_ips='${controllers_ips}', current_mdms='${current_mdms}', current_tbs='${current_tbs}'": }
     if count($mdms_present) {
       notify {"Cluster MDM change: mdms_present='${mdms_present}', mdms_absent='${mdms_absent}'": } ->
       notify {"Cluster TB change: tbs_present='${tbs_present}', tbs_absent='${tbs_absent}'": }
-      # the only mdm with minimal ip will do cleanup
-      if has_ip_address($mdms_present[0]) {
+      # primary-controller will do cleanup
+      if ! empty(filter_nodes(filter_nodes($all_nodes, 'name', $::hostname), 'role', 'primary-controller')) {
         $password = $scaleio['password']
-        notify {"Resize cluster: controllers_ips='${controllers_ips}', current_mdms='${current_mdms}', current_tbs='${current_tbs}'": } ->
-        scaleio::login {'Normal':
-          password => $password
-        }
+        notify {"Resize cluster: controllers_ips='${controllers_ips}', current_mdms='${current_mdms}', current_tbs='${current_tbs}'": }
         if count($mdms_absent) > 0 or count($tbs_absent) > 0 {
           $slaves_names = join(delete($current_mdms, $current_mdms[0]), ',') # first is current master
-          $to_remove_mdms = concat($mdms_absent, $tbs_absent) # !!! do not use $mdms_absent after this line
+          $to_remove_mdms = concat(split(join($mdms_absent, ','), ','), $tbs_absent)  # join/split because concat affects first argument
+          scaleio::login {'Normal':
+            password => $password
+          } ->
           scaleio::cluster {'Resize cluster mode to 1_node and remove other MDMs':
             ensure              => 'absent',
             cluster_mode        => 1,
             slave_names         => $slaves_names,
-            tb_names            => $::scaleio_tb_names,
+            tb_names            => $::tb_ips,
             require             => Scaleio::Login['Normal'],
+            before              => File_line['SCALEIO_mdm_ips']
           } ->
           cleanup_mdm {$to_remove_mdms:
-            before              => File_line['FACTER_mdm_ips']
+            before              => File_line['SCALEIO_mdm_ips']
           }
         }
       } else {
@@ -89,18 +90,24 @@ if $scaleio['metadata']['enabled'] {
     } else {
       notify {'Cluster is not discovered': }
     }
-    file_line {'FACTER_mdm_ips':
+    file_line {'SCALEIO_mdm_ips':
       ensure  => present,
       path    => '/etc/environment',
-      match   => "^FACTER_mdm_ips=",
-      line    => "FACTER_mdm_ips=${mdms_ips}",
+      match   => "^SCALEIO_mdm_ips=",
+      line    => "SCALEIO_mdm_ips=${new_mdms_ips}",
     } ->
-    file_line {'FACTER_tb_ips':
+    file_line {'SCALEIO_tb_ips':
       ensure  => present,
       path    => '/etc/environment',
-      match   => "^FACTER_tb_ips=",
-      line    => "FACTER_tb_ips=${tb_ips}",
-    }    
+      match   => "^SCALEIO_tb_ips=",
+      line    => "SCALEIO_tb_ips=${new_tb_ips}",
+    } ->
+    file_line {'SCALEIO_discovery_allowed':
+      ensure  => present,
+      path    => '/etc/environment',
+      match   => "^SCALEIO_discovery_allowed=",
+      line    => "SCALEIO_discovery_allowed=yes",
+    }
   } else {
     notify{'Skip configuring cluster because of using existing cluster': }
   }
