@@ -87,6 +87,16 @@ $scaleio = hiera('scaleio')
 if $scaleio['metadata']['enabled'] {
   if ! $scaleio['existing_cluster'] {
     if $::mdm_ips {
+      # forbid requesting sdc/sds from discovery facters,
+      # this is a workaround of the ScaleIO problem - 
+      # these requests hangs in some reason if cluster is in degraded state
+      file_line {'SCALEIO_discovery_allowed':
+        ensure  => present,
+        path    => '/etc/environment',
+        match   => "^SCALEIO_discovery_allowed=",
+        line    => "SCALEIO_discovery_allowed=no",
+      }
+      
       $mdm_ip_array = split($::mdm_ips, ',')
       $tb_ip_array = split($::tb_ips, ',')
       $all_nodes = hiera('nodes')
@@ -152,7 +162,10 @@ if $scaleio['metadata']['enabled'] {
          $device_storage_pools = undef
         }  
         notify {"Configure cluster MDM: ${master_mdm}": } ->
-        scaleio::login {'Normal': password => $password }
+        scaleio::login {'Normal':
+          password => $password,
+          require  => File_line['SCALEIO_discovery_allowed']
+        }
         if $::scaleio_current_sdc_list {
           $current_sdc_ips = split($::scaleio_current_sdc_list, ',')
           $to_keep_sdc = intersection($current_sdc_ips, $sdc_nodes_ips)

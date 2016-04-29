@@ -101,7 +101,13 @@ if $scaleio['metadata']['enabled'] {
       path    => '/etc/environment',
       match   => "^SCALEIO_tb_ips=",
       line    => "SCALEIO_tb_ips=${new_tb_ips}",
-    }    
+    } ->
+    file_line {'SCALEIO_discovery_allowed':
+      ensure  => present,
+      path    => '/etc/environment',
+      match   => "^SCALEIO_discovery_allowed=",
+      line    => "SCALEIO_discovery_allowed=yes",
+    }
   } else {
     notify{'Skip configuring cluster because of using existing cluster': }
   }

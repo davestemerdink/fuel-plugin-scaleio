@@ -10,7 +10,9 @@ def debug_log(msg)
 end
 
 base_cmd = "bash -c 'source /etc/environment; echo $SCALEIO_%s'"
-facters = ['controller_ips', 'tb_ips', 'mdm_ips', 'gateway_user', 'gateway_port', 'gateway_ips', 'gateway_password', 'mdm_password', 'storage_pools']
+facters = ['controller_ips', 'tb_ips', 'mdm_ips',
+  'gateway_user', 'gateway_port', 'gateway_ips', 'gateway_password', 'mdm_password',
+  'storage_pools', 'discovery_allowed']
 facters.each { |f|
   if ! Facter.value(f)
     Facter.add(f) do
@@ -83,27 +85,32 @@ if $controller_ips and $controller_ips != ''
     'scaleio_standby_mdm_ips'   => ['/Standby MDMs/,//p', '/Manager/,/Tie Breaker/p', 'IPs:'],
     'scaleio_standby_tb_ips'    => ['/Standby MDMs/,//p', '/Tie Breaker/,//p', 'IPs:'],
   }
-  mdm_components.each do |name, selector|
-    Facter.add(name) do
-      setcode do
-        # Define mdm opts for SCLI tool to connect to ScaleIO cluster.
-        # If there is no mdm_ips available it is expected to be run on a node with MDM Master. 
-        mdm_opts = []
-        $controller_ips.split(',').each do |ip|
-          mdm_opts.push("--mdm_ip %s" % ip)
-        end
-        ip = nil
-        # the cycle over MDM IPs because for query cluster SCLI's behaiveour is strange 
-        # it works for one IP but doesn't for the list.
-        mdm_opts.each do |opts|
-          query_cmd = "scli %s --query_cluster --approve_certificate 2>>%s" % [opts, $scaleio_log_file]
-          cmd = "%s | sed -n '%s' | sed -n '%s' | awk '/%s/ {print($2)}' | tr -d ','" % [query_cmd, selector[0], selector[1], selector[2]]
-          debug_log(cmd)
+  # Define mdm opts for SCLI tool to connect to ScaleIO cluster.
+  # If there is no mdm_ips available it is expected to be run on a node with MDM Master. 
+  mdm_opts = []
+  $controller_ips.split(',').each do |ip|
+    mdm_opts.push("--mdm_ip %s" % ip)
+  end
+  # the cycle over MDM IPs because for query cluster SCLI's behaiveour is strange 
+  # it works for one IP but doesn't for the list.
+  query_result = nil
+  mdm_opts.detect do |opts|
+    query_cmd = "scli %s --query_cluster --approve_certificate 2>>%s" % [opts, $scaleio_log_file]
+    res = Facter::Util::Resolution.exec(query_cmd)
+    debug_log("%s returns:\n'%s'" % [query_cmd, res])
+    query_result = res unless !res
+  end
+  if query_result
+    mdm_components.each do |name, selector|
+      Facter.add(name) do
+        setcode do
+          ip = nil
+          cmd = "echo '%s' | sed -n '%s' | sed -n '%s' | awk '/%s/ {print($2)}' | tr -d ','" % [query_result, selector[0], selector[1], selector[2]]
           res = Facter::Util::Resolution.exec(cmd)
           ip = res.split(' ').join(',') unless !res
+          debug_log("%s='%s'" % [name, ip])
+          ip
         end
-        debug_log("%s='%s'" % [name, ip])
-        ip
       end
     end
   end
@@ -111,9 +118,10 @@ end
 
 # Facter to scan existign cluster
 # MDM IPs to scan
+$discovery_allowed = Facter.value(:discovery_allowed)
 $mdm_ips = Facter.value(:mdm_ips)
 $mdm_password = Facter.value(:mdm_password)
-if $mdm_ips and $mdm_ips != '' and $mdm_password and $mdm_password != ''
+if $discovery_allowed == 'yes' and $mdm_ips and $mdm_ips != '' and $mdm_password and $mdm_password != ''
   sds_sdc_components = {
     'scaleio_current_sdc_list' => ['sdc', 'IP: [^ ]*', nil],
     'scaleio_current_sds_list' => ['sds', 'Name: [^ ]*', 'Protection Domain'],
