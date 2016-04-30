@@ -76,7 +76,7 @@ if $scaleio['metadata']['enabled'] {
             ensure              => 'absent',
             cluster_mode        => 1,
             slave_names         => $slaves_names,
-            tb_names            => $::tb_ips,
+            tb_names            => $::scaleio_tb_ips,
             require             => Scaleio::Login['Normal'],
             before              => File_line['SCALEIO_mdm_ips']
           } ->

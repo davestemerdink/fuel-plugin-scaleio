@@ -103,8 +103,8 @@ if $scaleio['metadata']['enabled'] {
       $pr_controller_node = filter_nodes($all_nodes, 'role', 'primary-controller')
       # primary controller configures cluster
       if has_ip_address($pr_controller_node[0]['internal_address']) {
-        $total_mdm_count = count($mdm_ip_array) + count($tb_ip_array)
-        if $total_mdm_count < 3 {
+        $mdm_count = count($mdm_ip_array)
+        if $mdm_count == 1 {
           $cluster_mode = 1
           $standby_ips = []
           $slave_names = undef
@@ -114,7 +114,7 @@ if $scaleio['metadata']['enabled'] {
           # it's guaranied by the tasks environment.pp and resize_cluster.pp
           # in case of re-deploy the first ip is current master ip
           $standby_ips = delete($mdm_ip_array, $mdm_ip_array[0])        
-          if $total_mdm_count < 5 {
+          if $mdm_count == 2 {
             $cluster_mode = 3
             $slave_names = join(values_at($standby_ips, "0-0"), ',')
             $tb_names    = join(values_at($tb_ip_array, "0-0"), ',')
