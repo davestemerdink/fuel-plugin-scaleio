@@ -49,8 +49,14 @@ define sds_device(
   if count(split($storage_ips, ',')) != 1 or count(split($mgmt_ips, ',')) != 1 {
     fail("TODO: behaviour changed: address becomes comma-separated list ${storage_ips} or ${mgmt_ips}, so it is needed to add the generation of ip roles")
   }
-  $sds_ips      = "${storage_ips},${mgmt_ips}"
-  $sds_ip_roles = "${storage_ip_roles},${mgmt_ip_roles}"
+  if $mgmt_ips == $storage_ips {
+    $sds_ips      = "${storage_ips}"
+    $sds_ip_roles = 'all'
+  }
+  else {
+    $sds_ips      = "${storage_ips},${mgmt_ips}"
+    $sds_ip_roles = "${storage_ip_roles},${mgmt_ip_roles}"
+  }
   scaleio::sds {$sds_name:
     ensure             => 'present',
     ensure_properties  => undef,
