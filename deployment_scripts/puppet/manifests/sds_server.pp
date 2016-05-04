@@ -21,7 +21,7 @@ if $scaleio['metadata']['enabled'] {
     } else {
       $all_nodes = hiera('nodes')
       $nodes = filter_nodes($all_nodes, 'name', $::hostname)
-      $is_sds_server = ! empty(filter_nodes($nodes, 'role', 'scaleio-storage'))
+      $is_sds_server = ! empty(concat(filter_nodes($nodes, 'role', 'scaleio-storage-tier1'), filter_nodes($nodes, 'role', 'scaleio-storage-tier2')))
     }
     if $is_sds_server {
       if $scaleio['device_paths'] {

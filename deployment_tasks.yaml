@@ -67,20 +67,34 @@
 ##############################################################################
 # ScaleIO cluster tasks
 ##############################################################################
-- id: scaleio-discover-and-resize
+- id: scaleio-discover-cluster
   role: [primary-controller, controller]
   required_for: [post_deployment_end]
-  requires: [post_deployment_start]  
+  requires: [post_deployment_start]
   type: puppet
   parameters:
-    puppet_manifest: puppet/manifests/discover_and_resize_cluster.pp
+    puppet_manifest: puppet/manifests/discovery_cluster.pp
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 600
+  reexecute_on:
+    - deploy_changes
+
+- id: scaleio-resize-cluster
+  role: [primary-controller, controller]
+  required_for: [post_deployment_end]
+  requires: [scaleio-discover-cluster]
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/resize_cluster.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
+    timeout: 600
+  reexecute_on:
+    - deploy_changes
     
 - id: scaleio-mdm-server
   groups: [primary-controller, controller]
   required_for: [post_deployment_end]
-  requires: [scaleio-discover-and-resize]
+  requires: [scaleio-resize-cluster]
   type: puppet
   parameters:
     puppet_manifest: puppet/manifests/mdm_server.pp
@@ -96,24 +110,12 @@
     puppet_manifest: puppet/manifests/gateway_server.pp
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 1800
-
-- id: scaleio-configure-cluster
-  role: [primary-controller, controller]
-  required_for: [post_deployment_end]
-  requires: [scaleio-gateway-server]
-  type: puppet
-  parameters:
-    puppet_manifest: puppet/manifests/cluster.pp
-    puppet_modules: puppet/modules:/etc/puppet/modules
-    timeout: 1800
+  reexecute_on:
+    - deploy_changes
     
-
-##############################################################################
-# ScaleIO client tasks
-##############################################################################
 - id: scaleio-sdc-server
   required_for: [post_deployment_end]
-  requires: [post_deployment_start, scaleio-configure-cluster]
+  requires: [scaleio-gateway-server]
   role: [compute, cinder]
   type: puppet
   parameters:
@@ -130,10 +132,28 @@
     puppet_manifest: puppet/manifests/sdc.pp
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 1800
+  reexecute_on:
+    - deploy_changes
 
-- id: scaleio-compute
+- id: scaleio-configure-cluster
+  role: [primary-controller, controller]
   required_for: [post_deployment_end]
   requires: [scaleio-sdc]
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/cluster.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
+    timeout: 1800
+  reexecute_on:
+    - deploy_changes
+
+
+##############################################################################
+# ScaleIO OS tasks
+##############################################################################
+- id: scaleio-compute
+  required_for: [post_deployment_end]
+  requires: [scaleio-configure-cluster]
   role: [compute]
   type: puppet
   parameters:
@@ -143,11 +163,10 @@
 
 - id: scaleio-cinder
   required_for: [post_deployment_end]
-  requires: [scaleio-sdc]
+  requires: [scaleio-configure-cluster]
   role: [cinder]
   type: puppet
   parameters:
     puppet_manifest: puppet/manifests/cinder.pp
     puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 600
-

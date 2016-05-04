@@ -36,7 +36,7 @@ if $scaleio['metadata']['enabled'] {
     }
   }
   $all_nodes = hiera('nodes')
-  if count(filter_nodes($all_nodes, 'role', 'cinder')) == 0 {
+  if ! $scaleio['skip_checks'] and empty(filter_nodes($all_nodes, 'role', 'cinder')) {
     fail('At least one Node with Cinder role is required')
   }
   if $scaleio['existing_cluster'] {
@@ -80,19 +80,16 @@ if $scaleio['metadata']['enabled'] {
       default => 0  
     }
     $total_sds_count = count(filter_nodes($all_nodes, 'role', 'compute')) + count(filter_nodes($all_nodes, 'role', 'scaleio-storage')) + $controller_sds_count
-    if $total_sds_count < 3 {
+    if ! $scaleio['skip_checks'] and $total_sds_count < 3 {
       fail('There should be at least 3 nodes with SDSs, either add Compute node or use Controllers as SDS.')
-    }
-    if empty(filter_nodes($all_nodes, 'role', 'cinder')) {
-      fail("There should be at least 1 node with Cinder role")
     }
     $nodes = filter_nodes($all_nodes, 'name', $::hostname)
     if ! empty(concat(filter_nodes($nodes, 'role', 'controller'), filter_nodes($nodes, 'role', 'primary-controller'))) {
-      if $::memorysize_mb < 3000 {
+      if ! $scaleio['skip_checks'] and $::memorysize_mb < 3000 {
         fail("Controller node requires at least 3000MB but there is ${::memorysize_mb}")
       }
     }
-    if $::sds_storage_small_devices {
+    if ! $scaleio['skip_checks'] and $::sds_storage_small_devices {
       fail("Storage devices minimal size is 100GB. The following devices do not meet this requirement ${::sds_storage_small_devices}")      
     }
     # mdm ips  and tb ips must be emtpy to avoid queries from ScaleIO about SDC/SDS,

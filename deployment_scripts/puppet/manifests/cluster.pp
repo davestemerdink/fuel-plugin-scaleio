@@ -40,7 +40,8 @@ define sds_device(
   $device_paths,
 ) {
   $sds_name = $title
-  $sds_node = filter_nodes($sds_nodes, 'name', $sds_name)[0]
+  $sds_node_ = filter_nodes($sds_nodes, 'name', $sds_name) 
+  $sds_node = $sds_node_[0]
   #ips for data path traffic
   $storage_ips      = $sds_node['storage_address']
   $storage_ip_roles = 'sdc_only'
@@ -148,7 +149,11 @@ if $scaleio['metadata']['enabled'] {
           }
         }
         $password = $scaleio['password']
-        $protection_domain_number = 1 + $sds_nodes_count / $scaleio['protection_domain_nodes']
+        if $scaleio['protection_domain_nodes'] {
+          $protection_domain_number = 1 + $sds_nodes_count / $scaleio['protection_domain_nodes']          
+        } else {
+          $protection_domain_number = 1
+        }
         $protection_domain =  $protection_domain_number ? {
           1       => $scaleio['protection_domain'],
           default => "${scaleio['protection_domain']}_${protection_domain_number}"
@@ -158,24 +163,24 @@ if $scaleio['metadata']['enabled'] {
         if $scaleio['device_paths'] {
           # for fuel6.1 devices come from settings
           $paths_ = split($scaleio['device_paths'], ',')
-          $paths = count($paths_) > 0 ? {
-            true    => $paths_,
-            default => undef
+          $paths = empty($paths_) ? {
+            true    => undef,
+            default => $paths_
           }
         } else {
           # for fuel 7.0 devices come from facter (search partition by guid)
           $tier12_paths = concat(split($::sds_storage_devices_tier1, ','), $tier2_devices) # concat changes first array!!
-          $paths = count(tier12_paths) > 0 ? {
-            true    => tier12_paths,
-            default => undef
+          $paths = empty($tier12_paths) ? {
+            true    => undef,
+            default => $tier12_paths
           }
         }
         if $scaleio['storage_pools'] {
           # for fuel6.1 storage pools come from settings
           $pools_ = split($scaleio['storage_pools'], ',')
-          $pools = count($pools_) > 0 ? {
-            true    => $pools_,
-            default => undef
+          $pools = empty($pools_) ? {
+            true    => undef,
+            default => $pools_
           }
         } else {  
           # for fuel 7.0 storage pools are generated for two storage tier2
