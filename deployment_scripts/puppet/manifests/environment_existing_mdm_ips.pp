@@ -2,11 +2,11 @@
 
 #TODO: move it from this file and from environment.pp into modules
 define env_fact($role, $fact, $value) {
-  file_line { "Append a FACTER_${role}_${fact} line to /etc/environment":
+  file_line { "Append a SCALEIO_${role}_${fact} line to /etc/environment":
     ensure  => present,
     path    => '/etc/environment',
-    match   => "^FACTER_${role}_${fact}=",
-    line    => "FACTER_${role}_${fact}=${value}",
+    match   => "^SCALEIO_${role}_${fact}=",
+    line    => "SCALEIO_${role}_${fact}=${value}",
   }  
 }
 
