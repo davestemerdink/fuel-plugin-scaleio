@@ -48,9 +48,10 @@ def debug_log(msg)
   File.open($scaleio_log_file, 'a') {|f| f.write("%s: %s\n" % [Time.now.strftime("%Y-%m-%d %H:%M:%S"), msg]) }
 end
 
-
-$mdm_ips = Facter.value(:mdm_ips)
-if $mdm_ips
+# Facter to scan existing cluster
+# Controller IPs to scan
+$controller_ips = Facter.value(:controller_ips)
+if $controller_ips and $controller_ips != ''
   # Register all facts for MDMs
   # Example of output that facters below parse:
   #   Cluster:
@@ -78,67 +79,83 @@ if $mdm_ips
     'scaleio_mdm_names'         => ['/Master MDM/,/\(Tie-Breakers\)\|\(Standby MDMs\)/p', '/./,//p', 'Name:'],
     'scaleio_tb_names'          => ['/Tie-Breakers/,/Standby MDMs/p', '/./,//p', 'Name:'],
     'scaleio_standby_mdm_ips'   => ['/Standby MDMs/,//p', '/Manager/,/Tie Breaker/p', 'IPs:'],
-    'scaleio_standby_tb_ips'    => ['/Standby MDMs/,//p', '/Tie Breaker/,//p', 'IPs:'],
+    'scaleio_standby_tb_ips'    => ['/Standby MDMs/,//p', '/Tie Breaker/,/./p', 'IPs:'],
   }
-  mdm_components.each do |name, selector|
-    Facter.add(name) do
-      setcode do
-        # Define mdm opts for SCLI tool to connect to ScaleIO cluster.
-        # If there is no mdm_ips available it is expected to be run on a node with MDM Master. 
-        mdm_opts = ''
-        if $mdm_ips != ''
-          mdm_opts = "--mdm_ip %s" % $mdm_ips
+  # Define mdm opts for SCLI tool to connect to ScaleIO cluster.
+  # If there is no mdm_ips available it is expected to be run on a node with MDM Master. 
+  mdm_opts = []
+  $controller_ips.split(',').each do |ip|
+    mdm_opts.push("--mdm_ip %s" % ip)
+  end
+  # the cycle over MDM IPs because for query cluster SCLI's behaiveour is strange 
+  # it works for one IP but doesn't for the list.
+  query_result = nil
+  mdm_opts.detect do |opts|
+    query_cmd = "scli %s --query_cluster --approve_certificate 2>>%s" % [opts, $scaleio_log_file]
+    res = Facter::Util::Resolution.exec(query_cmd)
+    debug_log("%s returns:\n'%s'" % [query_cmd, res])
+    query_result = res unless !res
+  end
+  if query_result
+    mdm_components.each do |name, selector|
+      Facter.add(name) do
+        setcode do
+          ip = nil
+          cmd = "echo '%s' | sed -n '%s' | sed -n '%s' | awk '/%s/ {print($2)}' | tr -d ','" % [query_result, selector[0], selector[1], selector[2]]
+          res = Facter::Util::Resolution.exec(cmd)
+          ip = res.split(' ').join(',') unless !res
+          debug_log("%s='%s'" % [name, ip])
+          ip
         end
-        ip = nil
-        query_cmd = "scli %s --query_cluster --approve_certificate 2>>%s" % [mdm_opts, $scaleio_log_file]
-        cmd = "%s | sed -n '%s' | sed -n '%s' | awk '/%s/ {print($2)}' | tr -d ','" % [query_cmd, selector[0], selector[1], selector[2]]
-        debug_log(cmd)
-        res = Facter::Util::Resolution.exec(cmd)
-        ip = res.split(' ').join(',') unless !res
-        debug_log("%s='%s'" % [name, ip])
-        ip
       end
     end
   end
+end
 
-  # Register all SDS/SDC facts
-  # Map SDC/SDS facts names to selection strings (the first string has 'include' semantic, the second - 'exclude')
+
+# Facter to scan existing cluster
+# MDM IPs to scan
+$discovery_allowed = Facter.value(:discovery_allowed)
+$mdm_ips = Facter.value(:mdm_ips)
+$mdm_password = Facter.value(:mdm_password)
+if $discovery_allowed == 'yes' and $mdm_ips and $mdm_ips != '' and $mdm_password and $mdm_password != ''
   sds_sdc_components = {
     'scaleio_sdc_ips'   => ['sdc', 'IP: [^ ]*', nil],
     'scaleio_sds_names' => ['sds', 'Name: [^ ]*', 'Protection Domain'],
     'scaleio_sds_ips'   => ['sds', 'IP: [^ ]*', 'Protection Domain'],
   }
+
   sds_sdc_components.each do |name, selector|
     Facter.add(name) do
       setcode do
         mdm_opts = "--mdm_ip %s" % $mdm_ips
+        login_cmd = "scli %s --approve_certificate --login --username admin --password %s 2>>%s" % [mdm_opts, $mdm_password, $scaleio_log_file]
         query_cmd = "scli %s --approve_certificate --query_all_%s 2>>%s" % [mdm_opts, selector[0], $scaleio_log_file]
-        mdm_password = Facter.value(:mdm_password)
-        if mdm_password
-          login_cmd = "scli %s --approve_certificate --login --username admin --password %s 2>>%s" % [mdm_opts, mdm_password, $scaleio_log_file]
-          cmd = "%s && %s" % [login_cmd, query_cmd]
-        else
-          cmd = query_cmd
-        end
+        cmd = "%s && %s" % [login_cmd, query_cmd]
         debug_log(cmd)
-        query_result = Facter::Util::Resolution.exec(cmd)
-        if query_result
+        result = Facter::Util::Resolution.exec(cmd)
+        if result
           skip_cmd = ''
           if selector[2]
             skip_cmd = "grep -v '%s' | " % selector[2]
           end
           select_cmd = "%s grep -o '%s' | awk '{print($2)}'" % [skip_cmd, selector[1]]
-          cmd = "echo '%s' | %s" % [query_result, select_cmd]
+          cmd = "echo '%s' | %s" % [result, select_cmd]
           debug_log(cmd)
-          select_result = Facter::Util::Resolution.exec(cmd)
-          result = select_result.split(' ').join(',') unless !select_result
+          result = Facter::Util::Resolution.exec(cmd)
+          if result
+            result = result.split(' ')
+            if result.count() > 0
+              result = result.join(',')
+            end
+          end
         end
         debug_log("%s='%s'" % [name, result])
         result
       end
     end
-  end  
-end # if $mdm_ips and $mdm_ips != ''
+  end
+end
 
 
 #The fact about MDM IPs.
@@ -163,7 +180,7 @@ if $gw_passw && $gw_passw != '' and $gw_ips and $gw_ips != ''
       base_url = "https://%s:%s/api/%s"
       login_url = base_url % [host, port, 'login']
       config_url = base_url % [host, port, 'Configuration']
-      login_req = "curl -k --basic --connect-timeout 5 --user #{gw_user}:#{$gw_passw} #{login_url} 2>>%s | sed 's/\"//g'" % $scaleio_log_file
+      login_req = "curl -k --basic --connect-timeout 5 --user #{gw_user}:#{gw_passw} #{login_url} 2>>%s | sed 's/\"//g'" % $scaleio_log_file
       debug_log(login_req)
       token = Facter::Util::Resolution.exec(login_req)
       if token && token != ''
@@ -182,3 +199,5 @@ if $gw_passw && $gw_passw != '' and $gw_ips and $gw_ips != ''
     end
   end
 end
+
+
