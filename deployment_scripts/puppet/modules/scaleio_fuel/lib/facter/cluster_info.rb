@@ -49,38 +49,7 @@ def debug_log(msg)
 end
 
 
-#skip fact for existing cluster if no gateway password that means deploying new cluster
-$gw_ips = Facter.value('gateway_ips')
-$gw_passw = Facter.value('gateway_password')
-if $gw_passw && $gw_passw != '' and $gw_ips and $gw_ips != ''
-  Facter.add('scaleio_mdm_ips_from_gateway') do
-    setcode do
-      user        = Facter.value('gateway_user')
-      host        = $gw_ips.split(',')[0]
-      port        = Facter.value('gateway_port')
-      base_url    = "https://%s:%s/api/%s"
-      login_url   = base_url % [host, port, 'login']
-      config_url  = base_url % [host, port, 'Configuration']
-      login_req   = "curl -k --basic --connect-timeout 5 --user #{user}:#{$gw_passw} #{login_url} 2>>%s | sed 's/\"//g'" % $scaleio_log_file
-      debug_log(login_req)
-      token       = Facter::Util::Resolution.exec(login_req)
-      if token && token != ''
-        req_url     = "curl -k --basic --connect-timeout 10 --user #{user}:#{token} #{config_url} 2>>%s" % $scaleio_log_file
-        debug_log(req_url)
-        config_str  = Facter::Util::Resolution.exec(req_url)
-        config      = JSON.parse(config_str)
-        mdm_ips     = config['mdmAddresses'].join(',')
-      else
-        mdm_ips = nil
-      end
-      debug_log("%s='%s'" % ['existing_cluster_mdm_ips', mdm_ips])
-      mdm_ips
-    end
-  end
-end
-
-        
-# Facter to scan existign cluster
+# Facter to scan existing cluster
 # Controller IPs to scan
 $controller_ips = Facter.value(:controller_ips)
 if $controller_ips and $controller_ips != ''
@@ -111,7 +80,7 @@ if $controller_ips and $controller_ips != ''
     'scaleio_mdm_names'         => ['/Master MDM/,/\(Tie-Breakers\)\|\(Standby MDMs\)/p', '/./,//p', 'Name:'],
     'scaleio_tb_names'          => ['/Tie-Breakers/,/Standby MDMs/p', '/./,//p', 'Name:'],
     'scaleio_standby_mdm_ips'   => ['/Standby MDMs/,//p', '/Manager/,/Tie Breaker/p', 'IPs:'],
-    'scaleio_standby_tb_ips'    => ['/Standby MDMs/,//p', '/Tie Breaker/,//p', 'IPs:'],
+    'scaleio_standby_tb_ips'    => ['/Standby MDMs/,//p', '/Tie Breaker/,/./p', 'IPs:'],
   }
   # Define mdm opts for SCLI tool to connect to ScaleIO cluster.
   # If there is no mdm_ips available it is expected to be run on a node with MDM Master. 
@@ -144,7 +113,7 @@ if $controller_ips and $controller_ips != ''
   end
 end
 
-# Facter to scan existign cluster
+# Facter to scan existing cluster
 # MDM IPs to scan
 $discovery_allowed = Facter.value(:discovery_allowed)
 $mdm_ips = Facter.value(:mdm_ips)
@@ -155,6 +124,7 @@ if $discovery_allowed == 'yes' and $mdm_ips and $mdm_ips != '' and $mdm_password
     'scaleio_sds_ips' => ['sds', 'IP: [^ ]*', 'Protection Domain'],
     'scaleio_sds_names' => ['sds', 'Name: [^ ]*', 'Protection Domain'],
   }
+
   sds_sdc_components.each do |name, selector|
     Facter.add(name) do
       setcode do
@@ -183,6 +153,49 @@ if $discovery_allowed == 'yes' and $mdm_ips and $mdm_ips != '' and $mdm_password
         debug_log("%s='%s'" % [name, result])
         result
       end
+    end
+  end
+end
+
+
+#The fact about MDM IPs.
+#It requests them from Gateway.
+$gw_ips    = Facter.value(:gateway_ips)
+$gw_passw  = Facter.value(:mdm_password)
+if $gw_passw && $gw_passw != '' and $gw_ips and $gw_ips != ''
+  Facter.add('scaleio_mdm_ips_from_gateway') do
+    setcode do
+      result = nil
+      if Facter.value('gateway_user')
+        gw_user = Facter.value('gateway_user')
+      else
+        gw_user = 'admin'
+      end
+      host = $gw_ips.split(',')[0]
+      if Facter.value('gateway_port')
+        port = Facter.value('gateway_port')
+      else
+        port = 4443
+      end
+      base_url = "https://%s:%s/api/%s"
+      login_url = base_url % [host, port, 'login']
+      config_url = base_url % [host, port, 'Configuration']
+      login_req = "curl -k --basic --connect-timeout 5 --user #{gw_user}:#{gw_passw} #{login_url} 2>>%s | sed 's/\"//g'" % $scaleio_log_file
+      debug_log(login_req)
+      token = Facter::Util::Resolution.exec(login_req)
+      if token && token != ''
+        req_url = "curl -k --basic --connect-timeout 5 --user #{gw_user}:#{token} #{config_url} 2>>%s" % $scaleio_log_file
+        debug_log(req_url)
+        request_result  = Facter::Util::Resolution.exec(req_url)
+        if request_result
+          config = JSON.parse(request_result)
+          if config and config['mdmAddresses'] 
+            result = config['mdmAddresses'].join(',')
+          end
+        end
+      end
+      debug_log("%s='%s'" % ['scaleio_mdm_ips_from_gateway', result])
+      result
     end
   end
 end

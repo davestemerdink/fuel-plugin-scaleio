@@ -49,8 +49,14 @@ define sds_device(
   if count(split($storage_ips, ',')) != 1 or count(split($mgmt_ips, ',')) != 1 {
     fail("TODO: behaviour changed: address becomes comma-separated list ${storage_ips} or ${mgmt_ips}, so it is needed to add the generation of ip roles")
   }
-  $sds_ips      = "${storage_ips},${mgmt_ips}"
-  $sds_ip_roles = "${storage_ip_roles},${mgmt_ip_roles}"
+  if $mgmt_ips == $storage_ips {
+    $sds_ips      = "${storage_ips}"
+    $sds_ip_roles = 'all'
+  }
+  else {
+    $sds_ips      = "${storage_ips},${mgmt_ips}"
+    $sds_ip_roles = "${storage_ip_roles},${mgmt_ip_roles}"
+  }
   scaleio::sds {$sds_name:
     ensure             => 'present',
     ensure_properties  => undef,
@@ -103,8 +109,10 @@ if $scaleio['metadata']['enabled'] {
       $pr_controller_node = filter_nodes($all_nodes, 'role', 'primary-controller')
       # primary controller configures cluster
       if has_ip_address($pr_controller_node[0]['internal_address']) {
-        $standby_mdm_count = count($mdm_ip_array) - 1
-        if $standby_mdm_count == 0 {
+        $mdm_count = count($mdm_ip_array)
+        $tb_count = count($tb_ip_array)
+        if $mdm_count < 2 or $tb_count == 0 {
+          $cluster_mode = 1
           $standby_ips = []
           $slave_names = undef
           $tb_names    = undef
@@ -112,18 +120,18 @@ if $scaleio['metadata']['enabled'] {
           # primary controller IP is first in the list in case of first deploy and it creates cluster.
           # it's guaranied by the tasks environment.pp and resize_cluster.pp
           # in case of re-deploy the first ip is current master ip
-          $standby_ips = delete($mdm_ip_array, $mdm_ip_array[0])
-          $slave_names = join($standby_ips, ',')
-          $tb_names    = join($tb_ip_array, ',')
-        }
-        $total_mdm_count = count($mdm_ip_array) + count($tb_ip_array)
-        if $total_mdm_count < 3 {
-          $cluster_mode = 1
-        } else {
-          if $total_mdm_count < 5 {
+          $standby_ips = delete($mdm_ip_array, $mdm_ip_array[0])        
+          if $mdm_count < 3 or $tb_count == 1 {
             $cluster_mode = 3
+            $slave_names = join(values_at($standby_ips, "0-0"), ',')
+            $tb_names    = join(values_at($tb_ip_array, "0-0"), ',')
           } else {
             $cluster_mode = 5
+            # incase of switch 3 to 5 nodes add only standby mdm/tb
+            $to_add_slaves = difference(values_at($standby_ips, "0-1"), intersection(values_at($standby_ips, "0-1"), split($::scaleio_mdm_ips, ',')))
+            $to_add_tb = difference(values_at($tb_ip_array, "0-1"), intersection(values_at($tb_ip_array, "0-1"), split($::scaleio_tb_ips, ',')))
+            $slave_names = join($to_add_slaves, ',')
+            $tb_names    = join($to_add_tb, ',')
           }
         }
         $password = $scaleio['password']

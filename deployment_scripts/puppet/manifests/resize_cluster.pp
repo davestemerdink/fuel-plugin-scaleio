@@ -21,9 +21,9 @@ if $scaleio['metadata']['enabled'] {
     # names of mdm and tb are IPs in fuel
     $current_mdms = split($::mdm_ips, ',')
     $current_tbs = split($::tb_ips, ',')
-    $mdms_present = intersection($controllers_ips, $current_mdms)
+    $mdms_present = intersection($current_mdms, $controllers_ips)
     $mdms_absent = difference($current_mdms, $mdms_present)
-    $tbs_present = intersection($controllers_ips, $current_tbs)
+    $tbs_present = intersection($current_tbs, $controllers_ips)
     $tbs_absent = difference($current_tbs, $tbs_present)
     $controllers_count = count($controllers_ips)
     if $controllers_count < 3 {
@@ -41,19 +41,19 @@ if $scaleio['metadata']['enabled'] {
         $to_add_tb_count = 2 - count($tbs_present)
       }
     }
-    $nodes_present = concat(intersection($controllers_ips, $current_mdms), $tbs_present)
-    $available_nodes = difference($controllers_ips, intersection($controllers_ips, $nodes_present))
+    $nodes_present = concat(intersection($current_mdms, $controllers_ips), $tbs_present)
+    $available_nodes = difference($controllers_ips, intersection($nodes_present, $controllers_ips))
     if $to_add_tb_count > 0 and count($available_nodes) >= $to_add_tb_count {
       $last_tb_index = count($available_nodes) - 1
       $first_tb_index = $last_tb_index - $to_add_tb_count + 1
-      $tbs_present_tmp = intersection($controllers_ips, $current_tbs) # use tmp because concat modifys first param
+      $tbs_present_tmp = intersection($current_tbs, $controllers_ips) # use tmp because concat modifys first param
       $new_tb_ips = join(concat($tbs_present_tmp, values_at($available_nodes, "${first_tb_index}-${last_tb_index}")), ',')
     } else {
       $new_tb_ips = join($tbs_present, ',')
     }                  
     if $to_add_mdm_count > 0 and count($available_nodes) >= $to_add_mdm_count {
       $last_mdm_index = $to_add_mdm_count - 1
-      $mdms_present_tmp = intersection($controllers_ips, $current_mdms) # use tmp because concat modifys first param
+      $mdms_present_tmp = intersection($current_mdms, $controllers_ips) # use tmp because concat modifys first param
       $new_mdms_ips = join(concat($mdms_present_tmp, values_at($available_nodes, "0-${last_mdm_index}")), ',')
     } else {
       $new_mdms_ips = join($mdms_present, ',')
@@ -76,7 +76,7 @@ if $scaleio['metadata']['enabled'] {
             ensure              => 'absent',
             cluster_mode        => 1,
             slave_names         => $slaves_names,
-            tb_names            => $::tb_ips,
+            tb_names            => $::scaleio_tb_ips,
             require             => Scaleio::Login['Normal'],
             before              => File_line['SCALEIO_mdm_ips']
           } ->

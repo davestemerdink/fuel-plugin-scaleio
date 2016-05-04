@@ -1,6 +1,5 @@
-# This is a workaround because FUEL daemons don't inherit environment variables
+# set of facts about deploying environment
 require 'facter'
-
 
 base_cmd = "bash -c 'source /etc/environment; echo $SCALEIO_%s'"
 facters = ['controller_ips', 'tb_ips', 'mdm_ips',
