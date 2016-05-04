@@ -48,6 +48,7 @@ def debug_log(msg)
   File.open($scaleio_log_file, 'a') {|f| f.write("%s: %s\n" % [Time.now.strftime("%Y-%m-%d %H:%M:%S"), msg]) }
 end
 
+
 # Facter to scan existing cluster
 # Controller IPs to scan
 $controller_ips = Facter.value(:controller_ips)
@@ -112,7 +113,6 @@ if $controller_ips and $controller_ips != ''
   end
 end
 
-
 # Facter to scan existing cluster
 # MDM IPs to scan
 $discovery_allowed = Facter.value(:discovery_allowed)
@@ -120,9 +120,9 @@ $mdm_ips = Facter.value(:mdm_ips)
 $mdm_password = Facter.value(:mdm_password)
 if $discovery_allowed == 'yes' and $mdm_ips and $mdm_ips != '' and $mdm_password and $mdm_password != ''
   sds_sdc_components = {
-    'scaleio_sdc_ips'   => ['sdc', 'IP: [^ ]*', nil],
+    'scaleio_sdc_ips' => ['sdc', 'IP: [^ ]*', nil],
+    'scaleio_sds_ips' => ['sds', 'IP: [^ ]*', 'Protection Domain'],
     'scaleio_sds_names' => ['sds', 'Name: [^ ]*', 'Protection Domain'],
-    'scaleio_sds_ips'   => ['sds', 'IP: [^ ]*', 'Protection Domain'],
   }
 
   sds_sdc_components.each do |name, selector|
@@ -161,7 +161,7 @@ end
 #The fact about MDM IPs.
 #It requests them from Gateway.
 $gw_ips    = Facter.value(:gateway_ips)
-$gw_passw  = Facter.value(:mdm_password)
+$gw_passw  = Facter.value(:gateway_password)
 if $gw_passw && $gw_passw != '' and $gw_ips and $gw_ips != ''
   Facter.add('scaleio_mdm_ips_from_gateway') do
     setcode do
@@ -180,7 +180,7 @@ if $gw_passw && $gw_passw != '' and $gw_ips and $gw_ips != ''
       base_url = "https://%s:%s/api/%s"
       login_url = base_url % [host, port, 'login']
       config_url = base_url % [host, port, 'Configuration']
-      login_req = "curl -k --basic --connect-timeout 5 --user #{gw_user}:#{gw_passw} #{login_url} 2>>%s | sed 's/\"//g'" % $scaleio_log_file
+      login_req = "curl -k --basic --connect-timeout 5 --user #{gw_user}:#{$gw_passw} #{login_url} 2>>%s | sed 's/\"//g'" % $scaleio_log_file
       debug_log(login_req)
       token = Facter::Util::Resolution.exec(login_req)
       if token && token != ''
@@ -199,5 +199,3 @@ if $gw_passw && $gw_passw != '' and $gw_ips and $gw_ips != ''
     end
   end
 end
-
-

@@ -13,7 +13,7 @@ define env_fact($role, $fact, $value) {
 $scaleio = hiera('scaleio')
 if $scaleio['metadata']['enabled'] {
   if $scaleio['existing_cluster'] {
-    $ips = $::existing_cluster_mdm_ips
+    $ips = $::scaleio_mdm_ips_from_gateway
     if ! $ips or $ips == '' {
       fail('Cannot request MDM IPs from existing cluster. Check Gateway address/port and user name with password.')
     }
