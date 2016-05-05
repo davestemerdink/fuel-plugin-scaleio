@@ -33,7 +33,7 @@ if $gw_passw && $gw_passw != '' and $gw_ips and $gw_ips != ''
       base_url    = "https://%s:%s/api/%s"
       login_url   = base_url % [host, port, 'login']
       config_url  = base_url % [host, port, 'Configuration']
-      login_req   = "curl -k --basic --connect-timeout 5 --user #{user}:#{gw_passw} #{login_url} 2>>%s | sed 's/\"//g'" % $scaleio_log_file
+      login_req   = "curl -k --basic --connect-timeout 5 --user #{user}:#{$gw_passw} #{login_url} 2>>%s | sed 's/\"//g'" % $scaleio_log_file
       debug_log(login_req)
       token       = Facter::Util::Resolution.exec(login_req)
       if token && token != ''
