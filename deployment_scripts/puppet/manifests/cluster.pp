@@ -158,8 +158,14 @@ if $scaleio['metadata']['enabled'] {
           1       => $scaleio['protection_domain'],
           default => "${scaleio['protection_domain']}_${protection_domain_number}"
         }
-        $tier1_devices = split($::sds_storage_devices_tier1, ',')
-        $tier2_devices = split($::sds_storage_devices_tier2, ',')
+        $tier1_devices = $::sds_storage_devices_tier1 ? {
+          undef   => [],
+          default => split($::sds_storage_devices_tier1, ',')
+        }
+        $tier2_devices = $::sds_storage_devices_tier2 ? {
+          undef   => [],
+          default => split($::sds_storage_devices_tier2, ',')
+        }
         if $scaleio['device_paths'] {
           # for fuel6.1 devices come from settings
           $paths_ = split($scaleio['device_paths'], ',')
@@ -169,7 +175,7 @@ if $scaleio['metadata']['enabled'] {
           }
         } else {
           # for fuel 7.0 devices come from facter (search partition by guid)
-          $tier12_paths = concat(split($::sds_storage_devices_tier1, ','), $tier2_devices) # concat changes first array!!
+          $tier12_paths = concat(flatten($tier1_devices), $tier2_devices) # concat changes first array!!
           $paths = empty($tier12_paths) ? {
             true    => undef,
             default => $tier12_paths
@@ -185,18 +191,18 @@ if $scaleio['metadata']['enabled'] {
         } else {  
           # for fuel 7.0 storage pools are generated for two storage tier2
           $tier1_devices_str = join($tier1_devices, ',')
-          $storage_pools_tier1 = count($tier1_devices) > 0 ? {
-            false   => [],
-            default => join(values(hash(split(regsubst("${tier1_devices_str},", ',', ",sp_tier1,", 'G'), ','))), ',')
-          }  
-          $tier2_devices_str = join($tier2_devices, ',')
-          $storage_pools_tier2 = count($tier2_devices) > 0 ? {
-            false   => [],
-            default => join(values(hash(split(regsubst("${tier2_devices_str},", ',', ",sp_tier2,", 'G'), ','))), ',')
+          $storage_pools_tier1 = empty($tier1_devices) ? {
+            true    => [],
+            default => values(hash(split(regsubst("${tier1_devices_str},", ',', ",sp_tier1,", 'G'), ',')))
           }
-          $tier12_pools = concat($storage_pools_tier1, $storage_pools_tier2)
-          $pools = count($tier12_pools) > 0 ? {
-            false   => undef,
+          $tier2_devices_str = join($tier2_devices, ',')
+          $storage_pools_tier2 = empty($tier2_devices) ? {
+            true    => [],
+            default => values(hash(split(regsubst("${tier2_devices_str},", ',', ",sp_tier2,", 'G'), ',')))
+          }
+          $tier12_pools = concat(flatten($storage_pools_tier1), $storage_pools_tier2) # concat changes first argument
+          $pools = empty($tier12_pools) ? {
+            true    => undef,
             default => $tier12_pools
           }
         }
@@ -268,7 +274,7 @@ if $scaleio['metadata']['enabled'] {
         }
         # Apply high performance profile to SDC-es
         # Use first sdc ip because underlined puppet uses all_sdc parameters
-        if count($sdc_nodes_ips) > 0 {
+        if ! empty($sdc_nodes_ips) {
           scaleio::sdc {'Set performance settings for all available SDCs':
             ip                => $sdc_nodes_ips[0],
             require           => Sds_device[$to_add_sds_names],
