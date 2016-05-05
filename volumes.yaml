@@ -1,0 +1,34 @@
+volumes:
+  - id: "scaleio-storage-tier1"
+    type: "partition"
+    min_size:
+      generator: "calc_gb_to_mb"
+      generator_args: [96]
+    label: "ScaleIO Storage Tier1"
+    name: "ScaleIOTier1"
+    mount: "none"
+    file_system: "none"
+    partition_guid: "f2e81bdc-99b3-4bf6-a68f-dc794da6cd8e"
+
+  - id: "scaleio-storage-tier2"
+    type: "partition"
+    min_size:
+      generator: "calc_gb_to_mb"
+      generator_args: [96]
+    label: "ScaleIO Storage Tier2"
+    name: "ScaleIOTier1"
+    mount: "none"
+    file_system: "none"
+    partition_guid: "d5321bb3-1098-433e-b4f5-216712fcd06f"
+
+
+volumes_roles_mapping:
+  scaleio-storage-tier1:
+    - {allocate_size: "min", id: "os"} 
+    - {allocate_size: "full-disk", id: "scaleio-storage-tier1"}
+    - {allocate_size: "full-disk", id: "scaleio-storage-tier2"}
+  scaleio-storage-tier2:
+    - {allocate_size: "min", id: "os"} 
+    - {allocate_size: "full-disk", id: "scaleio-storage-tier1"}
+    - {allocate_size: "full-disk", id: "scaleio-storage-tier2"}
+    

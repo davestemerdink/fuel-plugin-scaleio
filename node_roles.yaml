@@ -1,0 +1,18 @@
+scaleio-storage-tier1:
+  name: "ScaleIO Storage Tier1"
+  description: "Devices of a node with this role will be assigned to the storage poll tier1. If both tier roles are assigned, devices will be slit according to plugin settings."
+  limits:
+    min: 3
+  update_required:
+    - controller
+    - primary-controller
+
+scaleio-storage-tier2:
+  name: "ScaleIO Storage Tier2"
+  description: "Devices of a node with this role will be assigned to the storage poll tier2. If both tier roles are assigned, devices will be slit according to plugin settings."
+  limits:
+    min: 3
+  update_required:
+    - controller
+    - primary-controller
+ 
