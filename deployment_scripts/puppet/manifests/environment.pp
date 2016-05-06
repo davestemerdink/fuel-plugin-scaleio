@@ -105,7 +105,7 @@ if $scaleio['metadata']['enabled'] {
     }
     $nodes = filter_nodes($all_nodes, 'name', $::hostname)
     if ! empty(concat(filter_nodes($nodes, 'role', 'controller'), filter_nodes($nodes, 'role', 'primary-controller'))) {
-      if $::memorysize_mb < 3000 {
+      if $::memorysize_mb < 2900 {
         if ! $scaleio['skip_checks'] {
           fail("Controller node requires at least 3000MB but there is ${::memorysize_mb}")
         } else {
