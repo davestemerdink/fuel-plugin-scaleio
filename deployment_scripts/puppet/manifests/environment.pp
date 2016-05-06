@@ -73,7 +73,7 @@ if $scaleio['metadata']['enabled'] {
     # New ScaleIO cluster deployment
     notify{'Deploy ScaleIO cluster': }
     $controller_nodes = concat(filter_nodes($all_nodes, 'role', 'primary-controller'), filter_nodes($all_nodes, 'role', 'controller'))
-    $controller_ips_array = ipsort(values(nodes_to_hash($controller_nodes, 'name', 'internal_address')))
+    $controller_ips_array = values(nodes_to_hash($controller_nodes, 'name', 'internal_address'))
     $ctrl_ips = join($controller_ips_array, ',')
     # Check SDS count
     $fuel_version = hiera('fuel_version')
