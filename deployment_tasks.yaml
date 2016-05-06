@@ -62,10 +62,20 @@
 ##############################################################################
 # ScaleIO cluster tasks
 ##############################################################################
-- id: scaleio-discover-cluster
+- id: scaleio-mdm-packages
   role: [primary-controller, controller]
   required_for: [post_deployment_end]
   requires: [scaleio-environment-existing-mdm-ips]
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/mdm_package.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
+    timeout: 600
+
+- id: scaleio-discover-cluster
+  role: [primary-controller, controller]
+  required_for: [post_deployment_end]
+  requires: [scaleio-mdm-packages]
   type: puppet
   parameters:
     puppet_manifest: puppet/manifests/discovery_cluster.pp
