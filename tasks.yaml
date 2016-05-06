@@ -10,6 +10,14 @@
     timeout: 600
 
 - role: ['primary-controller', 'controller']
+  stage: post_deployment/2005
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/mdm_package.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
+    timeout: 600
+
+- role: ['primary-controller', 'controller']
   stage: post_deployment/2010
   type: puppet
   parameters:
