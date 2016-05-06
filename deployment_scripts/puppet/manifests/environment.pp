@@ -75,22 +75,50 @@ if $scaleio['metadata']['enabled'] {
     $controller_nodes = concat(filter_nodes($all_nodes, 'role', 'primary-controller'), filter_nodes($all_nodes, 'role', 'controller'))
     $controller_ips_array = ipsort(values(nodes_to_hash($controller_nodes, 'name', 'internal_address')))
     $ctrl_ips = join($controller_ips_array, ',')
-    $controller_sds_count = $scaleio['sds_on_controller'] ? {
-      true    => count($controller_nodes),
-      default => 0  
+    # Check SDS count
+    $fuel_version = hiera('fuel_version')
+    if $fuel_version == '6.1' {
+      $controller_sds_count = $scaleio['sds_on_controller'] ? {
+        true    => count($controller_ips_array),
+        default => 0  
+      }
+      $total_sds_count = count(filter_nodes($all_nodes, 'role', 'compute')) + $controller_sds_count
+      if $total_sds_count < 3 {
+        $sds_check_msg = 'There should be at least 3 nodes with SDSs, either add Compute node or use Controllers as SDS.'
+      }
+    } else {
+      $tier1_sds_count = count(filter_nodes($all_nodes, 'role', 'scaleio-storage-tier1'))
+      $tier2_sds_count = count(filter_nodes($all_nodes, 'role', 'scaleio-storage-tier2'))      
+      if $tier1_sds_count != 0 and $tier1_sds_count < 3 {
+        $sds_check_msg = 'There are less than 3 nodes with Scaleio Storage Tier1 role.'
+      }
+      if $tier2_sds_count != 0 and $tier2_sds_count < 3 {
+        $sds_check_msg = 'There are less than 3 nodes with Scaleio Storage Tier2 role.'
+      }
     }
-    $total_sds_count = count(filter_nodes($all_nodes, 'role', 'compute')) + count(filter_nodes($all_nodes, 'role', 'scaleio-storage')) + $controller_sds_count
-    if ! $scaleio['skip_checks'] and $total_sds_count < 3 {
-      fail('There should be at least 3 nodes with SDSs, either add Compute node or use Controllers as SDS.')
+    if $sds_check_msg {
+      if ! $scaleio['skip_checks'] { 
+        fail($sds_check_msg)
+      } else{
+        warning($sds_check_msg)
+      }        
     }
     $nodes = filter_nodes($all_nodes, 'name', $::hostname)
     if ! empty(concat(filter_nodes($nodes, 'role', 'controller'), filter_nodes($nodes, 'role', 'primary-controller'))) {
-      if ! $scaleio['skip_checks'] and $::memorysize_mb < 3000 {
-        fail("Controller node requires at least 3000MB but there is ${::memorysize_mb}")
+      if $::memorysize_mb < 3000 {
+        if ! $scaleio['skip_checks'] {
+          fail("Controller node requires at least 3000MB but there is ${::memorysize_mb}")
+        } else {
+          warning("Controller node requires at least 3000MB but there is ${::memorysize_mb}")
+        }
       }
     }
-    if ! $scaleio['skip_checks'] and $::sds_storage_small_devices {
-      fail("Storage devices minimal size is 100GB. The following devices do not meet this requirement ${::sds_storage_small_devices}")      
+    if $::sds_storage_small_devices {
+      if ! $scaleio['skip_checks'] {
+        fail("Storage devices minimal size is 100GB. The following devices do not meet this requirement ${::sds_storage_small_devices}")      
+      } else {
+        warning("Storage devices minimal size is 100GB. The following devices do not meet this requirement ${::sds_storage_small_devices}")      
+      }
     }
     # mdm ips  and tb ips must be emtpy to avoid queries from ScaleIO about SDC/SDS,
     # the next task (cluster discovering) will set them into correct values.

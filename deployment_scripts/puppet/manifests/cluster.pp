@@ -109,13 +109,18 @@ if $scaleio['metadata']['enabled'] {
       $pr_controller_node = filter_nodes($all_nodes, 'role', 'primary-controller')
       # primary controller configures cluster
       if has_ip_address($pr_controller_node[0]['internal_address']) {
-        $storage_nodes = concat(filter_nodes($all_nodes, 'role', 'scaleio-storage'), filter_nodes($all_nodes, 'role', 'compute'))
-        if $scaleio['sds_on_controller'] {    
-          $controller_nodes  = filter_nodes($all_nodes, 'role', 'controller')   
-          $pr_controller_nodes = filter_nodes($all_nodes, 'role', 'primary-controller')
-          $sds_nodes = concat(concat($pr_controller_nodes, $controller_nodes), $storage_nodes)
-        } else {    
-          $sds_nodes = $storage_nodes
+        $fuel_version = hiera('fuel_version')
+        if $fuel_version == '6.1' {
+          $storage_nodes = filter_nodes($all_nodes, 'role', 'compute')
+          if $scaleio['sds_on_controller'] {    
+            $controller_nodes  = filter_nodes($all_nodes, 'role', 'controller')   
+            $pr_controller_nodes = filter_nodes($all_nodes, 'role', 'primary-controller')
+            $sds_nodes = concat(concat($pr_controller_nodes, $controller_nodes), $storage_nodes)
+          } else {    
+            $sds_nodes = $storage_nodes
+          }
+        } else {
+          $sds_nodes = concat(filter_nodes($all_nodes, 'role', 'scaleio-storage-tier1'), filter_nodes($all_nodes, 'role', 'scaleio-storage-tier2'))
         }
         $sds_nodes_names = keys(nodes_to_hash($sds_nodes, 'name', 'internal_address'))
         $sds_nodes_count = count($sds_nodes_names)
