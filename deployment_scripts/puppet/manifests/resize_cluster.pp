@@ -17,7 +17,7 @@ if $scaleio['metadata']['enabled'] {
     $all_nodes = hiera('nodes')
     $controllers_nodes = concat(filter_nodes($all_nodes, 'role', 'primary-controller'), filter_nodes($all_nodes, 'role', 'controller'))
     #use management network for ScaleIO components communications
-    $controllers_ips = ipsort(values(nodes_to_hash($controllers_nodes, 'name', 'internal_address')))
+    $controllers_ips = values(nodes_to_hash($controllers_nodes, 'name', 'internal_address'))
     # names of mdm and tb are IPs in fuel
     $current_mdms = split($::mdm_ips, ',')
     $current_tbs = split($::tb_ips, ',')
