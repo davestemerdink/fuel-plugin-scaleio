@@ -72,8 +72,13 @@ if $scaleio['metadata']['enabled'] {
   else {
     # New ScaleIO cluster deployment
     notify{'Deploy ScaleIO cluster': }
-    $controller_nodes = concat(filter_nodes($all_nodes, 'role', 'primary-controller'), filter_nodes($all_nodes, 'role', 'controller'))
-    $controller_ips_array = values(nodes_to_hash($controller_nodes, 'name', 'internal_address'))
+    $controllers_nodes = filter_nodes($all_nodes, 'role', 'controller')
+    $primary_controller_nodes = filter_nodes($all_nodes, 'role', 'primary-controller')
+    #use management network for ScaleIO components communications
+    # order of ips should be equal on all nodes:
+    #   - first ip must be primary controller, others should be sorted have defined order
+    $controllers_ips_ = ipsort(values(nodes_to_hash($controllers_nodes, 'name', 'internal_address')))
+    $controller_ips_array = concat(values(nodes_to_hash($primary_controller_nodes, 'name', 'internal_address')), $controllers_ips_)
     $ctrl_ips = join($controller_ips_array, ',')
     # Check SDS count
     $fuel_version = hiera('fuel_version')

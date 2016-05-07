@@ -15,9 +15,13 @@ $scaleio = hiera('scaleio')
 if $scaleio['metadata']['enabled'] {
   if ! $scaleio['existing_cluster'] {
     $all_nodes = hiera('nodes')
-    $controllers_nodes = concat(filter_nodes($all_nodes, 'role', 'primary-controller'), filter_nodes($all_nodes, 'role', 'controller'))
+    $controllers_nodes = filter_nodes($all_nodes, 'role', 'controller')
+    $primary_controller_nodes = filter_nodes($all_nodes, 'role', 'primary-controller')
     #use management network for ScaleIO components communications
-    $controllers_ips = values(nodes_to_hash($controllers_nodes, 'name', 'internal_address'))
+    # order of ips should be equal on all nodes:
+    #   - first ip must be primary controller, others should be sorted have defined order
+    $controllers_ips_ = ipsort(values(nodes_to_hash($controllers_nodes, 'name', 'internal_address')))
+    $controllers_ips = concat(values(nodes_to_hash($primary_controller_nodes, 'name', 'internal_address')), $controllers_ips_)
     # names of mdm and tb are IPs in fuel
     $current_mdms = split($::mdm_ips, ',')
     $current_tbs = split($::tb_ips, ',')
