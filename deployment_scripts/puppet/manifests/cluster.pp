@@ -104,11 +104,9 @@ if $scaleio['metadata']['enabled'] {
         match   => "^SCALEIO_discovery_allowed=",
         line    => "SCALEIO_discovery_allowed=no",
       }
-      
       $all_nodes = hiera('nodes')
-      $pr_controller_node = filter_nodes($all_nodes, 'role', 'primary-controller')
       # primary controller configures cluster
-      if has_ip_address($pr_controller_node[0]['internal_address']) {
+      if ! empty(filter_nodes(filter_nodes($all_nodes, 'name', $::hostname), 'role', 'primary-controller')) {
         $fuel_version = hiera('fuel_version')
         if $fuel_version == '6.1' {
           $storage_nodes = filter_nodes($all_nodes, 'role', 'compute')

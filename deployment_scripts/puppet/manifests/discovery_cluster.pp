@@ -8,11 +8,7 @@ if $scaleio['metadata']['enabled'] {
     $current_tbs = concat(split($::scaleio_tb_ips, ','), split($::scaleio_standby_tb_ips, ','))
     $discovered_mdms_ips = join($current_mdms, ',')
     $discovered_tbs_ips = join($current_tbs, ',')
-    if count($current_mdms) > 0 or count($current_tbs) > 0 {
-      notify {"Cluster: current_mdms='${discovered_mdms_ips}', current_tbs='${discovered_tbs_ips}'": }
-    } else {
-      notify {'Cluster is not discovered': }
-    }
+    notify {"ScaleIO cluster: discovery: discovered_mdms_ips='${discovered_mdms_ips}', discovered_tbs_ips='${discovered_tbs_ips}'": } ->
     file_line {'SCALEIO_mdm_ips':
       ensure  => present,
       path    => '/etc/environment',

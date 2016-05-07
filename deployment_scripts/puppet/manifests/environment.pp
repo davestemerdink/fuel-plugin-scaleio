@@ -80,6 +80,7 @@ if $scaleio['metadata']['enabled'] {
     $controllers_ips_ = ipsort(values(nodes_to_hash($controllers_nodes, 'name', 'internal_address')))
     $controller_ips_array = concat(values(nodes_to_hash($primary_controller_nodes, 'name', 'internal_address')), $controllers_ips_)
     $ctrl_ips = join($controller_ips_array, ',')
+    notify{"ScaleIO cluster: ctrl_ips=${ctrl_ips}": }
     # Check SDS count
     $fuel_version = hiera('fuel_version')
     if $fuel_version == '6.1' {
