@@ -102,13 +102,11 @@ if $scaleio['metadata']['enabled'] {
         match   => "^SCALEIO_discovery_allowed=",
         line    => "SCALEIO_discovery_allowed=no",
       }
-      
       $mdm_ip_array = split($::mdm_ips, ',')
       $tb_ip_array = split($::tb_ips, ',')
       $all_nodes = hiera('nodes')
-      $pr_controller_node = filter_nodes($all_nodes, 'role', 'primary-controller')
       # primary controller configures cluster
-      if has_ip_address($pr_controller_node[0]['internal_address']) {
+      if ! empty(filter_nodes(filter_nodes($all_nodes, 'name', $::hostname), 'role', 'primary-controller')) {
         $mdm_count = count($mdm_ip_array)
         $tb_count = count($tb_ip_array)
         if $mdm_count < 2 or $tb_count == 0 {
@@ -143,8 +141,7 @@ if $scaleio['metadata']['enabled'] {
         $compute_nodes  = filter_nodes($all_nodes, 'role', 'compute')		
         if $scaleio['sds_on_controller'] {		
           $controller_nodes  = filter_nodes($all_nodes, 'role', 'controller')		
-          $pr_controller_nodes = filter_nodes($all_nodes, 'role', 'primary-controller')		
-          $sds_nodes = concat(concat($pr_controller_nodes, $controller_nodes), $compute_nodes)
+          $sds_nodes = concat(concat(filter_nodes($all_nodes, 'role', 'primary-controller'), $controller_nodes), $compute_nodes)
         } else {		
           $sds_nodes = $compute_nodes		
         }
