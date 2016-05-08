@@ -83,7 +83,7 @@ if $controller_ips and $controller_ips != ''
     'scaleio_mdm_names'         => ['/Master MDM/,/\(Tie-Breakers\)\|\(Standby MDMs\)/p', '/./,//p', 'Name:'],
     'scaleio_tb_names'          => ['/Tie-Breakers/,/Standby MDMs/p', '/./,//p', 'Name:'],
     'scaleio_standby_mdm_ips'   => ['/Standby MDMs/,//p', '/Manager/,/Tie Breaker/p', 'IPs:'],
-    'scaleio_standby_tb_ips'    => ['/Standby MDMs/,//p', '/Tie Breaker/,/./p', 'IPs:'],
+    'scaleio_standby_tb_ips'    => ['/Standby MDMs/,//p', '/Tie Breaker/,/Manager/p', 'IPs:'],
   }
   # Define mdm opts for SCLI tool to connect to ScaleIO cluster.
   # If there is no mdm_ips available it is expected to be run on a node with MDM Master. 
@@ -95,10 +95,10 @@ if $controller_ips and $controller_ips != ''
   # it works for one IP but doesn't for the list.
   query_result = nil
   mdm_opts.detect do |opts|
-    query_cmd = "scli %s --query_cluster --approve_certificate 2>>%s" % [opts, $scaleio_log_file]
+    query_cmd = "scli %s --query_cluster --approve_certificate 2>>%s && echo success" % [opts, $scaleio_log_file]
     res = Facter::Util::Resolution.exec(query_cmd)
     debug_log("%s returns:\n'%s'" % [query_cmd, res])
-    query_result = res unless !res
+    query_result = res unless !res or !res.include?('success')
   end
   if query_result
     mdm_components.each do |name, selector|
