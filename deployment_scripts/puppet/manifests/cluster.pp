@@ -73,6 +73,18 @@ define sds_device(
   }
 }
 
+define volume_type_ensure(
+  $protection_domain,
+) {
+  $storage_pool = $title
+  $type_name = "sio_${protection_domain}_${storage_pool}" # additional types for next domains/pools
+  scaleio_openstack::volume_type{"cinder volume type ${type_name} ${protection_domain}:${storage_pool}":
+    $name               => $type_name,
+    $protection_domain  => $protection_domain,
+    $storage_pool       => $storage_pool
+  }
+}
+
 define cleanup_sdc () {
   $sdc_ip = $title
   scaleio::sdc {"Remove SDC ${sdc_ip}":
@@ -153,11 +165,12 @@ if $scaleio['metadata']['enabled'] {
         }
         $password = $scaleio['password']
         if $scaleio['protection_domain_nodes'] {
-          $protection_domain_number = 1 + $sds_nodes_count / $scaleio['protection_domain_nodes']          
+          $protection_domain_number = ($sds_nodes_count + $scaleio['protection_domain_nodes'] - 1) / $scaleio['protection_domain_nodes']          
         } else {
           $protection_domain_number = 1
         }
         $protection_domain =  $protection_domain_number ? {
+          0       => $scaleio['protection_domain'],
           1       => $scaleio['protection_domain'],
           default => "${scaleio['protection_domain']}_${protection_domain_number}"
         }
@@ -275,6 +288,18 @@ if $scaleio['metadata']['enabled'] {
             storage_pools     => $device_storage_pools,		
             device_paths      => $device_paths,		
         }
+        if ! empty($pools) {
+          $volume_type_pools = unique($pools)
+          scaleio_openstack::volume_type{"default cinder volume type scaleio ${scaleio['protection_domain']}:${volume_type_pools[0]}":
+            $name               => 'scaleio',
+            $protection_domain  => $scaleio['protection_domain'],
+            $storage_pool       => $volume_type_pools[0],
+            require             => Sds_device[$to_add_sds_names],
+          } ->
+          volume_type_ensure {$volume_type_pools:
+            protection_domain => $protection_domain,
+          }            
+       }
         # Apply high performance profile to SDC-es
         # Use first sdc ip because underlined puppet uses all_sdc parameters
         if ! empty($sdc_nodes_ips) {
