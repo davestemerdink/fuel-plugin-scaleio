@@ -11,7 +11,6 @@ define mdm_standby() {
       name                => $ip,
       role                => 'manager',
       ips                 => $ip,
-      management_ips      => $ip,
   }
 }
 
