@@ -73,18 +73,6 @@ define sds_device(
   }
 }
 
-define volume_type_ensure(
-  $protection_domain,
-) {
-  $storage_pool = $title
-  $type_name = "sio_${protection_domain}_${storage_pool}" # additional types for next domains/pools
-  scaleio_openstack::volume_type{"cinder volume type ${type_name} ${protection_domain}:${storage_pool}":
-    $name               => $type_name,
-    $protection_domain  => $protection_domain,
-    $storage_pool       => $storage_pool
-  }
-}
-
 define cleanup_sdc () {
   $sdc_ip = $title
   scaleio::sdc {"Remove SDC ${sdc_ip}":
@@ -106,7 +94,7 @@ define cleanup_sds () {
 $scaleio = hiera('scaleio')
 if $scaleio['metadata']['enabled'] {
   if ! $scaleio['existing_cluster'] {
-    if $::mdm_ips {
+    if $::managers_ips {
       # forbid requesting sdc/sds from discovery facters,
       # this is a workaround of the ScaleIO problem - 
       # these requests hangs in some reason if cluster is in degraded state
@@ -136,7 +124,7 @@ if $scaleio['metadata']['enabled'] {
         $sds_nodes_count = count($sds_nodes_names)
         $sdc_nodes =concat(filter_nodes($all_nodes, 'role', 'compute'), filter_nodes($all_nodes, 'role', 'cinder'))
         $sdc_nodes_ips = values(nodes_to_hash($sdc_nodes, 'name', 'internal_address'))
-        $mdm_ip_array = split($::mdm_ips, ',')
+        $mdm_ip_array = split($::managers_ips, ',')
         $tb_ip_array = split($::tb_ips, ',')
         $mdm_count = count($mdm_ip_array)
         $tb_count = count($tb_ip_array)
@@ -288,28 +276,22 @@ if $scaleio['metadata']['enabled'] {
             storage_pools     => $device_storage_pools,		
             device_paths      => $device_paths,		
         }
-        if ! empty($pools) {
-          $volume_type_pools = unique($pools)
-          scaleio_openstack::volume_type{"default cinder volume type scaleio ${scaleio['protection_domain']}:${volume_type_pools[0]}":
-            $name               => 'scaleio',
-            $protection_domain  => $scaleio['protection_domain'],
-            $storage_pool       => $volume_type_pools[0],
-            require             => Sds_device[$to_add_sds_names],
-          } ->
-          volume_type_ensure {$volume_type_pools:
-            protection_domain => $protection_domain,
-          }            
-       }
         # Apply high performance profile to SDC-es
         # Use first sdc ip because underlined puppet uses all_sdc parameters
         if ! empty($sdc_nodes_ips) {
           scaleio::sdc {'Set performance settings for all available SDCs':
             ip                => $sdc_nodes_ips[0],
             require           => Sds_device[$to_add_sds_names],
-          }  
+          }
         }
       } else {
         notify {"Not Master MDM IP ${master_mdm}": }
+      }      
+      file_line {'SCALEIO_mdm_ips':
+        ensure  => present,
+        path    => '/etc/environment',
+        match   => "^SCALEIO_mdm_ips=",
+        line    => "SCALEIO_mdm_ips=${::managers_ips}",
       }
     } else {
       fail('Empty MDM IPs configuration')
