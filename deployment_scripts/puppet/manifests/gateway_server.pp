@@ -3,7 +3,7 @@
 $scaleio = hiera('scaleio')
 if $scaleio['metadata']['enabled'] {
   if ! $scaleio['existing_cluster'] {
-    if $::mdm_ips {
+    if $::managers_ips {
       $gw_ips = split($::gateway_ips, ',')
       $haproxy_config_options = {
           'balance' => 'roundrobin',
@@ -14,7 +14,7 @@ if $scaleio['metadata']['enabled'] {
       Haproxy::Balancermember { use_include => true }
       class {'scaleio::gateway_server':
         ensure   => 'present',
-        mdm_ips  => $::mdm_ips,
+        mdm_ips  => $::managers_ips,
         password => $scaleio['gateway_password'],
       } ->
       notify { "Configure Haproxy for Gateway nodes: ${gw_ips}": } ->

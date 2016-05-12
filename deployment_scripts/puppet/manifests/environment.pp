@@ -101,6 +101,11 @@ if $scaleio['metadata']['enabled'] {
       fact => 'ips',
       value => ''
     } ->
+      env_fact{'Environment fact: managers ips':
+        role => 'managers',
+        fact => 'ips',
+        value => ''
+      } ->
     env_fact{'Environment fact: tb ips':
       role => 'tb',
       fact => 'ips',

@@ -5,7 +5,7 @@ if $scaleio['metadata']['enabled'] {
   if ! $scaleio['existing_cluster'] {
     $all_nodes = hiera('nodes')
     $node_ips = split($::ip_address_array, ',')
-    $new_mdm_ips = split($::mdm_ips, ',')
+    $new_mdm_ips = split($::managers_ips, ',')
     $is_tb = ! empty(intersection(split($::tb_ips, ','), $node_ips))
     $is_mdm = ! empty(intersection($new_mdm_ips, $node_ips))
     if $is_tb or $is_mdm {

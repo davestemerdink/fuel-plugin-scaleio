@@ -92,7 +92,7 @@ define cleanup_sds () {
 $scaleio = hiera('scaleio')
 if $scaleio['metadata']['enabled'] {
   if ! $scaleio['existing_cluster'] {
-    if $::mdm_ips {
+    if $::managers_ips {
       # forbid requesting sdc/sds from discovery facters,
       # this is a workaround of the ScaleIO problem - 
       # these requests hangs in some reason if cluster is in degraded state
@@ -102,11 +102,11 @@ if $scaleio['metadata']['enabled'] {
         match   => "^SCALEIO_discovery_allowed=",
         line    => "SCALEIO_discovery_allowed=no",
       }
-      $mdm_ip_array = split($::mdm_ips, ',')
-      $tb_ip_array = split($::tb_ips, ',')
       $all_nodes = hiera('nodes')
       # primary controller configures cluster
       if ! empty(filter_nodes(filter_nodes($all_nodes, 'name', $::hostname), 'role', 'primary-controller')) {
+        $mdm_ip_array = split($::managers_ips, ',')
+        $tb_ip_array = split($::tb_ips, ',')
         $mdm_count = count($mdm_ip_array)
         $tb_count = count($tb_ip_array)
         if $mdm_count < 2 or $tb_count == 0 {
@@ -146,7 +146,7 @@ if $scaleio['metadata']['enabled'] {
           $sds_nodes = $compute_nodes		
         }
         $cinder_nodes = filter_nodes($all_nodes, 'role', 'cinder')   
-        $sdc_nodes =concat($compute_nodes, $cinder_nodes)
+        $sdc_nodes =concat(flatten($compute_nodes), $cinder_nodes)
         $sdc_nodes_ips = values(nodes_to_hash($sdc_nodes, 'name', 'internal_address'))
         $paths = $scaleio['device_paths'] ? {
           udnef   => undef,
@@ -224,10 +224,16 @@ if $scaleio['metadata']['enabled'] {
           scaleio::sdc {'Set performance settings for all available SDCs':
             ip                => $sdc_nodes_ips[0],
             require           => Sds_device[$sds_nodes],
-          }  
+          }
         }
       } else {
         notify {"Not Master MDM IP ${master_mdm}": }
+      }      
+      file_line {'SCALEIO_mdm_ips':
+        ensure  => present,
+        path    => '/etc/environment',
+        match   => "^SCALEIO_mdm_ips=",
+        line    => "SCALEIO_mdm_ips=${::managers_ips}",
       }
     } else {
       fail('Empty MDM IPs configuration')

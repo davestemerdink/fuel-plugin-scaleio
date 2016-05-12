@@ -17,9 +17,10 @@ if $scaleio['metadata']['enabled'] {
     $all_nodes = hiera('nodes')
     $controller_ips_array = split($::controller_ips, ',')
     # names of mdm and tb are IPs in fuel
-    $current_mdms = split($::mdm_ips, ',')
+    $current_mdms = split($::managers_ips, ',')
     $current_tbs = split($::tb_ips, ',')
     $mdms_present = intersection($current_mdms, $controller_ips_array)
+    $mdms_present_str = join($mdms_present, ',')
     $mdms_absent = difference($current_mdms, $mdms_present)
     $tbs_present = intersection($current_tbs, $controller_ips_array)
     $tbs_absent = difference($current_tbs, $tbs_present)
@@ -87,7 +88,13 @@ if $scaleio['metadata']['enabled'] {
       ensure  => present,
       path    => '/etc/environment',
       match   => "^SCALEIO_mdm_ips=",
-      line    => "SCALEIO_mdm_ips=${new_mdms_ips}",
+      line    => "SCALEIO_mdm_ips=${mdms_present_str}",
+    } ->
+    file_line {'SCALEIO_managers_ips':
+      ensure  => present,
+      path    => '/etc/environment',
+      match   => "^SCALEIO_managers_ips=",
+      line    => "SCALEIO_managers_ips=${new_mdms_ips}",
     } ->
     file_line {'SCALEIO_tb_ips':
       ensure  => present,
