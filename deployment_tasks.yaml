@@ -1,31 +1,33 @@
 ##############################################################################
 # ScaleIO task groups
 ##############################################################################      
-- id: scaleio-storage-tier1
-  type: group
-  role: [scaleio-storage-tier1]
-  tasks: [hiera, globals, tools, logging, netconfig, hosts, firewall, deploy_start]
-  required_for: [deploy_end]
-  requires: [deploy_start]
-  parameters:
-    strategy:
-      type: parallel
-
-- id: scaleio-storage-tier2
-  type: group
-  role: [scaleio-storage-tier2]
-  tasks: [hiera, globals, tools, logging, netconfig, hosts, firewall, deploy_start]
-  required_for: [deploy_end]
-  requires: [deploy_start]
-  parameters:
-    strategy:
-      type: parallel
+# for next version:
+# - id: scaleio-storage-tier1
+#   type: group
+#   role: [scaleio-storage-tier1]
+#   tasks: [hiera, globals, tools, logging, netconfig, hosts, firewall, deploy_start]
+#   required_for: [deploy_end]
+#   requires: [deploy_start]
+#   parameters:
+#     strategy:
+#       type: parallel
+# 
+# - id: scaleio-storage-tier2
+#   type: group
+#   role: [scaleio-storage-tier2]
+#   tasks: [hiera, globals, tools, logging, netconfig, hosts, firewall, deploy_start]
+#   required_for: [deploy_end]
+#   requires: [deploy_start]
+#   parameters:
+#     strategy:
+#       type: parallel
 
 ##############################################################################
 # ScaleIO environment check
 ##############################################################################
 - id: scaleio-environment-check
-  groups: [scaleio-storage-tier1, scaleio-storage-tier2, primary-controller, controller, compute, cinder]
+#  groups: [scaleio-storage-tier1, scaleio-storage-tier2, primary-controller, controller, compute, cinder]
+  groups: [primary-controller, controller, compute, cinder]
   required_for: [deploy_end, hosts]
   requires: [deploy_start] #, netconfig]
   type: puppet
@@ -39,7 +41,8 @@
 # ScaleIO prerequisites tasks
 ##############################################################################      
 - id: scaleio-environment
-  role: [scaleio-storage-tier1, scaleio-storage-tier2, primary-controller, controller, compute, cinder]
+#  role: [scaleio-storage-tier1, scaleio-storage-tier2, primary-controller, controller, compute, cinder]
+  role: [primary-controller, controller, compute, cinder]
   required_for: [post_deployment_end]
   requires: [post_deployment_start]
   type: puppet
@@ -49,7 +52,8 @@
     timeout: 600
 
 - id: scaleio-environment-existing-mdm-ips
-  role: [scaleio-storage-tier1, scaleio-storage-tier2, primary-controller, controller, compute, cinder]
+#  role: [scaleio-storage-tier1, scaleio-storage-tier2, primary-controller, controller, compute, cinder]
+  role: [primary-controller, controller, compute, cinder]
   required_for: [post_deployment_end]
   requires: [scaleio-environment]
   type: puppet
@@ -113,7 +117,8 @@
     timeout: 1800
 
 - id: scaleio-sds-server
-  role: [scaleio-storage-tier1, scaleio-storage-tier2]
+#  role: [scaleio-storage-tier1, scaleio-storage-tier2]
+  role: [primary-controller, controller, compute]
   required_for: [post_deployment_end]
   requires: [scaleio-gateway-server]
   type: puppet

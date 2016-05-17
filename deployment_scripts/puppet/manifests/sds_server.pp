@@ -14,7 +14,7 @@ $scaleio = hiera('scaleio')
 if $scaleio['metadata']['enabled'] {
   if ! $scaleio['existing_cluster'] {      
     $fuel_version = hiera('fuel_version')
-    if $fuel_version == '6.1' {
+    if $fuel_version <= '8.0' {
       #it is supposed that task is run on compute or controller
       $node_ips = split($::ip_address_array, ',')
       $is_sds_server = empty(intersection(split($::controller_ips, ','), $node_ips)) or $scaleio['sds_on_controller']

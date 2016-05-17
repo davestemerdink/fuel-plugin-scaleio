@@ -108,7 +108,7 @@ if $scaleio['metadata']['enabled'] {
       # primary controller configures cluster
       if ! empty(filter_nodes(filter_nodes($all_nodes, 'name', $::hostname), 'role', 'primary-controller')) {
         $fuel_version = hiera('fuel_version')
-        if $fuel_version == '6.1' {
+        if $fuel_version <= '8.0' {
           $storage_nodes = filter_nodes($all_nodes, 'role', 'compute')
           if $scaleio['sds_on_controller'] {    
             $controller_nodes  = filter_nodes($all_nodes, 'role', 'controller')   
@@ -170,30 +170,30 @@ if $scaleio['metadata']['enabled'] {
           undef   => [],
           default => split($::sds_storage_devices_tier2, ',')
         }
-        if $scaleio['device_paths'] {
-          # for fuel6.1 devices come from settings
+        if $scaleio['device_paths'] and $scaleio['device_paths'] != '' {
+          # if devices come from settings
           $paths_ = split($scaleio['device_paths'], ',')
           $paths = empty($paths_) ? {
             true    => undef,
             default => $paths_
           }
         } else {
-          # for fuel 7.0 devices come from facter (search partition by guid)
+          # otherwise devices come from facter (search partition by guid)
           $tier12_paths = concat(flatten($tier1_devices), $tier2_devices) # concat changes first array!!
           $paths = empty($tier12_paths) ? {
             true    => undef,
             default => $tier12_paths
           }
         }
-        if $scaleio['storage_pools'] {
-          # for fuel6.1 storage pools come from settings
+        if $scaleio['storage_pools'] and $scaleio['storage_pools'] != '' {
+          # if storage pools come from settings
           $pools_ = split($scaleio['storage_pools'], ',')
           $pools = empty($pools_) ? {
             true    => undef,
             default => $pools_
           }
         } else {  
-          # for fuel 7.0 storage pools are generated for two storage tier2
+          # otherwise storage pools are generated for two storage tier2
           $tier1_devices_str = join($tier1_devices, ',')
           $storage_pools_tier1 = empty($tier1_devices) ? {
             true    => [],

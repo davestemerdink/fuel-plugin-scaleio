@@ -102,7 +102,7 @@ attributes:
       source: '^(\w+){1}((,){1}(?=\w+))*'
       error: "Can contain characters, numbers and underlines"
     restrictions:
-      - condition: "settings:scaleio.existing_cluster.value == true or cluster:fuel_version != '6.1'"
+      - condition: "settings:scaleio.existing_cluster.value == true or cluster:fuel_version != '9.0'"
         action: hide
 
   existing_storage_pools:
@@ -128,7 +128,7 @@ attributes:
       source: '^(/dev/[a-zA-Z0-9:-_/]+){1}((,){1}(?=/dev/[a-zA-Z0-9:-_/]+))*'
       error: 'List of path is incorrect. It is comma separated list aka /dev/sdb,/dev/sdc'
     restrictions:
-      - condition: "settings:scaleio.existing_cluster.value == true or cluster:fuel_version != '6.1'"
+      - condition: "settings:scaleio.existing_cluster.value == true or cluster:fuel_version != '9.0'"
         action: hide
 
   sds_on_controller:
@@ -138,7 +138,7 @@ attributes:
     description: "Setup SDS-es on controller nodes."
     weight: 110
     restrictions:
-      - condition: "settings:scaleio.existing_cluster.value == true or cluster:fuel_version != '6.1'"
+      - condition: "settings:scaleio.existing_cluster.value == true or cluster:fuel_version != '9.0'"
         action: hide
         
   version:
