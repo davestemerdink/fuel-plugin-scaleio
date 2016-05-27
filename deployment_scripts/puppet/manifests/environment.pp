@@ -52,10 +52,10 @@ if $scaleio['metadata']['enabled'] {
       fact => 'user',
       value => $scaleio['gateway_user']
     } ->
-    env_fact{"Environment fact: role gateway, password: ${scaleio['gateway_password']}":
+    env_fact{"Environment fact: role gateway, password: ${scaleio['password']}":
       role => 'gateway',
       fact => 'password',
-      value => $scaleio['gateway_password']
+      value => $scaleio['password']
     } ->
     env_fact{"Environment fact: role gateway, port: ${scaleio['gateway_port']}":
       role => 'gateway',

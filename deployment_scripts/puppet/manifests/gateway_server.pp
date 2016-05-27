@@ -15,7 +15,7 @@ if $scaleio['metadata']['enabled'] {
       class {'scaleio::gateway_server':
         ensure   => 'present',
         mdm_ips  => $::managers_ips,
-        password => $scaleio['gateway_password'],
+        password => $scaleio['password'],
       } ->
       notify { "Configure Haproxy for Gateway nodes: ${gw_ips}": } ->
       openstack::ha::haproxy_service { 'scaleio-gateway':
