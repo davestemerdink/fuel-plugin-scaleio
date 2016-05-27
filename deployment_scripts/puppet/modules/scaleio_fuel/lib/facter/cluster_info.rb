@@ -42,7 +42,7 @@ require 'date'
 require 'facter'
 require 'json'
 
-$scaleio_log_file = "/var/log/puppet-scaleio.log"
+$scaleio_log_file = "/var/log/fuel-plugin-scaleio.log"
 
 def debug_log(msg)  
   File.open($scaleio_log_file, 'a') {|f| f.write("%s: %s\n" % [Time.now.strftime("%Y-%m-%d %H:%M:%S"), msg]) }
@@ -129,7 +129,7 @@ if $discovery_allowed == 'yes' and $mdm_ips and $mdm_ips != '' and $mdm_password
     Facter.add(name) do
       setcode do
         mdm_opts = "--mdm_ip %s" % $mdm_ips
-        login_cmd = "scli %s --approve_certificate --login --username admin --password %s 2>>%s" % [mdm_opts, $mdm_password, $scaleio_log_file]
+        login_cmd = "scli %s --approve_certificate --login --username admin --password %s 1>/dev/null 2>>%s" % [mdm_opts, $mdm_password, $scaleio_log_file]
         query_cmd = "scli %s --approve_certificate --query_all_%s 2>>%s" % [mdm_opts, selector[0], $scaleio_log_file]
         cmd = "%s && %s" % [login_cmd, query_cmd]
         debug_log(cmd)
@@ -153,6 +153,26 @@ if $discovery_allowed == 'yes' and $mdm_ips and $mdm_ips != '' and $mdm_password
         debug_log("%s='%s'" % [name, result])
         result
       end
+    end
+  end
+
+  Facter.add(:scaleio_storage_pools) do
+    setcode do
+      mdm_opts = "--mdm_ip %s" % $mdm_ips
+      login_cmd = "scli %s --approve_certificate --login --username admin --password %s 1>/dev/null 2>>%s" % [mdm_opts, $mdm_password, $scaleio_log_file]
+      query_cmd = "scli %s --approve_certificate --query_all 2>>%s" % [mdm_opts, $scaleio_log_file]
+      fiter_cmd = "awk '/Protection Domain|Storage Pool/ {if($2==\"Domain\"){pd=$3}else{if($2==\"Pool\"){print(pd\":\"$3)}}}'"
+      cmd = "%s && %s | %s" % [login_cmd, query_cmd, fiter_cmd]
+      debug_log(cmd)
+      result = Facter::Util::Resolution.exec(cmd)
+      if result
+        result = result.split(' ')
+        if result.count() > 0
+          result = result.join(',')
+        end
+      end
+      debug_log("%s='%s'" % ['scaleio_storage_pools', result])
+      result
     end
   end
 end

@@ -18,6 +18,7 @@ The `ScaleIO` plugin allows to:
 |----------------------------------|-----------------|
 | Mirantis OpenStack               | 6.1             |
 | Mirantis OpenStack               | 7.0             |
+| Mirantis OpenStack               | 8.0             |
 
 ## Recommendations
 
@@ -36,8 +37,8 @@ The `ScaleIO` plugin allows to:
 
 ## Limitations
 
-1. Plugin is only compatible with Mirantis 6.1 and 7.0.
-2. Plugin supports the only Ubuntu environment.
+1. Plugin is only compatible with Mirantis 6.1, 7.0 and 8.0.
+2. Plugin supports Ubuntu environment only.
 3. The only hyper converged environment is supported - there is no separate ScaleIO Storage nodes.
 4. Multi storage backend is not supported.
 5. It is not possible to use different backends for persistent and ephemeral volumes.

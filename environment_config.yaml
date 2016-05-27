@@ -1,5 +1,9 @@
 attributes:
-
+  metadata:
+    # Settings group can be one of "general", "security", "compute", "network",
+    # "storage", "logging", "openstack_services" and "other".
+    group: 'storage'
+    
   existing_cluster:
     type: "checkbox"
     value: false
@@ -32,38 +36,25 @@ attributes:
     restrictions:
       - condition: "settings:scaleio.existing_cluster.value == false"
         action: hide
- 
-  password:
-    type: "password"
-    weight: 30
-    value: ""
-    label: "Admin password"
-    description: "Type ScaleIO Admin password"
-    regex:
-      source: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,15}$'
-      error: "You must provide a password with between 8 and 15 characters, one uppercase, and one number"
-    restrictions:
-      - condition: "settings:scaleio.existing_cluster.value == true"
-        action: hide
-
+       
   gateway_user:
     type: "text"
     value: "admin"
     label: "Gateway user"
     description: "Type a user name for the gateway"
-    weight: 35
+    weight: 30
     regex:
         source: '^\w+$'
     restrictions:
       - condition: "settings:scaleio.existing_cluster.value == false"
         action: hide
 
-  gateway_password:
+  password:
     type: "password"
     weight: 40
     value: ""
-    label: "Gateway password"
-    description: "Type a password for the gateway"
+    label: "Admin password"
+    description: "Type ScaleIO Admin password"
     regex:
       source: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,15}$'
       error: "You must provide a password with between 8 and 15 characters, one uppercase, and one number"
@@ -89,6 +80,9 @@ attributes:
     regex:
       source: '^[1-9]{1}[0-9]*$'
       error: "Should be number that equal or larger than 1"
+    restrictions:
+      - condition: "settings:scaleio.existing_cluster.value == true"
+        action: hide
 
   storage_pools:
     type: "text"
@@ -125,7 +119,7 @@ attributes:
     description: "Comma separated list of devices, e.g. /dev/sdb,/dev/sdc."
     weight: 100
     regex:
-      source: '^(/dev/[a-zA-Z0-9:-_/]+){1}((,){1}(?=/dev/[a-zA-Z0-9:-_/]+))*'
+      source: '^(/[a-zA-Z0-9:-_]+)+(,(/[a-zA-Z0-9:-_]+)+)*$'
       error: 'List of path is incorrect. It is comma separated list aka /dev/sdb,/dev/sdc'
     restrictions:
       - condition: "settings:scaleio.existing_cluster.value == true or cluster:fuel_version == '9.0'"
@@ -141,9 +135,68 @@ attributes:
       - condition: "settings:scaleio.existing_cluster.value == true or cluster:fuel_version == '9.0'"
         action: hide
         
+  checksum_mode:
+    type: "checkbox"
+    value: false
+    label: "Checksum mode"
+    description:
+        Checksum protection. ScaleIO protects data in-flight by calculating and validating the checksum value for the payload at both ends.
+        Note, the checksum feature may have a minor effect on performance.
+        ScaleIO utilizes hardware capabilities for this feature, where possible.
+    weight: 120
+    restrictions:
+      - condition: "settings:scaleio.existing_cluster.value == true"
+        action: hide
+
+  spare_policy:
+    type: "text"
+    value: '10'
+    label: "Spare policy"
+    description: "% out of total space"
+    weight: 130
+    regex:
+        source: '^[0-9]{1,2}$'
+        error: "Value could be between 0 and 99"
+    restrictions:
+      - condition: "settings:scaleio.existing_cluster.value == true"
+        action: hide
+
+  zero_padding:
+    type: "checkbox"
+    value: true
+    label: "Enable Zero Padding for Storage Pools"
+    description: "New volumes will be zeroed if the option enabled."
+    weight: 140
+    restrictions:
+      - condition: "settings:scaleio.existing_cluster.value == true"
+        action: hide
+
+  scanner_mode:
+    type: "checkbox"
+    value: false
+    label: "Background device scanner"
+    description: "This options enables the background device scanner on the devices in device only mode."
+    weight: 150
+    restrictions:
+      - condition: "settings:scaleio.existing_cluster.value == true"
+        action: hide
+
+  rfcache_devices:
+    type: "text"
+    value: ""
+    label: "XCache devices"
+    description: "List of SDS devices for SSD caching. Cache is disabled if list empty."
+    weight: 150
+    regex:
+      source: '^(/[a-zA-Z0-9:-_]+)*(,(/[a-zA-Z0-9:-_]+)+)*$'
+      error: 'List of path is incorrect. It could be either empty or the comma separated list e.g. /dev/sdb,/dev/sdc'
+    restrictions:
+      - condition: "settings:scaleio.existing_cluster.value == true or cluster:fuel_version == '9.0'"
+        action: hide
+
   version:
     type: "select"
-    weight: 120
+    weight: 200
     value: "2.0"
     label: "Version"
     description: "Select the ScaleIO version you wish to install. The only version 2.0 is supported for now."
