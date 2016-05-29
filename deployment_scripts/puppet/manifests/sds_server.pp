@@ -61,23 +61,26 @@ if $scaleio['metadata']['enabled'] {
           undef   => '',
           default => join(split($::sds_storage_devices_rfcache, ','), ',')
         }
+        $sds_name = $::hostname 
         $sds_config = {
-          "${::hostname}" => {
+          "${sds_name}" => {
             'devices' => {
-              'tier1' => $tier1_devices,
-              'tier2' => $tier2_devices,
-              'tier3' => $tier3_devices,
+              'tier1' => "${tier1_devices}",
+              'tier2' => "${tier2_devices}",
+              'tier3' => "${tier3_devices}",
             },
-            'rfcache_devices' => $rfcache_devices,
+            'rfcache_devices' => "${rfcache_devices}",
           }
         }
-        $sds_config_str = regsubst(inline_template('<%= @sds_config.to_s %>'), '=>', ":", 'G')
-        $mysql_opts = hiera('mysql')
+        # convert hash to string and add escaping of qoutes
+        $sds_config_str = regsubst(regsubst(inline_template('<%= @sds_config.to_s %>'), '=>', ":", 'G'), '"', '\"', 'G')
         $galera_host = hiera('management_vip')
-        $sql_connect = "mysql -h ${galera_host} -uroot -p${mysql_opts['root_password']}"  
+        $mysql_opts = hiera('mysql')
+        $mysql_password = $mysql_opts['root_password']
+        $sql_connect = "mysql -h ${galera_host} -uroot -p${mysql_password}"  
         $db_query = 'CREATE DATABASE IF NOT EXISTS scaleio; USE scaleio'
         $table_query = 'CREATE TABLE IF NOT EXISTS sds (name VARCHAR(64), PRIMARY KEY(name), value TEXT(1024))'
-        $update_query = "INSERT INTO sds (name, value) VALUES ('${::hostname}', '${sds_config_str}') ON DUPLICATE KEY UPDATE value='${sds_config_str}'"
+        $update_query = "INSERT INTO sds (name, value) VALUES ('${sds_name}', '${sds_config_str}') ON DUPLICATE KEY UPDATE value='${sds_config_str}'"
         $sql_query = "${sql_connect} -e \"${db_query}; ${table_query}; ${update_query};\""
         package {'mysql-client':
           ensure => present,

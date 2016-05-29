@@ -59,41 +59,6 @@ define storage_pool_ensure(
   } 
 }
 
-define sds_pool_and_devices (
-  $sds_name,
-  $protection_domain,
-  $ips,
-  $ip_roles,
-  $sds_cfg,             # hash - sds config from centralized db
-) {
-  $pool_name = $title
-  $pool_devices = $sds_cfg ? {
-    false   => undef,
-    default => $sds_cfg['devices']
-  }
-  if $pool_devices and $pool_devices[$pool_name] and $pool_devices[$pool_name] != '' {
-    $device_paths = $pool_devices[$pool_name]
-    $storage_pools = $pool_name
-  } else {
-    $device_paths = undef
-    $storage_pools = undef
-  }
-  $rfcache_devices = $sds_cfg and $sds_cfg['rfcache_devices'] and $sds_cfg['rfcache_devices'] != '' ? {
-    false   => undef,
-    default => $sds_cfg['rfcache_devices']
-  }
-  scaleio::sds {$sds_name:
-    ensure             => 'present',
-    name               => $sds_name,
-    protection_domain  => $protection_domain,
-    ips                => $sds_ips,
-    ip_roles           => $sds_ip_roles,
-    storage_pools      => $storage_pools,
-    device_paths       => $device_paths,
-    rfcache_devices    => $rfcache_devices,
-  }  
-}
-
 define sds_ensure(
   $sds_nodes,
   $protection_domain,
@@ -124,36 +89,42 @@ define sds_ensure(
   }
   if $sds_devices_config {
     $cfg = $sds_devices_config[$sds_name]
-    $pool_devices = $cfg    ? { false => undef, default => $cfg['devices'] }
-    $pools = $pool_devices  ? { false => undef, default => keys($pool_devices) }
-    if $pools {
-      sds_pool_and_devices {$pools:
-        sds_name          => $sds_name,
-        protection_domain => $protection_domain,
-        ips               => $sds_ips,
-        ip_roles          => $sds_ip_roles,
-        sds_cfg           => $cfg,
+    if $cfg {
+      notify{"sds ${sds_name} config: ${cfg}": }
+      $pool_devices = $cfg  ? { false => undef, default => convert_sds_config($cfg) }
+      if $pool_devices {
+        $sds_pools = $pool_devices[0]
+        $sds_device = $pool_devices[1]
+      } else {
+        warn("sds ${sds_name} there is empty pools and devices in configuration")      
+        $sds_pools = undef
+        $sds_device = undef
+      }      
+      $sds_rfcache_devices = $cfg['rfcache_devices'] and $cfg['rfcache_devices'] != '' ? {
+        false   => undef,
+        default => $cfg['rfcache_devices']
       }
     } else {
-      scaleio::sds {$sds_name:
-        ensure             => 'present',
-        name               => $sds_name,
-        protection_domain  => $protection_domain,
-        ips                => $sds_ips,
-        ip_roles           => $sds_ip_roles,
-      }
+      warn("sds ${sds_name} there is no sds config in DB")
+      $sds_pools = undef
+      $sds_device = undef
+      $sds_rfcache_devices = undef
     }
   } else {
-    scaleio::sds {$sds_name:
-      ensure             => 'present',
-      name               => $sds_name,
-      protection_domain  => $protection_domain,
-      ips                => $sds_ips,
-      ip_roles           => $sds_ip_roles,
-      storage_pools      => $storage_pools,
-      device_paths       => $device_paths,
-      rfcache_devices    => $rfcache_devices,        
-    }
+    $sds_pools = $storage_pools
+    $sds_device = $device_paths
+    $sds_rfcache_devices = $rfcache_devices
+  }
+  notify { "sds ${sds_name}: pools:devices:rfcache: '${sds_pools}': '${sds_device}': '${sds_rfcache_devices}'": } ->
+  scaleio::sds {$sds_name:
+    ensure             => 'present',
+    name               => $sds_name,
+    protection_domain  => $protection_domain,
+    ips                => $sds_ips,
+    ip_roles           => $sds_ip_roles,
+    storage_pools      => $sds_pools,
+    device_paths       => $sds_device,
+    rfcache_devices    => $sds_rfcache_devices,        
   }
 }
 
@@ -237,6 +208,13 @@ if $scaleio['metadata']['enabled'] {
           1       => $scaleio['protection_domain'],
           default => "${scaleio['protection_domain']}_${protection_domain_number}"
         }
+        # parse config from centralized DB if exists
+        if $::sds_config and $::sds_config != '' {
+          $sds_devices_config = parsejson($::sds_config)
+          }
+        else {
+          $sds_devices_config = undef
+        }
         if $scaleio['device_paths'] and $scaleio['device_paths'] != '' {
           # if devices come from settings, remove probable trailing commas
           $paths = join(split($scaleio['device_paths'], ','), ',')
@@ -248,16 +226,13 @@ if $scaleio['metadata']['enabled'] {
           $pools_array = split($scaleio['storage_pools'], ',') 
           $pools = join($pools_array, ',')
         } else {
-          $pools_array = undef
+          $poos_devices = convert_sds_config($sds_devices_config)
+          $pools_array = $poos_devices and $poos_devices[0] {
+            false   => [],
+            default => unique(split($poos_devices[0], ','))
+          }
           $pools = undef
           # $sds_configuragion is already set above in this scenario
-        }
-        # parse config from centralized DB if exists
-        if $::sds_config and $::sds_config != '' {
-          $sds_devices_config = parsejson($::sds_config)
-          }
-        else {
-          $sds_devices_config = undef
         }
         $zero_padding = $scaleio['zero_padding'] ? {
           false   => 'disable',

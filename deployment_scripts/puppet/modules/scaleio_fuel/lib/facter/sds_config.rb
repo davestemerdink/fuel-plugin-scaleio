@@ -1,6 +1,6 @@
 require 'date'
 require 'facter'
-require 'yaml'
+require 'json'
 
 $scaleio_log_file = "/var/log/fuel-plugin-scaleio.log"
 def debug_log(msg)  
@@ -15,14 +15,28 @@ if File.exists?($astute_config)
       result = nil
       config = YAML.load_file($astute_config)
       if config
-        mysql_opts = config['mysql']
         galera_host = config['management_vip']
-        sql_query = "mysql -h %s -uroot -p%s -e 'USE scaleio; SELECT * FROM sds;' 2>>%s" % [galera_host, mysql_opts['root_password'], $scaleio_log_file]
+        mysql_opts = config['mysql']
+        password = mysql_opts['root_password']
+        sql_query = "mysql -h %s -uroot -p%s -e 'USE scaleio; SELECT * FROM sds \\G;' 2>>%s | awk '/value:/ {sub($1 FS,\"\" );print}'" % [galera_host, password, $scaleio_log_file]
+        debug_log(sql_query)
         query_result = Facter::Util::Resolution.exec(sql_query)
-        puts(sql_query)
-        puts(query_result)
         debug_log(query_result)
+        if query_result
+          query_result.each_line do |r|
+            if r
+              if not result
+                result = '{'
+              else
+                result += ', '
+              end
+              result += r.strip.slice(1..-2)
+            end
+          end
+          result += '}' unless !result
+        end        
       end
+      debug_log("sds_config='%s'" % result)
       result
     end
   end
