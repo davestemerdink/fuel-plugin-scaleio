@@ -184,12 +184,25 @@ attributes:
   rfcache_devices:
     type: "text"
     value: ""
-    label: "XCache devices"
+    label: "XtremCache devices"
     description: "List of SDS devices for SSD caching. Cache is disabled if list empty."
-    weight: 150
+    weight: 160
     regex:
       source: '^(/[a-zA-Z0-9:-_]+)*(,(/[a-zA-Z0-9:-_]+)+)*$'
       error: 'List of path is incorrect. It could be either empty or the comma separated list e.g. /dev/sdb,/dev/sdc'
+    restrictions:
+      - condition: "settings:scaleio.existing_cluster.value == true or cluster:fuel_version == '9.0'"
+        action: hide
+
+  cached_storage_pools:
+    type: "text"
+    value: ""
+    label: "XtremCache storage pools"
+    description: "List of storage pools which should be cached with XtremCache."
+    weight: 170
+    regex:
+      source: '^(\w+)*((,){1}(?=\w+))*'
+      error: 'List of storage pools incorrect. It could be either empty or the comma separated list e.g. pool1,pool2'
     restrictions:
       - condition: "settings:scaleio.existing_cluster.value == true or cluster:fuel_version == '9.0'"
         action: hide

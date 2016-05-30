@@ -27,20 +27,28 @@ if $scaleio['metadata']['enabled'] {
         filter_nodes($nodes, 'role', 'scaleio-storage-tier3')))
     }
     if $is_sds_server {
-      class {'scaleio::sds_server':
-        ensure  => 'present',
-      }
-      if $scaleio['rfcache_devices'] and $scaleio['rfcache_devices'] != '' {
-        class {'scaleio::xcache_server':
-          ensure  => 'present',
-          require => Class['Scaleio::Sds_server'],
-        }
-      }
       if ! $use_plugin_roles {
         if $scaleio['device_paths'] and $scaleio['device_paths'] != '' {
-          $devices = split($scaleio['device_paths'], ',')
-          sds_device_cleanup {$devices:
-            before => Class['scaleio::sds_server']
+          $device_paths = split($scaleio['device_paths'], ',')
+        } else {
+          $device_paths = []
+        }
+        if $scaleio['rfcache_devices'] and $scaleio['rfcache_devices'] != '' {
+          $rfcache_devices = split($scaleio['rfcache_devices'], ',')
+        } else {
+          $rfcache_devices = []
+        }
+        $devices = concat(flatten($device_paths), $rfcache_devices)
+        sds_device_cleanup {$devices:
+          before => Class['Scaleio::Sds_server']
+        } ->
+        class {'scaleio::sds_server':
+          ensure  => 'present',
+        }
+        if ! empty($rfcache_devices) {
+          class {'scaleio::xcache_server':
+            ensure  => 'present',
+            require => Class['Scaleio::Sds_server'],
           }
         }
       } else {
@@ -82,6 +90,9 @@ if $scaleio['metadata']['enabled'] {
         $table_query = 'CREATE TABLE IF NOT EXISTS sds (name VARCHAR(64), PRIMARY KEY(name), value TEXT(1024))'
         $update_query = "INSERT INTO sds (name, value) VALUES ('${sds_name}', '${sds_config_str}') ON DUPLICATE KEY UPDATE value='${sds_config_str}'"
         $sql_query = "${sql_connect} -e \"${db_query}; ${table_query}; ${update_query};\""
+        class {'scaleio::sds_server':
+          ensure  => 'present',
+        } ->
         package {'mysql-client':
           ensure => present,
           require => Class['Scaleio::Sds_server'],
@@ -89,6 +100,12 @@ if $scaleio['metadata']['enabled'] {
         exec {'sds_devices_config':
           command => $sql_query,
           path    => '/bin:/usr/bin:/usr/local/bin',
+        }
+        if $rfcache_devices and $rfcache_devices != '' {
+          class {'scaleio::xcache_server':
+            ensure  => 'present',
+            require => Class['Scaleio::Sds_server'],
+          }
         }
       }
     }

@@ -1,9 +1,9 @@
 require 'date'
 require 'facter'
 
-$scaleio_tier1_guid = 'f2e81bdc-99b3-4bf6-a68f-dc794da6cd8e'
-$scaleio_tier2_guid = 'd5321bb3-1098-433e-b4f5-216712fcd06f'
-$scaleio_tier3_guid = '97987bfc-a9ba-40f3-afea-13e1a228e492'
+$scaleio_tier1_guid   = 'f2e81bdc-99b3-4bf6-a68f-dc794da6cd8e'
+$scaleio_tier2_guid   = 'd5321bb3-1098-433e-b4f5-216712fcd06f'
+$scaleio_tier3_guid   = '97987bfc-a9ba-40f3-afea-13e1a228e492'
 $scaleio_rfcache_guid = '163ddeea-95dd-4af0-a329-140623590c47'
 
 $scaleio_tiers = {

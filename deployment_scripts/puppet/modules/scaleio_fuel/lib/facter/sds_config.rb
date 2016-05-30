@@ -10,7 +10,7 @@ end
 
 $astute_config = '/etc/astute.yaml'
 if File.exists?($astute_config)
-  Facter.add(:sds_config) do
+  Facter.add(:scaleio_sds_config) do
     setcode do
       result = nil
       config = YAML.load_file($astute_config)
@@ -36,7 +36,7 @@ if File.exists?($astute_config)
           result += '}' unless !result
         end        
       end
-      debug_log("sds_config='%s'" % result)
+      debug_log("scaleio_sds_config='%s'" % result)
       result
     end
   end

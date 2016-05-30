@@ -34,7 +34,7 @@ define storage_pool_ensure(
   $scanner_mode,
   $checksum_mode,
   $spare_policy,
-  $rfcache_usage,
+  $cached_storage_pools_array,
 ) {
   $sp_name = $title
   if $::scaleio_storage_pools and $::scaleio_storage_pools != '' {
@@ -43,7 +43,12 @@ define storage_pool_ensure(
     $current_pools = []
   }
   if ! ("${protection_domain}:${sp_name}" in $current_pools) {
-    notify {"storage_pool_ensure ${protection_domain}:${sp_name}: zero_padding=${zero_padding}, checksum_mode=${checksum_mode}, scanner_mode=${scanner_mode}, spare_policy=${spare_policy}":
+    if $sp_name in $cached_storage_pools_array {
+      $rfcache_usage = 'use'
+    } else {
+      $rfcache_usage = 'dont_use'
+    }    
+    notify {"storage_pool_ensure ${protection_domain}:${sp_name}: zero_padding=${zero_padding}, checksum=${checksum_mode}, scanner=${scanner_mode}, spare=${spare_policy}, rfcache=${rfcache_usage}":
     } ->
     scaleio::storage_pool {"Storage Pool ${protection_domain}:${sp_name}":
       name                => $sp_name,
@@ -99,10 +104,11 @@ define sds_ensure(
         warn("sds ${sds_name} there is empty pools and devices in configuration")      
         $sds_pools = undef
         $sds_device = undef
-      }      
-      $sds_rfcache_devices = $cfg['rfcache_devices'] and $cfg['rfcache_devices'] != '' ? {
-        false   => undef,
-        default => $cfg['rfcache_devices']
+      }
+      if $cfg['rfcache_devices'] and $cfg['rfcache_devices'] != '' {
+        $sds_rfcache_devices = $cfg['rfcache_devices']
+      } else {
+        $sds_rfcache_devices = undef
       }
     } else {
       warn("sds ${sds_name} there is no sds config in DB")
@@ -209,8 +215,8 @@ if $scaleio['metadata']['enabled'] {
           default => "${scaleio['protection_domain']}_${protection_domain_number}"
         }
         # parse config from centralized DB if exists
-        if $::sds_config and $::sds_config != '' {
-          $sds_devices_config = parsejson($::sds_config)
+        if $::scaleio_sds_config and $::scaleio_sds_config != '' {
+          $sds_devices_config = parsejson($::scaleio_sds_config)
           }
         else {
           $sds_devices_config = undef
@@ -226,13 +232,8 @@ if $scaleio['metadata']['enabled'] {
           $pools_array = split($scaleio['storage_pools'], ',') 
           $pools = join($pools_array, ',')
         } else {
-          $poos_devices = convert_sds_config($sds_devices_config)
-          $pools_array = $poos_devices and $poos_devices[0] {
-            false   => [],
-            default => unique(split($poos_devices[0], ','))
-          }
+          $pools_array = get_pools_from_sds_config($sds_devices_config)
           $pools = undef
-          # $sds_configuragion is already set above in this scenario
         }
         $zero_padding = $scaleio['zero_padding'] ? {
           false   => 'disable',
@@ -252,12 +253,14 @@ if $scaleio['metadata']['enabled'] {
         }
         if $scaleio['rfcache_devices'] and $scaleio['rfcache_devices'] != '' {
           $rfcache_devices = $scaleio['rfcache_devices']
-          $rfcache_usage = 'use'
         } else {
           $rfcache_devices = undef
-          $rfcache_usage = 'dont_use'
         }
-        notify {"DBG: ${scaleio['rfcache_devices']} : ${rfcache_devices} : ${rfcache_usage}": } ->
+        if $scaleio['cached_storage_pools'] and $scaleio['cached_storage_pools'] != '' {
+          $cached_storage_pools_array = split($scaleio['cached_storage_pools'], ',')
+        } else {
+          $cached_storage_pools_array = []
+        }
         notify {"Configure cluster MDM: ${master_mdm}": } ->
         scaleio::login {'Normal':
           password => $password,
@@ -297,6 +300,7 @@ if $scaleio['metadata']['enabled'] {
             cluster_mode        => $cluster_mode,
             slave_names         => $slave_names,
             tb_names            => $tb_names,
+            require             => Scaleio::Login['Normal'],          
           }
         }
         scaleio::protection_domain {"Ensure protection domain ${protection_domain}":
@@ -304,12 +308,13 @@ if $scaleio['metadata']['enabled'] {
           require             => Scaleio::Login['Normal'],          
         } ->
         storage_pool_ensure {$pools_array:
-          protection_domain => $protection_domain,
-          zero_padding      => $zero_padding,
-          scanner_mode      => $scanner_mode,
-          checksum_mode     => $checksum_mode,
-          spare_policy      => $spare_policy,
-          rfcache_usage     => $rfcache_usage,
+          protection_domain           => $protection_domain,
+          zero_padding                => $zero_padding,
+          scanner_mode                => $scanner_mode,
+          checksum_mode               => $checksum_mode,
+          spare_policy                => $spare_policy,
+          cached_storage_pools_array  => $cached_storage_pools_array,
+          require           => Scaleio::Protection_domain["Ensure protection domain ${protection_domain}"],
         } ->
         sds_ensure {$to_add_sds_names:
           sds_nodes           => $sds_nodes,		
@@ -318,6 +323,7 @@ if $scaleio['metadata']['enabled'] {
           device_paths        => $paths,
           rfcache_devices     => $rfcache_devices,
           sds_devices_config  => $sds_devices_config,
+          require             => Scaleio::Protection_domain["Ensure protection domain ${protection_domain}"],          
         }
         # Apply high performance profile to SDC-es
         # Use first sdc ip because underlined puppet uses all_sdc parameters
