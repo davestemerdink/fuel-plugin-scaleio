@@ -38,18 +38,18 @@ if $scaleio['metadata']['enabled'] {
         } else {
           $rfcache_devices = []
         }
+        if ! empty($rfcache_devices) {
+          $use_xcache = 'present'
+        } else {
+          $use_xcache = 'absent'
+        }
         $devices = concat(flatten($device_paths), $rfcache_devices)
         sds_device_cleanup {$devices:
           before => Class['Scaleio::Sds_server']
         } ->
         class {'scaleio::sds_server':
           ensure  => 'present',
-        }
-        if ! empty($rfcache_devices) {
-          class {'scaleio::xcache_server':
-            ensure  => 'present',
-            require => Class['Scaleio::Sds_server'],
-          }
+          xcache  => $use_xcache,
         }
       } else {
         # save devices in shared DB
@@ -68,6 +68,11 @@ if $scaleio['metadata']['enabled'] {
         $rfcache_devices = $::sds_storage_devices_rfcache ? {
           undef   => '',
           default => join(split($::sds_storage_devices_rfcache, ','), ',')
+        }
+        if $rfcache_devices and $rfcache_devices != '' {
+          $use_xcache = 'present'
+        } else {
+          $use_xcache = 'absent'
         }
         $sds_name = $::hostname 
         $sds_config = {
@@ -92,20 +97,14 @@ if $scaleio['metadata']['enabled'] {
         $sql_query = "${sql_connect} -e \"${db_query}; ${table_query}; ${update_query};\""
         class {'scaleio::sds_server':
           ensure  => 'present',
+          xcache  => $use_xcache,
         } ->
         package {'mysql-client':
           ensure => present,
-          require => Class['Scaleio::Sds_server'],
         } ->
         exec {'sds_devices_config':
           command => $sql_query,
           path    => '/bin:/usr/bin:/usr/local/bin',
-        }
-        if $rfcache_devices and $rfcache_devices != '' {
-          class {'scaleio::xcache_server':
-            ensure  => 'present',
-            require => Class['Scaleio::Sds_server'],
-          }
         }
       }
     }
