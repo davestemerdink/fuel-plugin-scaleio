@@ -261,6 +261,16 @@ if $scaleio['metadata']['enabled'] {
         } else {
           $cached_storage_pools_array = []
         }
+        if $scaleio['capacity_high_alert_threshold'] and $scaleio['capacity_high_alert_threshold'] != '' {
+          $capacity_high_alert_threshold = $scaleio['capacity_high_alert_threshold']
+        } else {
+          $capacity_high_alert_threshold = undef
+        }
+        if $scaleio['capacity_critical_alert_threshold'] and $scaleio['capacity_critical_alert_threshold'] != '' {
+          $capacity_critical_alert_threshold = $scaleio['capacity_critical_alert_threshold']
+        } else {
+          $capacity_critical_alert_threshold = undef
+        }
         notify {"Configure cluster MDM: ${master_mdm}": } ->
         scaleio::login {'Normal':
           password => $password,
@@ -303,7 +313,8 @@ if $scaleio['metadata']['enabled'] {
             require             => Scaleio::Login['Normal'],          
           }
         }
-        scaleio::protection_domain {"Ensure protection domain ${protection_domain}":
+        $protection_domain_resource_name = "Ensure protection domain ${protection_domain}"
+        scaleio::protection_domain {$protection_domain_resource_name:
           name                => $protection_domain,
           require             => Scaleio::Login['Normal'],          
         } ->
@@ -314,7 +325,6 @@ if $scaleio['metadata']['enabled'] {
           checksum_mode               => $checksum_mode,
           spare_policy                => $spare_policy,
           cached_storage_pools_array  => $cached_storage_pools_array,
-          require           => Scaleio::Protection_domain["Ensure protection domain ${protection_domain}"],
         } ->
         sds_ensure {$to_add_sds_names:
           sds_nodes           => $sds_nodes,		
@@ -323,14 +333,22 @@ if $scaleio['metadata']['enabled'] {
           device_paths        => $paths,
           rfcache_devices     => $rfcache_devices,
           sds_devices_config  => $sds_devices_config,
-          require             => Scaleio::Protection_domain["Ensure protection domain ${protection_domain}"],          
+          require             => Scaleio::Protection_domain[$protection_domain_resource_name],
+        }
+        if $capacity_high_alert_threshold and $capacity_critical_alert_threshold {
+          scaleio::cluster {'Configure alerts':
+            ensure                            => 'present',
+            capacity_high_alert_threshold     => $capacity_high_alert_threshold,
+            capacity_critical_alert_threshold => $capacity_critical_alert_threshold,
+            require                           => Scaleio::Protection_domain[$protection_domain_resource_name],
+          }
         }
         # Apply high performance profile to SDC-es
         # Use first sdc ip because underlined puppet uses all_sdc parameters
         if ! empty($sdc_nodes_ips) {
           scaleio::sdc {'Set performance settings for all available SDCs':
             ip      => $sdc_nodes_ips[0],
-            require => Scaleio::Login['Normal'],          
+            require => Scaleio::Protection_domain[$protection_domain_resource_name],          
           }
         }
       } else {

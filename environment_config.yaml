@@ -130,11 +130,28 @@ attributes:
     value: false
     label: "Controller as Storage"
     description: "Setup SDS-es on controller nodes."
-    weight: 110
+    weight: 105
     restrictions:
       - condition: "settings:scaleio.existing_cluster.value == true or cluster:fuel_version == '9.0'"
         action: hide
-        
+
+  provisioning_type:
+    type: "radio"
+    value: "thin"
+    label: "Provisioning type"
+    description: "Thin/Thick provisioning for ephemeral and persistent volumes."
+    weight: 110
+    values:
+      - data: 'thin'
+        label: 'Thin provisioning'
+        description: "Thin provisioning for ephemeral and persistent volumes."
+      - data: 'thick'
+        label: 'Thick provisioning'
+        description: "Thick provisioning for ephemeral and persistent volumes."
+    restrictions:
+      - condition: "settings:scaleio.existing_cluster.value == true"
+        action: hide
+
   checksum_mode:
     type: "checkbox"
     value: false
@@ -205,6 +222,32 @@ attributes:
       error: 'List of storage pools incorrect. It could be either empty or the comma separated list e.g. pool1,pool2'
     restrictions:
       - condition: "settings:scaleio.existing_cluster.value == true or cluster:fuel_version == '9.0'"
+        action: hide
+
+  capacity_high_alert_threshold:
+    type: "text"
+    value: '80'
+    label: "Capacity high priority alert"
+    description: "Threshold of the non-spare capacity of the Storage Pool that will trigger a high-priority alert, in percentage format"
+    weight: 180
+    regex:
+        source: '^[0-9]{1,2}$'
+        error: "Value could be between 0 and 99"
+    restrictions:
+      - condition: "settings:scaleio.existing_cluster.value == true"
+        action: hide
+
+  capacity_critical_alert_threshold:
+    type: "text"
+    value: '90'
+    label: "Capacity critical priority alert"
+    description: "Threshold of the non-spare capacity of the Storage Pool that will trigger a critical-priority alert, in percentage format"
+    weight: 190
+    regex:
+        source: '^[0-9]{1,2}$'
+        error: "Value could be between 0 and 99"
+    restrictions:
+      - condition: "settings:scaleio.existing_cluster.value == true"
         action: hide
 
   version:

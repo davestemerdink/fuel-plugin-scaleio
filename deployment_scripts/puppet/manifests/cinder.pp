@@ -7,6 +7,11 @@ if $scaleio['metadata']['enabled'] {
   if empty(filter_nodes($nodes, 'role', 'cinder')) {
     fail("Cinder Role is not found on the host ${::hostname}")
   }
+  if $scaleio['provisioning_type'] and $scaleio['provisioning_type'] != '' {
+    $provisioning_type = $scaleio['provisioning_type']
+  } else {
+    $provisioning_type = undef
+  }
   class {'scaleio_openstack::cinder':
     ensure                     => present,
     gateway_user               => $::gateway_user,
@@ -15,5 +20,6 @@ if $scaleio['metadata']['enabled'] {
     gateway_port               => $::gateway_port,
     protection_domains         => $scaleio['protection_domain'],
     storage_pools              => $::storage_pools,
+    provisioning_type          => $provisioning_type,
   }
 }

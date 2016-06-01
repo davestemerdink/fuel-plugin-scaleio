@@ -6,7 +6,12 @@ if $scaleio['metadata']['enabled'] {
   $nodes = filter_nodes($all_nodes, 'name', $::hostname)
   if empty(filter_nodes($nodes, 'role', 'compute')) {
     fail("Compute Role is not found on the host ${::hostname}")
-  }  
+  }
+  if $scaleio['provisioning_type'] and $scaleio['provisioning_type'] != '' {
+    $provisioning_type = $scaleio['provisioning_type']
+  } else {
+    $provisioning_type = undef
+  }
   class {'scaleio_openstack::nova':
     ensure              => present,
     gateway_user        => $::gateway_user,
@@ -15,5 +20,6 @@ if $scaleio['metadata']['enabled'] {
     gateway_port        => $::gateway_port,
     protection_domains  => $scaleio['protection_domain'],
     storage_pools       => $::storage_pools,
+    provisioning_type   => $provisioning_type,
  }
 }
