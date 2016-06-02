@@ -119,7 +119,7 @@ To install the ScaleIOv2.0 Fuel plugin:
 2. Copy the rpm file to the Fuel Master node
     ```
     [root@home ~]# scp scaleio-2.0-2.0.0-1.noarch.rpm root@fuel-master:/tmp
-￼    ```
+    ```
 
 3. Log into Fuel Master node and install the plugin using the Fuel CLI
     ```
@@ -141,7 +141,7 @@ To install the ScaleIOv2.0 Fuel plugin:
     ---|-----------------------|---------|----------------
      1 | scaleio               | 2.1.0   | 3.0.0
     ```
-￼
+
 # User Guide
 
 Please read the [ScaleIO Plugin User Guide](doc/source/builddir/ScaleIO-Plugin_Guide.pdf) for full description.
@@ -151,8 +151,8 @@ First of all, ScaleIOv2.0 plugin functionality should be enabled by switching on
 ScaleIO section contains the following info to fill in:
 
 1. Existing ScaleIO Cluster.
-Set "Use existing ScaleIO" checkbox.
-The following parameters should be specified:
+  Set "Use existing ScaleIO" checkbox.
+  The following parameters should be specified:
 * Gateway IP address - IP address of ScaleIO gateway
 * Gateway port - Port of ScaleIO gateway
 * Gateway user - User to access ScaleIO gateway
@@ -161,12 +161,14 @@ The following parameters should be specified:
 * Storage pools - Comma-separated list of storage pools
 
 2. New ScaleIO deployment
+
 The following parameters should be specified:
 * Admin password - Administrator password to set for ScaleIO MDM
 * Protection domain - The protection domain to create for ScaleIO cluster
 * Storage pools - Comma-separated list of storage pools to create for ScaleIO cluster
 * Storage devices - Path to storage devices, comma separated (/dev/sdb,/dev/sdd)
-The following parameters are optional and have default values suitable for most cases.
+
+The following parameters are optional and have default values suitable for most cases:
 * Controller as Storage - Use controller nodes for ScaleIO SDS (by default only compute nodes are used for ScaleIO SDS deployment)
 * Provisioning type - Thin/Thick provisioning for ephemeral and persistent volumes
 * Checksum mode - Checksum protection. ScaleIO protects data in-flight by calculating and validating the checksum value for the payload at both ends.
