@@ -151,38 +151,39 @@ First of all, ScaleIOv2.0 plugin functionality should be enabled by switching on
 ScaleIO section contains the following info to fill in:
 
 1. Existing ScaleIO Cluster.
-  Set "Use existing ScaleIO" checkbox.
-  The following parameters should be specified:
-* Gateway IP address - IP address of ScaleIO gateway
-* Gateway port - Port of ScaleIO gateway
-* Gateway user - User to access ScaleIO gateway
-* Gateway password - Password to access ScaleIO gateway
-* Protection domain - The protection domain to use
-* Storage pools - Comma-separated list of storage pools
+
+ Set "Use existing ScaleIO" checkbox.
+ The following parameters should be specified:
+ * Gateway IP address - IP address of ScaleIO gateway
+ * Gateway port - Port of ScaleIO gateway
+ * Gateway user - User to access ScaleIO gateway
+ * Gateway password - Password to access ScaleIO gateway
+ * Protection domain - The protection domain to use
+ * Storage pools - Comma-separated list of storage pools
 
 2. New ScaleIO deployment
 
-The following parameters should be specified:
-* Admin password - Administrator password to set for ScaleIO MDM
-* Protection domain - The protection domain to create for ScaleIO cluster
-* Storage pools - Comma-separated list of storage pools to create for ScaleIO cluster
-* Storage devices - Path to storage devices, comma separated (/dev/sdb,/dev/sdd)
-
-The following parameters are optional and have default values suitable for most cases:
-* Controller as Storage - Use controller nodes for ScaleIO SDS (by default only compute nodes are used for ScaleIO SDS deployment)
-* Provisioning type - Thin/Thick provisioning for ephemeral and persistent volumes
-* Checksum mode - Checksum protection. ScaleIO protects data in-flight by calculating and validating the checksum value for the payload at both ends.
-  Note, the checksum feature may have a minor effect on performance. ScaleIO utilizes hardware capabilities for this feature, where possible.
-* Spare policy - % out of total space to be reserved for rebalance and redundancy recovery cases.
-* Enable Zero Padding for Storage Pools - New volumes will be zeroed if the option enabled.
-* Background device scanner - This options enables the background device scanner on the devices in device only mode.
-* XtremCache devices - List of SDS devices for SSD caching. Cache is disabled if list empty.
-* XtremCache storage pools - List of storage pools which should be cached with XtremCache.
-* Capacity high priority alert - Threshold of the non-spare capacity of the Storage Pool that will trigger a high-priority alert, in percentage format.
-* Capacity critical priority alert - Threshold of the non-spare capacity of the Storage Pool that will trigger a critical-priority alert, in percentage format.
-
-Configuration of disks for allocated nodes:
-The devices listed in the "Storage devices" and "XtremCache devices" should be left unallocated for ScaleIO SDS to work.
+ The following parameters should be specified:
+ * Admin password - Administrator password to set for ScaleIO MDM
+ * Protection domain - The protection domain to create for ScaleIO cluster
+ * Storage pools - Comma-separated list of storage pools to create for ScaleIO cluster
+ * Storage devices - Path to storage devices, comma separated (/dev/sdb,/dev/sdd)
+ 
+ The following parameters are optional and have default values suitable for most cases:
+ * Controller as Storage - Use controller nodes for ScaleIO SDS (by default only compute nodes are used for ScaleIO SDS deployment)
+ * Provisioning type - Thin/Thick provisioning for ephemeral and persistent volumes
+ * Checksum mode - Checksum protection. ScaleIO protects data in-flight by calculating and validating the checksum value for the payload at both ends.
+   Note, the checksum feature may have a minor effect on performance. ScaleIO utilizes hardware capabilities for this feature, where possible.
+ * Spare policy - % out of total space to be reserved for rebalance and redundancy recovery cases.
+ * Enable Zero Padding for Storage Pools - New volumes will be zeroed if the option enabled.
+ * Background device scanner - This options enables the background device scanner on the devices in device only mode.
+ * XtremCache devices - List of SDS devices for SSD caching. Cache is disabled if list empty.
+ * XtremCache storage pools - List of storage pools which should be cached with XtremCache.
+ * Capacity high priority alert - Threshold of the non-spare capacity of the Storage Pool that will trigger a high-priority alert, in percentage format.
+ * Capacity critical priority alert - Threshold of the non-spare capacity of the Storage Pool that will trigger a critical-priority alert, in percentage format.
+ 
+ Configuration of disks for allocated nodes:
+ The devices listed in the "Storage devices" and "XtremCache devices" should be left unallocated for ScaleIO SDS to work.
 
 # Contributions
 
