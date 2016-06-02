@@ -25,26 +25,25 @@ The `ScaleIO` plugin allows to:
 1. Use configuration with 3 controllers or 5 controllers.
     Although 1 controller mode is supported is suitable for testing purposees only.
 2. Assign Cinder role for all controllers with allocating minimal diskspace for this role.
-    Some space is needed because of FUEL6.1/7.0 framework limitation (this space will not used).
+    Some space is needed because of FUEL framework limitation (this space will not used).
     Rest of the space keep for images.
 3.  Use nodes with similar HW configuration within one group of roles.
 4. Deploy SDS coponents only on compute nodes.
     Deploymen SDS-es on controllers is supported but it is more suitable for testing than for production environment.
 5. On compute nodes keep minimal space for virtual storage on the first disk, rest disks use for ScaleIO.
-    Some space is needed because of FUEL6.1/7.0 framework limitations.
+    Some space is needed because of FUEL framework limitations.
     Other disks should be unallocated and can be used for ScaleIO.
 6. In case of extending cluster with new compute nodes not to forget to run update_hosts tasks on controller nodes via FUEL cli. 
 
 ## Limitations
 
-1. Plugin is only compatible with Mirantis 6.1, 7.0 and 8.0.
-2. Plugin supports Ubuntu environment only.
-3. The only hyper converged environment is supported - there is no separate ScaleIO Storage nodes.
-4. Multi storage backend is not supported.
-5. It is not possible to use different backends for persistent and ephemeral volumes.
-6. Disks for SDS-es should be unallocated before deployment via FUEL UI or cli.
-7. MDMs and Gateways are deployed together and only onto controller nodes.
-8. Adding and removing node(s) to/from the OpenStack cluster won't re-configure the ScaleIO.
+1. Plugin supports Ubuntu environment only.
+2. The only hyper converged environment is supported - there is no separate ScaleIO Storage nodes.
+3. Multi storage backend is not supported.
+4. It is not possible to use different backends for persistent and ephemeral volumes.
+5. Disks for SDS-es should be unallocated before deployment via FUEL UI or cli.
+6. MDMs and Gateways are deployed together and only onto controller nodes.
+7. Adding and removing node(s) to/from the OpenStack cluster won't re-configure the ScaleIO.
 
 # Installation Guide
 
@@ -77,9 +76,17 @@ In this case, please refer to the section "Preparing an environment for plugin d
 of the [Fuel Plugins wiki](https://wiki.openstack.org/wiki/Fuel/Plugins) if you
 need further instructions about how to build the Fuel Plugin Builder.*
 
-4. Clone the ScaleIO Plugin git repository (note the `--recursive` option):
+4. Clone the ScaleIO Plugin git repository:
+    For FUEL6.1/7.0:
     ```
     $ git clone https://github.com/cloudscaling/fuel-plugin-scaleio.git
+    $ git checkout "tags/v0.3.1"
+    $ cd fuel-plugin-scaleio
+    ```
+    For FUEL8.0:
+    ```
+    $ git clone https://github.com/cloudscaling/fuel-plugin-scaleio.git
+    $ git checkout "tags/v0.3.2"
     $ cd fuel-plugin-scaleio
     ```
 
@@ -94,11 +101,47 @@ need further instructions about how to build the Fuel Plugin Builder.*
     ```
 
 7. Install plugin:
+    For FUEL6.1/7.0:
     ```
     $ fuel plugins --install ./scaleio-2.0-2.0.0-1.noarch.rpm
     ```
+    For FUEL8.0:
+    ```
+    $ fuel plugins --install ./scaleio-2.0-2.1.0-1.noarch.rpm
+    ```
 
+## ScaleIO Plugin install from Fuel Plugins Catalog
 
+To install the ScaleIOv2.0 Fuel plugin:
+
+1. Download it from the [Fuel Plugins Catalog](https://www.mirantis.com/products/openstack-drivers-and-plugins/fuel-plugins/)
+
+2. Copy the rpm file to the Fuel Master node
+    ```
+    [root@home ~]# scp scaleio-2.0-2.0.0-1.noarch.rpm root@fuel-master:/tmp
+￼    ```
+
+3. Log into Fuel Master node and install the plugin using the Fuel CLI
+    ```
+    [root@fuel-master ~]# fuel plugins --install /tmp/scaleio-2.0-2.0.0-1.noarch.rpm
+    ```
+
+4. Verify that the plugin is installed correctly
+    For FUEL6.1/7.0
+    ```
+    [root@fuel-master ~]# fuel plugins
+    id | name                  | version | package_version
+    ---|-----------------------|---------|----------------
+     1 | scaleio               | 2.0.0   | 2.0.0
+    ```
+    For FUEL8.0
+    ```
+    [root@fuel-master ~]# fuel plugins
+    id | name                  | version | package_version
+    ---|-----------------------|---------|----------------
+     1 | scaleio               | 2.1.0   | 3.0.0
+    ```
+￼
 # User Guide
 
 Please read the [ScaleIO Plugin User Guide](doc/source/builddir/ScaleIO-Plugin_Guide.pdf) for full description.
@@ -120,14 +163,24 @@ The following parameters should be specified:
 2. New ScaleIO deployment
 The following parameters should be specified:
 * Admin password - Administrator password to set for ScaleIO MDM
-* Gateway password - Administrator password to set for ScaleIO Gateway (for now should be the same as Admin password)
 * Protection domain - The protection domain to create for ScaleIO cluster
 * Storage pools - Comma-separated list of storage pools to create for ScaleIO cluster
 * Storage devices - Path to storage devices, comma separated (/dev/sdb,/dev/sdd)
+The following parameters are optional and have default values suitable for most cases.
 * Controller as Storage - Use controller nodes for ScaleIO SDS (by default only compute nodes are used for ScaleIO SDS deployment)
-  
+* Provisioning type - Thin/Thick provisioning for ephemeral and persistent volumes
+* Checksum mode - Checksum protection. ScaleIO protects data in-flight by calculating and validating the checksum value for the payload at both ends.
+  Note, the checksum feature may have a minor effect on performance. ScaleIO utilizes hardware capabilities for this feature, where possible.
+* Spare policy - % out of total space to be reserved for rebalance and redundancy recovery cases.
+* Enable Zero Padding for Storage Pools - New volumes will be zeroed if the option enabled.
+* Background device scanner - This options enables the background device scanner on the devices in device only mode.
+* XtremCache devices - List of SDS devices for SSD caching. Cache is disabled if list empty.
+* XtremCache storage pools - List of storage pools which should be cached with XtremCache.
+* Capacity high priority alert - Threshold of the non-spare capacity of the Storage Pool that will trigger a high-priority alert, in percentage format.
+* Capacity critical priority alert - Threshold of the non-spare capacity of the Storage Pool that will trigger a critical-priority alert, in percentage format.
+
 Configuration of disks for allocated nodes:
-The devices listed in the "Storage devices" above should be left unallocated for ScaleIO SDS to work.
+The devices listed in the "Storage devices" and "XtremCache devices" should be left unallocated for ScaleIO SDS to work.
 
 # Contributions
 

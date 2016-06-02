@@ -32,6 +32,7 @@ ScaleIO Components
 
 **ScaleIO Gateway** is the HTTP/HTTPS REST endpoint. It is the primary endpoint used by OpenStack to actuate commands against ScaleIO. Due to its stateless nature, we can have multiples instances and easily balance the load.
 
+**Xtrem Cache (RFCache)** is the component enabling caching on PCI flash cards and/or SSDs thus accelerating the reads of SDS's HDD devices. It is deployed together with SDS component. 
 
 ScaleIO Cinder and Nova Drivers
 -------------------------------
@@ -46,13 +47,14 @@ Requirement               Version/Comment
 ========================= ===============
 Mirantis OpenStack        6.1
 Mirantis OpenStack        7.0
+Mirantis OpenStack        8.0
 ========================= ===============
 
 
 Limitations
 -----------
 
-1. Plugin is only compatible with Mirantis 6.1 and 7.0.
+1. Plugin is only compatible with Mirantis Fuel6.1/7.0/8.0.
 2. Plugin supports only Ubuntu environment.
 3. Only hyper converged environment is supported - there is no separate ScaleIO Storage nodes.
 4. Multi storage backend is not supported.

@@ -50,7 +50,8 @@ It is recommended to install the ScaleIO GUI to easily access and manage the Sca
 Select Environment
 ------------------
 
-#. Create a new environment with the Fuel UI wizard. From OpenStack Release dropdown list select “Juno on Ubunu 14.04” if you are using MOS 6.1 or “Kilo on Ubunu 14.04” for MOS 7.0 and continue until you finish with the wizard.
+#. Create a new environment with the Fuel UI wizard.
+From OpenStack Release dropdown list select “Juno on Ubunu 14.04” if you are using MOS 6.1 or “Kilo on Ubunu 14.04” for MOS 7.0 or "Liberty on Ubunu 14.04" for MOS8.0 and continue until you finish with the wizard.
 
     .. image:: images/wizard.png
        :width: 80%
@@ -161,14 +162,14 @@ Troubleshooting
   * Verify network settings.
   * Ensure that the nodes have internet access.
   * Ensure that there are at least 3 nodes with SDS in the cluster. All Compute nodes play SDS role, Controller nodes play SDS role in case if the option 'Controller as Storage' is enabled in the Plugin's settings.
-  * For the nodes that play SDS role ensure that disks which are listed in the Plugin's setting 'Storage devices' are unallocated and their sizes are greater than 100GB.
+  * For the nodes that play SDS role ensure that disks which are listed in the Plugin's settings 'Storage devices' and 'XtremCache devices' are unallocated and their sizes are greater than 100GB.
   * Ensure that controller nodes have at least 3GB RAM.
 
 2. Deploying changes fails with timeout errors if remove a controller node (only if there were 3 controllers in cluster).
   * Connect via ssh to the one of controller nodes
   * Get MDM IPs:
     ::
-      cat /etc/environment | grep FACTER_mdm_ips
+      cat /etc/environment | grep SCALEIO_mdm_ips
       
   * Request ScaleIO cluster state
     ::
@@ -176,10 +177,12 @@ Troubleshooting
       
   * If cluster is in Degraded mode and there is one of Slave MDMs is disconnected then switch the cluster into the mode '1_node':
     ::
-      scli --switch_cluster_mode --cluster_mode 1_node --remove_slave_mdm_ip <ips_of_slave_mdms>
+      scli --switch_cluster_mode --cluster_mode 1_node
+           --remove_slave_mdm_ip <ips_of_slave_mdms>
            --remove_tb_ip <ips_of_tie_breakers>
-      Where ips_of_slave_mdms and ips_of_tie_breakers are comma separated lists of slave MDMs and
-           Tie Breakers respectively (IPs should be taken from query_cluster command above).
+      Where ips_of_slave_mdms and ips_of_tie_breakers are comma separated lists
+      of slave MDMs and Tie Breakers respectively (IPs should be taken from
+      query_cluster command above).
       
 3. ScaleIO cluster does not see new SDS after deploying new Compute node.
 	It is needed to run update hosts task on controller nodes manually on the FUEL master node, e.g. 'fuel --env 5 node --node-id 1,2,3 --task update_hosts'. This is because FUEL does not trigger plugin's tasks after Compute node deploymet.
