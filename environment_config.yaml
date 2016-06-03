@@ -127,7 +127,7 @@ attributes:
 
   sds_on_controller:
     type: "checkbox"
-    value: false
+    value: true
     label: "Controller as Storage"
     description: "Setup SDS-es on controller nodes."
     weight: 105
