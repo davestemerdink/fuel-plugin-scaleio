@@ -118,12 +118,22 @@ To install the ScaleIOv2.0 Fuel plugin:
 
 2. Copy the rpm file to the Fuel Master node
     ```
+    FUEL6.1/7.0
     [root@home ~]# scp scaleio-2.0-2.0.0-1.noarch.rpm root@fuel-master:/tmp
+    ```
+    ```
+    FUEL8.0
+    [root@home ~]# scp scaleio-2.0-2.1.0-1.noarch.rpm root@fuel-master:/tmp
     ```
 
 3. Log into Fuel Master node and install the plugin using the Fuel CLI
     ```
-    [root@fuel-master ~]# fuel plugins --install /tmp/scaleio-2.0-2.0.0-1.noarch.rpm
+    FUEL6.1/7.0:
+    $ fuel plugins --install ./scaleio-2.0-2.0.0-1.noarch.rpm
+    ```
+    ```
+    FUEL8.0:
+    $ fuel plugins --install ./scaleio-2.0-2.1.0-1.noarch.rpm
     ```
 
 4. Verify that the plugin is installed correctly
