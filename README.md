@@ -107,7 +107,7 @@ need further instructions about how to build the Fuel Plugin Builder.*
     ```
     ```
     FUEL8.0:
-    $ fuel plugins --install ./scaleio-2.0-2.1.0-1.noarch.rpm
+    $ fuel plugins --install ./scaleio-2.1-2.1.0-1.noarch.rpm
     ```
 
 ## ScaleIO Plugin install from Fuel Plugins Catalog
@@ -123,7 +123,7 @@ To install the ScaleIOv2.0 Fuel plugin:
     ```
     ```
     FUEL8.0
-    [root@home ~]# scp scaleio-2.0-2.1.0-1.noarch.rpm root@fuel-master:/tmp
+    [root@home ~]# scp scaleio-2.1-2.1.0-1.noarch.rpm root@fuel-master:/tmp
     ```
 
 3. Log into Fuel Master node and install the plugin using the Fuel CLI
@@ -133,7 +133,7 @@ To install the ScaleIOv2.0 Fuel plugin:
     ```
     ```
     FUEL8.0:
-    $ fuel plugins --install ./scaleio-2.0-2.1.0-1.noarch.rpm
+    $ fuel plugins --install ./scaleio-2.1-2.1.0-1.noarch.rpm
     ```
 
 4. Verify that the plugin is installed correctly

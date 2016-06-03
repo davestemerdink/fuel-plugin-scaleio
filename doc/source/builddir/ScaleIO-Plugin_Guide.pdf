@@ -405,7 +405,7 @@ endobj
 << /Outlines 103 0 R /PageLabels 138 0 R /PageMode /UseNone /Pages 124 0 R /Type /Catalog >>
 endobj
 102 0 obj
-<< /Author () /CreationDate <rst2pdf.createpdf.PDFDate instance at 0x1162b01b8> /Creator (\(unspecified\)) /Keywords () /ModDate <rst2pdf.createpdf.PDFDate instance at 0x1162b01b8> /Producer (ReportLab PDF Library - www.reportlab.com) 
+<< /Author () /CreationDate <rst2pdf.createpdf.PDFDate instance at 0x111feab48> /Creator (\(unspecified\)) /Keywords () /ModDate <rst2pdf.createpdf.PDFDate instance at 0x111feab48> /Producer (ReportLab PDF Library - www.reportlab.com) 
   /Subject (\(unspecified\)) /Title () /Trapped /False >>
 endobj
 103 0 obj
@@ -505,7 +505,7 @@ n -10 0 525.2441 24 re B*
 Q
 q
 .12549 .262745 .360784 rg
-BT 1 0 0 1 0 3 Tm /F2 15 Tf 18 TL 192.5895 0 Td (version 2.0-2.1.0-1) Tj T* -192.5895 0 Td ET
+BT 1 0 0 1 0 3 Tm /F2 15 Tf 18 TL 192.5895 0 Td (version 2.1-2.1.0-1) Tj T* -192.5895 0 Td ET
 Q
 Q
 q
@@ -1518,7 +1518,7 @@ n -4 0 491.4441 30 re B*
 Q
 q
 0 0 0 rg
-BT 1 0 0 1 0 14 Tm /F5 10 Tf 12 TL ([root@home ~]# scp scaleio-2.0-2.1.0-1.noarch.rpm) Tj T* (root@fuel-master:/tmp) Tj T* ET
+BT 1 0 0 1 0 14 Tm /F5 10 Tf 12 TL ([root@home ~]# scp scaleio-2.1-2.1.0-1.noarch.rpm) Tj T* (root@fuel-master:/tmp) Tj T* ET
 Q
 Q
 Q
@@ -1588,7 +1588,7 @@ n -4 0 491.4441 30 re B*
 Q
 q
 0 0 0 rg
-BT 1 0 0 1 0 14 Tm /F5 10 Tf 12 TL ([root@fuel-master ~]# fuel plugins --install) Tj T* (/tmp/scaleio-2.0-2.1.0-1.noarch.rpm) Tj T* ET
+BT 1 0 0 1 0 14 Tm /F5 10 Tf 12 TL ([root@fuel-master ~]# fuel plugins --install) Tj T* (/tmp/scaleio-2.1-2.1.0-1.noarch.rpm) Tj T* ET
 Q
 Q
 Q
@@ -4249,7 +4249,7 @@ endobj
 << /Outlines 103 0 R /PageLabels 138 0 R /PageMode /UseNone /Pages 124 0 R /Type /Catalog >>
 endobj
 102 0 obj
-<< /Author () /CreationDate <rst2pdf.createpdf.PDFDate instance at 0x10ca8fb48> /Creator (\(unspecified\)) /Keywords () /ModDate <rst2pdf.createpdf.PDFDate instance at 0x10ca8fb48> /Producer (ReportLab PDF Library - www.reportlab.com) 
+<< /Author () /CreationDate <rst2pdf.createpdf.PDFDate instance at 0x108850a70> /Creator (\(unspecified\)) /Keywords () /ModDate <rst2pdf.createpdf.PDFDate instance at 0x108850a70> /Producer (ReportLab PDF Library - www.reportlab.com) 
   /Subject (\(unspecified\)) /Title () /Trapped /False >>
 endobj
 103 0 obj
@@ -4349,7 +4349,7 @@ n -10 0 525.2441 24 re B*
 Q
 q
 .12549 .262745 .360784 rg
-BT 1 0 0 1 0 3 Tm /F2 15 Tf 18 TL 192.5895 0 Td (version 2.0-2.1.0-1) Tj T* -192.5895 0 Td ET
+BT 1 0 0 1 0 3 Tm /F2 15 Tf 18 TL 192.5895 0 Td (version 2.1-2.1.0-1) Tj T* -192.5895 0 Td ET
 Q
 Q
 q
@@ -5362,7 +5362,7 @@ n -4 0 491.4441 30 re B*
 Q
 q
 0 0 0 rg
-BT 1 0 0 1 0 14 Tm /F5 10 Tf 12 TL ([root@home ~]# scp scaleio-2.0-2.1.0-1.noarch.rpm) Tj T* (root@fuel-master:/tmp) Tj T* ET
+BT 1 0 0 1 0 14 Tm /F5 10 Tf 12 TL ([root@home ~]# scp scaleio-2.1-2.1.0-1.noarch.rpm) Tj T* (root@fuel-master:/tmp) Tj T* ET
 Q
 Q
 Q
@@ -5432,7 +5432,7 @@ n -4 0 491.4441 30 re B*
 Q
 q
 0 0 0 rg
-BT 1 0 0 1 0 14 Tm /F5 10 Tf 12 TL ([root@fuel-master ~]# fuel plugins --install) Tj T* (/tmp/scaleio-2.0-2.1.0-1.noarch.rpm) Tj T* ET
+BT 1 0 0 1 0 14 Tm /F5 10 Tf 12 TL ([root@fuel-master ~]# fuel plugins --install) Tj T* (/tmp/scaleio-2.1-2.1.0-1.noarch.rpm) Tj T* ET
 Q
 Q
 Q
