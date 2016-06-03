@@ -107,7 +107,7 @@ need further instructions about how to build the Fuel Plugin Builder.*
     ```
     ```
     FUEL8.0:
-    $ fuel plugins --install ./scaleio-2.0-2.1.0-1.noarch.rpm
+    $ fuel plugins --install ./scaleio-2.1-2.1.0-1.noarch.rpm
     ```
 
 ## ScaleIO Plugin install from Fuel Plugins Catalog
