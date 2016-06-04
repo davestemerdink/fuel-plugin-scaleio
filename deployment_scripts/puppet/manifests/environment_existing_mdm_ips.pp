@@ -18,7 +18,7 @@ if $scaleio['metadata']['enabled'] {
       fail('Cannot request MDM IPs from existing cluster. Check Gateway address/port and user name with password.')
     }
     env_fact{"Environment fact: role mdm, ips from existing cluster ${ips}":
-      role => 'mdm',
+      role => 'controller',
       fact => 'ips',
       value => $ips
     }
