@@ -62,7 +62,10 @@ From OpenStack Release dropdown list select “Juno on Ubunu 14.04” if you are
 Plugin configuration
 --------------------
 
-\1. Go to the Settings tab and scroll down to "ScaleIO plugin" section. You need to fill all fields with your preferred ScaleIO configuration. If you do not know the purpose of a field you can leave it with its default value.
+\1. Go to the Settings tab and then go to the section Storage. You need to fill all fields with your preferred ScaleIO configuration. If you do not know the purpose of a field you can leave it with its default value.
+
+    .. image:: images/settings1.png
+       :width: 80%
 
 \2. In order to deploy new ScaleIO cluster together with OpenStack
 
@@ -70,7 +73,10 @@ Plugin configuration
 
   \b. Provide Admin passwords for ScaleIO MDM and Gateway, list of Storage devices to be used as ScaleIO SDS storage devices. Optionally you can provide protection domain name and storage pool names.
 
-    .. image:: images/settings.png
+    .. image:: images/settings2.png
+       :width: 80%
+
+    .. image:: images/settings3.png
        :width: 80%
 
   \c. In case you want to specify different storage pools for different devices provide a list of pools corresponding to device paths, e.g. 'pool1,pool2' and '/dev/sdb,/dev/sdc' will assign /dev/sdb for the pool1 and /dev/sdc for the pool2.
