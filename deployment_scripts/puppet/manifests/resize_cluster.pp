@@ -56,12 +56,13 @@ if $scaleio['metadata']['enabled'] {
       $new_mdms_ips = join(concat($mdms_present_tmp, values_at($available_nodes, "0-${last_mdm_index}")), ',')
     } else {
       $new_mdms_ips = join($mdms_present, ',')
-    }                  
+    }
+    $is_primary_controller = !empty(filter_nodes(filter_nodes($all_nodes, 'name', $::hostname), 'role', 'primary-controller'))    
     notify {"ScaleIO cluster: resize: controller_ips_array='${controller_ips_array}', current_mdms='${current_mdms}', current_tbs='${current_tbs}'": }
     if !empty($mdms_absent) or !empty($tbs_absent) {
       notify {"ScaleIO cluster: change: mdms_present='${mdms_present}', mdms_absent='${mdms_absent}', tbs_present='${tbs_present}', tbs_absent='${tbs_absent}'": }
       # primary-controller will do cleanup
-      if ! empty(filter_nodes(filter_nodes($all_nodes, 'name', $::hostname), 'role', 'primary-controller')) {
+      if $is_primary_controller {
         $slaves_names = join(delete($current_mdms, $current_mdms[0]), ',') # first is current master
         $to_remove_mdms = concat(split(join($mdms_absent, ','), ','), $tbs_absent)  # join/split because concat affects first argument
         scaleio::login {'Normal':
@@ -101,12 +102,16 @@ if $scaleio['metadata']['enabled'] {
       path    => '/etc/environment',
       match   => "^SCALEIO_tb_ips=",
       line    => "SCALEIO_tb_ips=${new_tb_ips}",
-    } ->
-    file_line {'SCALEIO_discovery_allowed':
-      ensure  => present,
-      path    => '/etc/environment',
-      match   => "^SCALEIO_discovery_allowed=",
-      line    => "SCALEIO_discovery_allowed=yes",
+    }
+    # only primary-controller needs discovery of sds/sdc
+    if $is_primary_controller {
+      file_line {'SCALEIO_discovery_allowed':
+        ensure    => present,
+        path      => '/etc/environment',
+        match     => "^SCALEIO_discovery_allowed=",
+        line      => "SCALEIO_discovery_allowed=yes",
+        require   => File_line['SCALEIO_tb_ips']
+      }
     }
   } else {
     notify{'Skip configuring cluster because of using existing cluster': }
