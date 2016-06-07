@@ -2,3 +2,4 @@
 .doctrees
 .DS_Store
 .buildpath
+.pydevproject
