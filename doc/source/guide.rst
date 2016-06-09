@@ -51,12 +51,12 @@ Select Environment
 ------------------
 
 #. Create a new environment with the Fuel UI wizard.
-From OpenStack Release dropdown list select “Juno on Ubunu 14.04” if you are using MOS 6.1 or “Kilo on Ubunu 14.04” for MOS 7.0 or "Liberty on Ubunu 14.04" for MOS8.0 and continue until you finish with the wizard.
+From OpenStack Release dropdown list select "Liberty on Ubunu 14.04" and continue until you finish with the wizard.
 
     .. image:: images/wizard.png
        :width: 80%
 
-#. Add VMs to the new environment according to `Fuel User Guide <https://docs.mirantis.com/openstack/fuel/fuel-6.1/user-guide.html#add-nodes-to-the-environment>`_ and configure them properly.
+#. Add VMs to the new environment according to `Fuel User Guide <https://docs.mirantis.com/openstack/fuel/fuel-8.0/operations.html#adding-redeploying-and-replacing-nodes>`_ and configure them properly.
 
 
 Plugin configuration
@@ -106,12 +106,12 @@ Finish environment configuration
 
 #. Go to the Network tab and configure the network according to your environment.
 
-#. Run `network verification check <https://docs.mirantis.com/openstack/fuel/fuel-6.1/user-guide.html#verify-networks>`_
+#. Run `network verification check <https://docs.mirantis.com/openstack/fuel/fuel-8.0/pdf/Fuel-8.0-UserGuide.pdf#Verify network configuration>`_
 
     .. image:: images/network.png
        :width: 90%
 
-#. Press `Deploy button <https://docs.mirantis.com/openstack/fuel/fuel-6.1/user-guide.html#deploy-changes>`_ once you have finished reviewing the environment configuration.
+#. Press `Deploy button <https://docs.mirantis.com/openstack/fuel/fuel-8.0/pdf/Fuel-8.0-UserGuide.pdf#Deploy changes>`_ once you have finished reviewing the environment configuration.
 
     .. image:: images/deploy.png
        :width: 60%
